@@ -39,7 +39,7 @@ class RecordController extends Controller
     // $fields = $module->fields;
     // $record = Record::create([
     //     'module_id' => $module->id,
-    //     'created_by' => 1,
+    //     'created_by' => auth()->id(),
     // ]);
 
     // foreach ($fields as $field) {
@@ -58,7 +58,7 @@ class RecordController extends Controller
     try {
         $record = Record::create([
             'module_id' => $module->id,
-            'created_by' =>1,
+            'created_by' =>auth()->id(),
         ]);
 
         $insertData = [];
