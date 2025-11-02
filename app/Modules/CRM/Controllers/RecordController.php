@@ -93,4 +93,16 @@ class RecordController extends Controller
     }
 }
 
+public function convertModule($recordId)
+{
+    $module = Module::where('name','Accounts')->first();
+    if(!$module){
+        return response()->json(['message'=>'Accounts module not found.'],400);
+    }
+    $record = Record::where('id',$recordId)->update(['module_id'=>$module->id]);
+
+    return response()->json(['status'=>true,'message'=>'Record converted to Accounts module successfully.'],200);
+}
+
+
 }
