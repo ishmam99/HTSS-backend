@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Modules\CRM\Models\Module;
 use Modules\CRM\Models\Record;
 use Modules\CRM\Models\RecordValue;
@@ -40,7 +41,6 @@ public function store(Request $request, Module $module)
     try {
         $record = Record::create([
             'module_id' => $module->id,
-            // 'created_by' => 1,
             'created_by' => auth()->id(),
         ]);
 
