@@ -33,44 +33,27 @@ class RecordController extends Controller
 
         return response()->json($records);
     }
-
-    public function store(Request $request, Module $module)
+public function store(Request $request, Module $module)
 {
-    // dd($module->id);
-    // $fields = $module->fields;
-    // $record = Record::create([
-    //     'module_id' => $module->id,
-    //     'created_by' => auth()->id(),
-    // ]);
-
-    // foreach ($fields as $field) {
-    //     if ($request->has($field->name)) {
-    //         RecordValue::create([
-    //             'record_id' => $record->id,
-    //             'field_id' => $field->id,
-    //             'value' => $request->input($field->name),
-    //         ]);
-    //     }
-    // }
-
-    // return response()->json($record->load('values.field'));
     DB::beginTransaction();
 
     try {
         $record = Record::create([
             'module_id' => $module->id,
-            'created_by' =>auth()->id(),
+            // 'created_by' => 1,
+            'created_by' => auth()->id(),
         ]);
 
         $insertData = [];
         $timestamp = now();
 
-        foreach ($module->fields as $field) {
-            if ($request->has($field->name)) {
+        foreach ($request->input('fields', []) as $fieldData) {
+
+            if (isset($fieldData['field_id']) && isset($fieldData['value'])) {
                 $insertData[] = [
                     'record_id' => $record->id,
-                    'field_id' => $field->id,
-                    'value' => $request->input($field->name),
+                    'field_id' => $fieldData['field_id'],
+                    'value' => $fieldData['value'],
                     'created_at' => $timestamp,
                     'updated_at' => $timestamp,
                 ];
@@ -84,7 +67,7 @@ class RecordController extends Controller
         DB::commit();
 
         return response()->json($record->load('values.field'));
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         DB::rollBack();
         return response()->json([
             'message' => 'Failed to create record',
