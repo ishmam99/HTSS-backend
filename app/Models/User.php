@@ -46,4 +46,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    
+    public function softwareSkills()
+    {
+        return $this->belongsToMany(SoftwareSkill::class, 'user_software_skills')
+                    ->withPivot('proficiency_level', 'experience_years')
+                    ->withTimestamps();
+    }
 }
