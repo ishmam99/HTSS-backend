@@ -25,5 +25,8 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call(ModuleSeeder::class);
         $this->call(LeedsFieldSeeder::class);
+        $this->call(SoftwareSkillSeeder::class);
+        $this->call(SoftwareSeeder::class);
+        $this->call(SolutionSeeder::class);
     }
 }
