@@ -11,4 +11,9 @@ class RecordValue extends Model
     {
         return $this->belongsTo(ModuleField::class,'field_id');
     }
+
+    public function record()
+    {
+        return $this->belongsTo(Record::class);
+    }
 }
