@@ -49,7 +49,7 @@ class TrainingScheduleController extends Controller
         $schedule = TrainingSchedule::findOrFail($id);
 
         $validated = $request->validate([
-            'title' => 'sometimes|required|string',
+            'title' => 'nullable|string',
             'description' => 'nullable|string',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
