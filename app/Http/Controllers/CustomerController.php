@@ -12,8 +12,13 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $customers = Customer::with('user')->paginate(10);
-        return CustomerResource::collection($customers);
+        $customers = Customer::with('user');
+        if ($request->has('per_page')) {
+            $lists = $customers->paginate($request->per_page);
+        } else {
+            $lists = $customers->get();
+        }
+        return CustomerResource::collection($lists);
     }
 
     public function show($id)

@@ -10,8 +10,13 @@ class SolutionTrainingController extends Controller
 {
     public function index(Request $request)
     {
-        $solutionTrainings = SolutionTraining::with('trainingSchedule')->paginate(10);
-        return SolutionTrainingResource::collection($solutionTrainings);
+        $solutionTrainings = SolutionTraining::with('trainingSchedule');
+        if ($request->has('per_page')) {
+            $lists = $solutionTrainings->paginate($request->per_page);
+        } else {
+            $lists = $solutionTrainings->get();
+        }
+        return SolutionTrainingResource::collection($lists);
     }
 
     public function show($id)

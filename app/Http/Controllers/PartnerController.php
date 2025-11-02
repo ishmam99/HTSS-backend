@@ -12,8 +12,14 @@ class PartnerController extends Controller
 {
     public function index(Request $request)
     {
-        $partners = Partner::with('user')->paginate(10);
-        return PartnerResource::collection($partners);
+        $partners = Partner::with('user');
+
+        if ($request->has('per_page')) {
+            $lists = $partners->paginate($request->per_page);
+        } else {
+            $lists = $partners->get();
+        }
+        return PartnerResource::collection($lists);
     }
     public function show($id)
     {

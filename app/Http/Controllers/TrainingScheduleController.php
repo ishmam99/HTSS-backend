@@ -10,8 +10,14 @@ class TrainingScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        $schedules = TrainingSchedule::paginate(10);
-        return TrainingScheduleResource::collection($schedules);
+        $schedules = TrainingSchedule::query();
+
+        if ($request->has('per_page')) {
+            $lists = $schedules->paginate($request->per_page);
+        } else {
+            $lists = $schedules->get();
+        }
+        return TrainingScheduleResource::collection($lists);
     }
 
     public function show($id)
