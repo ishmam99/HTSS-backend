@@ -15,6 +15,8 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::prefix('modules/{module}')->group(function () {
             Route::get('/records', [RecordController::class, 'index']);
             Route::post('/records', [RecordController::class, 'store']);
+            Route::get('/fields', [ModuleFieldController::class, 'getByModule']);
         });
+   
     });
 });
