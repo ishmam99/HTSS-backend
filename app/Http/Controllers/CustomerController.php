@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Http\Resources\CustomerResource;
 use Illuminate\Validation\Rule;
+use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -30,7 +31,10 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'nullable|min:6',
+            'role' => 'nullable|string',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
@@ -40,17 +44,56 @@ class CustomerController extends Controller
             'gender' => 'nullable|string',
         ]);
 
-        $customer = Customer::create($validated);
-        $customer->load('user');
+        try {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make('12345678'),
+            ]);
 
-        return new CustomerResource($customer);
+            if (!empty($validated['role'])) {
+                $user->role = $validated['role'];
+                $user->save();
+            }
+
+            $customer = Customer::create([
+                'user_id' => $user->id,
+                'phone' => $validated['phone'] ?? null,
+                'address' => $validated['address'] ?? null,
+                'city' => $validated['city'] ?? null,
+                'country' => $validated['country'] ?? null,
+                'postal_code' => $validated['postal_code'] ?? null,
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'gender' => $validated['gender'] ?? null,
+            ]);
+
+            $customer->load('user');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer created successfully',
+                'user_id' => $user->id,
+                'customer_id' => $customer->id,
+                'data' => new CustomerResource($customer),
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer creation failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $customer = Customer::findOrFail($id);
+        $customer = Customer::with('user')->findOrFail($id);
+        $user = $customer->user;
 
         $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => ['nullable', 'email', Rule::unique('users')->ignore($user->id)],
+            'role' => 'nullable|string',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
@@ -61,16 +104,58 @@ class CustomerController extends Controller
             'status' => 'nullable|integer',
         ]);
 
-        $customer->update($validated);
-        $customer->load('user');
+        try {
+            if (isset($validated['name'])) $user->name = $validated['name'];
+            if (isset($validated['email'])) $user->email = $validated['email'];
+            if (!empty($validated['role'])) $user->role = $validated['role'];
+            $user->save();
 
-        return new CustomerResource($customer);
+            $customer->update([
+                'phone' => $validated['phone'] ?? $customer->phone,
+                'address' => $validated['address'] ?? $customer->address,
+                'city' => $validated['city'] ?? $customer->city,
+                'country' => $validated['country'] ?? $customer->country,
+                'postal_code' => $validated['postal_code'] ?? $customer->postal_code,
+                'date_of_birth' => $validated['date_of_birth'] ?? $customer->date_of_birth,
+                'gender' => $validated['gender'] ?? $customer->gender,
+                'status' => $validated['status'] ?? $customer->status,
+            ]);
+
+            $customer->load('user');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer updated successfully',
+                'data' => new CustomerResource($customer),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer update failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
     public function destroy($id)
     {
-        $customer = Customer::findOrFail($id);
-        $customer->delete();
+        try {
+            $customer = Customer::with('user')->findOrFail($id);
+            $user = $customer->user;
 
-        return response()->json(['message' => 'Customer deleted successfully']);
+            $customer->delete();
+            if ($user) $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer and associated user deleted successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete customer',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
