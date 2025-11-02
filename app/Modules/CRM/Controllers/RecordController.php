@@ -36,6 +36,7 @@ class RecordController extends Controller
 
     public function store(Request $request, Module $module)
 {
+    // dd($module->id);
     // $fields = $module->fields;
     // $record = Record::create([
     //     'module_id' => $module->id,
