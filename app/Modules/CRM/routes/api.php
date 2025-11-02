@@ -17,6 +17,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
             Route::post('/records', [RecordController::class, 'store'])->middleware('auth:sanctum');
             Route::get('/fields', [ModuleFieldController::class, 'getByModule']);
         });
+        Route::post('/convert-to-accounts/{recordId}', [RecordController::class, 'convertModule']);
 
     });
 });
