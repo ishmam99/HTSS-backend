@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\SoftwareSkill;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class SoftwareSkillSeeder extends Seeder
 {
@@ -13,7 +14,9 @@ class SoftwareSkillSeeder extends Seeder
      */
     public function run(): void
     {
-        SoftwareSkill::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        \App\Models\SoftwareSkill::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $skills = [
             ['name' => 'AutoCAD', 'description' => '2D/3D drafting tool.'],
