@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Modules\CRM\database\seeders\LeedsFieldSeeder;
+use Modules\CRM\database\seeders\ModuleSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,5 +23,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+        $this->call(ModuleSeeder::class);
+        $this->call(LeedsFieldSeeder::class);
     }
 }

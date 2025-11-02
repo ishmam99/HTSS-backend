@@ -28,7 +28,7 @@ class MakeModuleMigration extends Command
         }
 
         $timestamp = date('Y_m_d_His');
-        $file = $migrationPath . "/{$timestamp}_{$name}.php";
+        $file = $migrationPath . "/{$timestamp}_create_{$name}_table.php";
 
         $className = Str::studly($name);
 

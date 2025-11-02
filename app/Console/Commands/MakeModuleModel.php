@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Support\Str;
 class MakeModuleModel extends Command
 {
   protected $signature = 'make:module:model
@@ -23,11 +23,17 @@ class MakeModuleModel extends Command
         $path = $modulePath . "/{$name}.php";
 
 
-        if ($this->option('migration')) {
-            // Call make:module:migration command
+       if ($this->option('migration')) {
+            // Get the model name
+            $modelName = $this->argument('name');
+
+            // Convert model name to snake_case and plural form
+            $tableName = Str::snake(Str::pluralStudly($modelName));
+
+            // Call the module migration generator
             $this->call('make:module:migration', [
                 'module' => $module,
-                'name' => "create_" . strtolower($name) . "_table"
+                'name' => $tableName,
             ]);
         }
 
