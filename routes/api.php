@@ -45,8 +45,11 @@ Route::prefix('v1')->group(function () {
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
         });
     });
+<<<<<<< HEAD
 
     
 
 
+=======
+>>>>>>> 80b5e07bc60b57d0ef0dc064aa74c094eb04c424
 });
