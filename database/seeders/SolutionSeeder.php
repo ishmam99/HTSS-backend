@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Solution;
+use Illuminate\Support\Facades\DB;
 
 class SolutionSeeder extends Seeder
 {
@@ -13,32 +13,25 @@ class SolutionSeeder extends Seeder
      */
     public function run(): void
     {
-
+        // Disable foreign key checks before truncating
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Solution::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $solutions = [
-            [
-                'user_id' => 1,
-                'name' => 'Aerospace Structural Analysis',
-                'domain' => 'Aerospace',
-                'description' => 'Solution for composite material simulation and fatigue analysis.'
-            ],
-            [
-                'user_id' => 1,
-                'name' => 'Architectural Design Suite',
-                'domain' => 'Construction',
-                'description' => 'Integrated 3D BIM workflow for large structures.'
-            ],
-            [
-                'user_id' => 1,
-                'name' => 'Mechanical Simulation Package',
-                'domain' => 'Engineering',
-                'description' => 'Complete system for FEA, CFD, and CAD integration.'
-            ],
+            ['name' => 'Aerospace Structural Analysis'],
+            ['name' => 'Automotive Crash Analysis'],
+            ['name' => 'Thermal Analysis'],
+            ['name' => 'System Dynamics'],
+            ['name' => 'Fatigue & Durability'],
+            ['name' => 'Acoustics Simulation'],
+            ['name' => 'Composite Material Analysis'],
+            ['name' => 'Manufacturing Simulation'],
+            ['name' => 'Welding Simulation'],
+            ['name' => 'Fluid Dynamics'],
         ];
 
-        foreach ($solutions as $solution) {
-            Solution::create($solution);
-        }
+        // Insert all solutions at once
+        Solution::insert($solutions);
     }
 }

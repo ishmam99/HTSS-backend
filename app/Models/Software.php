@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Software extends Model
 {
+ protected $table = 'softwares';
 
      protected $fillable = ['name', 'vendor', 'version', 'release_date', 'software_skill_id' , 'user_id' , 'status'];
     public function softwareSkill()

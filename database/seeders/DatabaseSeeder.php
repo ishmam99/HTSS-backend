@@ -31,13 +31,16 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call(ModuleSeeder::class);
         $this->call(LeedsFieldSeeder::class);
-        // $this->call(SoftwareSkillSeeder::class);
-        // $this->call(SoftwareSeeder::class);
-        // $this->call(SolutionSeeder::class);
+
+        $this->call(SoftwareSeeder::class);
+        $this->call(SolutionSeeder::class);
+        $this->call(IndustrySeeder::class);
+           $this->call(SoftwareSkillSeeder::class);
         $this->call([
-            TrainingSeeder::class,
-            TrainingSessionSeeder::class,
-            TrainingEnrollmentSeeder::class,
+            // TrainingSeeder::class,
+            // TrainingSessionSeeder::class,
+            UserSeeder::class,
+            // TrainingEnrollmentSeeder::class,
         ]);
     }
 }
