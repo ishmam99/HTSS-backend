@@ -88,5 +88,40 @@ public function convertModule($recordId)
     return response()->json(['status'=>true,'message'=>'Record converted to Accounts module successfully.'],200);
 }
 
+    public function getByRecord($recordId)
+    {
+        $data = RecordValue::with('field')
+            ->where('record_id', $recordId)
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json([
+                'message' => 'No record values found for this record ID'
+            ], 400);
+        }
+        return response()->json([
+            'status' => true,
+            'record_id' => $recordId,
+            'values' => $data
+        ],200);
+    }
+    public function updateValue(Request $request, $id)
+    {
+        $recordValue = RecordValue::find($id);
+        if (!$recordValue) {
+            return response()->json([
+                'message' => 'Record value not found'
+            ], 400);
+        }
+        $recordValue->update([
+            'value' => $request->value
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Value updated successfully',
+            'data' => $recordValue
+        ],200);
+    }
+
 
 }

@@ -18,6 +18,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
             Route::get('/fields', [ModuleFieldController::class, 'getByModule']);
         });
         Route::post('/convert-to-accounts/{recordId}', [RecordController::class, 'convertModule']);
-
+        Route::get('/record-values/{recordId}', [RecordController::class, 'getByRecord']);
+        Route::put('/record-values/{id}', [RecordController::class, 'updateValue']);
     });
 });
