@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IndustrySolution;
 use App\Models\Software;
 use App\Models\SoftwareSkill;
 use Illuminate\Http\Request;
@@ -61,5 +62,38 @@ class SoftwareController extends Controller
     {
         $software->delete();
         return response()->json(['message' => 'Software deleted successfully']);
+    }
+    public function industrySolution(Request $request)  {
+        $request->validate([
+            'industry_id' => 'required|exists:industries,id',
+            'solution_id' => 'required|exists:solutions,id',
+        ]);
+        IndustrySolution::create([
+            'industry_id' => $request->industry_id,
+            'solution_id' => $request->solution_id,
+        ]);
+        return response()->json('Data added successfully');
+    }
+    public function industrySoftware(Request $request)  {
+        $request->validate([
+            'industry_id' => 'required|exists:industries,id',
+            'software_id' => 'required|exists:softwares,id',
+        ]);
+        IndustrySolution::create([
+            'industry_id' => $request->industry_id,
+            'software_id' => $request->software_id,
+        ]);
+        return response()->json('Data added successfully');
+    }
+    public function softwareSolution(Request $request)  {
+        $request->validate([
+            'solution_id' => 'required|exists:solutions,id',
+            'software_id' => 'required|exists:softwares,id',
+        ]);
+        IndustrySolution::create([
+            'solution_id' => $request->solution_id,
+            'software_id' => $request->software_id,
+        ]);
+        return response()->json('Data added successfully');
     }
 }

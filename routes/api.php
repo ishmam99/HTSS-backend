@@ -37,6 +37,11 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('training-schedules', TrainingScheduleController::class);
     Route::apiResource('solution-trainings', SolutionTrainingController::class);
+
+    Route::post('add-industry-solutions',[SoftwareController::class, 'industrySolution']);
+    Route::post('add-industry-softwares',[SoftwareController::class, 'industrySoftware']);
+    Route::post('add-software-solutions',[SoftwareController::class, 'softwareSolution']);
+
     Route::apiResource('industries', IndustryController::class);
         Route::apiResource('software-skills', SoftwareSkillController::class);
         Route::apiResource('solutions', SolutionController::class);

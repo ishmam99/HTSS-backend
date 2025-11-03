@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Modules\CRM\Models\Module;
 use Modules\CRM\Models\Record;
+use Modules\CRM\Models\RecordRelation;
 use Modules\CRM\Models\RecordValue;
 
 class RecordController extends Controller
@@ -99,7 +100,7 @@ public function store(Request $request, Module $module)
 
 public function convertModule($recordId)
 {
-    
+
     $module = Module::where('name','Accounts')->first();
     if(!$module){
         return response()->json(['message'=>'Accounts module not found.'],400);
@@ -143,6 +144,20 @@ public function convertModule($recordId)
             'data' => $recordValue
         ],200);
     }
-
+    public function addChild(Request $request){
+        $request->validate([
+            'parent_record_id' => 'required|exists:records,id',
+            'child_record_id' => 'required|exists:records,id',
+        ]);
+        $parent = Record::find($request->parent_record_id)->with('module');
+        $child = Record::find($request->child_record_id)->with('module');
+        $relation_type = $parent->module->name.'-'.$child->module->name;
+        RecordRelation::create([
+            'parent_record_id' => $request->parent_record_id,
+            'child_record_id' => $request->child_record_id,
+            'relation_type' => $relation_type
+        ]);
+        return response()->json('Child Data added successfully');
+    }
 
 }
