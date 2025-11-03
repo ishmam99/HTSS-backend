@@ -10,7 +10,8 @@ class LeedsFieldSeeder extends Seeder
     public function run(): void
     {
         $fields = [
-             ['Company', 'T'],
+             ['Parent Company', 'T'],
+             ['Company Name', 'T'],
             ['Industry', 'DD' ,['Aerospace','Automovitve','Electronics','Defense']],
             ['Leads Source', 'DD',['Oue Own Source']],
             ['Street', 'T'],

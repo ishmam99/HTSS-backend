@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('module_id')->constrained('modules')->cascadeOnDelete();
              $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+             $table->foreignId('record_id')->nullable()->constrained('records')->cascadeOnDelete();
+             $table->string('relation_type')->nullable();
             $table->timestamps();
         });
     }
