@@ -35,7 +35,7 @@ class RecordController extends Controller
         return response()->json($records);
     }
 public function store(Request $request, Module $module)
-{dd(Hash::make('12345678'));
+{
     DB::beginTransaction();
 
     try {
