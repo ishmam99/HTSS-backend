@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IndustrySoftware;
 use App\Models\IndustrySolution;
 use App\Models\Software;
 use App\Models\SoftwareSkill;
+use App\Models\SoftwareSolution;
 use Illuminate\Http\Request;
 
 class SoftwareController extends Controller
@@ -79,7 +81,7 @@ class SoftwareController extends Controller
             'industry_id' => 'required|exists:industries,id',
             'software_id' => 'required|exists:softwares,id',
         ]);
-        IndustrySolution::create([
+        IndustrySoftware::create([
             'industry_id' => $request->industry_id,
             'software_id' => $request->software_id,
         ]);
@@ -90,7 +92,7 @@ class SoftwareController extends Controller
             'solution_id' => 'required|exists:solutions,id',
             'software_id' => 'required|exists:softwares,id',
         ]);
-        IndustrySolution::create([
+        SoftwareSolution::create([
             'solution_id' => $request->solution_id,
             'software_id' => $request->software_id,
         ]);
