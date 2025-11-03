@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('software_skills', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('software_id')->constrained('softwares')->cascadeOnDelete();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
