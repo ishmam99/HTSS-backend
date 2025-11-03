@@ -28,18 +28,19 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::apiResource('partners', PartnerController::class);
-    Route::apiResource('customers', CustomerController::class);
-    Route::apiResource('training-schedules', TrainingScheduleController::class);
-    Route::apiResource('solution-trainings', SolutionTrainingController::class);
-    Route::apiResource('industries', IndustryController::class);
+
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
+     Route::apiResource('partners', PartnerController::class);
+    Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('training-schedules', TrainingScheduleController::class);
+    Route::apiResource('solution-trainings', SolutionTrainingController::class);
+    Route::apiResource('industries', IndustryController::class);
         Route::apiResource('software-skills', SoftwareSkillController::class);
         Route::apiResource('solutions', SolutionController::class);
-        Route::apiResource('software', SoftwareController::class);
+        Route::apiResource('softwares', SoftwareController::class);
         Route::prefix('users/{userId}')->group(function () {
             Route::get('software-skills', [UserSoftwareSkillController::class, 'index']);
             Route::post('software-skills', [UserSoftwareSkillController::class, 'store']);
