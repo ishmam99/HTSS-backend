@@ -34,6 +34,25 @@ class RecordController extends Controller
 
         return response()->json($records);
     }
+    public function show(Record $record ,Request $request)
+    {
+        $relational_data = [];
+        if($request->has('relational_data'))
+        {
+           foreach( $request->relational_data as $relation)
+           {
+                $data = Record::where('record_id',$record->id)->where('module_id',$relation)->with('values')->get();
+                if($data)
+                {
+                    array_push($relational_data,['data'=>$data,'relation'=>$relation]);
+                }
+           }
+        }
+         $record->load(['values.field']);
+
+        return response()->json(['data'=>$record,'relational_data'=>$relational_data ]);
+    }
+
 public function store(Request $request, Module $module)
 {
     DB::beginTransaction();
@@ -42,6 +61,8 @@ public function store(Request $request, Module $module)
         $record = Record::create([
             'module_id' => $module->id,
             'created_by' => auth()->id(),
+            // 'record_id' => $request->parent_id,
+            // 'relation_type' => $request->relation_type,
         ]);
 
         $insertData = [];

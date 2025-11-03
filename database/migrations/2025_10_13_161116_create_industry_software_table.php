@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('crm_deal_items', function (Blueprint $table) {
+        Schema::create('industry_software', function (Blueprint $table) {
             $table->id();
+              $table->foreignId('industry_id')->constrained('industries')->cascadeOnDelete();
+            $table->foreignId('software_id')->constrained('softwares')->cascadeOnDelete();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('crm_deal_items');
+        Schema::dropIfExists('industry_software');
     }
 };
