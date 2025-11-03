@@ -27,6 +27,9 @@ class TrainingController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'start_date' => 'nullable|date',
+            'software_id' => 'required|exists:softwares,id',
+            'solution_id' => 'required|exists:softwares,id',
+            'customer_id' => 'nullable|exists:customers,id',
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 

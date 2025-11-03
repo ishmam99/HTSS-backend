@@ -41,19 +41,20 @@ Route::prefix('v1')->group(function () {
     Route::post('add-industry-solutions',[SoftwareController::class, 'industrySolution']);
     Route::post('add-industry-softwares',[SoftwareController::class, 'industrySoftware']);
     Route::post('add-software-solutions',[SoftwareController::class, 'softwareSolution']);
-
+      Route::apiResource('trainings', TrainingController::class);
     Route::apiResource('industries', IndustryController::class);
         Route::apiResource('software-skills', SoftwareSkillController::class);
         Route::apiResource('solutions', SolutionController::class);
         Route::apiResource('softwares', SoftwareController::class);
+        Route::apiResource('training-sessions', TrainingSessionController::class);
+        Route::apiResource('training-enrollments', TrainingEnrollmentController::class);
         Route::prefix('users/{userId}')->group(function () {
             Route::get('software-skills', [UserSoftwareSkillController::class, 'index']);
             Route::post('software-skills', [UserSoftwareSkillController::class, 'store']);
             Route::put('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'update']);
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
-            Route::apiResource('trainings', TrainingController::class);
-            Route::apiResource('training-sessions', TrainingSessionController::class);
-            Route::apiResource('training-enrollments', TrainingEnrollmentController::class);
+
+
         });
     });
 
