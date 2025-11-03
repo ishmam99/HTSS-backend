@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class IndustrySoftware extends Model
 {
     //
+     protected $guarded = ['id'];
 }

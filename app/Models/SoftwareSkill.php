@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SoftwareSkill extends Model
 {
 
-    protected $fillable = ['name', 'category', 'description', 'skill' , 'status'];
+    protected $guarded = ['id'];
     // public function users()
     // {
     //     return $this->belongsToMany(User::class, 'user_software_skills');

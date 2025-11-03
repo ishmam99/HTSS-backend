@@ -9,7 +9,7 @@ class TrainingSession extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['training_id', 'session_title', 'session_date', 'location' , 'status'];
+     protected $guarded = ['id'];
 
     public function training()
     {

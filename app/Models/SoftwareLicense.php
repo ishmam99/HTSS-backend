@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class SoftwareLicense extends Model
 {
     //
+     protected $guarded = ['id'];
 }

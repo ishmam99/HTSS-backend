@@ -8,7 +8,7 @@ class TrainingEnrollment extends Model
 {
 
 
-    protected $fillable = ['training_id', 'enrolled_on', 'status'];
+   protected $guarded = ['id'];
 
     public function training()
     {

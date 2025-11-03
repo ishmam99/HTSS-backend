@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Training extends Model
 {
-    protected $fillable = ['title', 'description', 'start_date', 'end_date' , 'status'];
+    protected $guarded = ['id'];
 
     public function sessions()
     {
