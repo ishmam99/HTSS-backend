@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('industry_solutions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('industry_id')->constrained('industries')->cascadeOnDelete();
+            $table->foreignId('solution_id')->constrained('solutions')->cascadeOnDelete();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

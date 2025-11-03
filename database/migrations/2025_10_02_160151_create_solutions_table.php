@@ -13,13 +13,10 @@ return new class extends Migration
     {
         Schema::create('solutions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-            $table->string('name');
-            $table->string('domain')->nullable();    
-            $table->text('description')->nullable();
-            $table->integer('status')->default(0);
+            $table->string('name')->unique();
+            $table->text('icon')->nullable();
+            $table->text('image')->nullable();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

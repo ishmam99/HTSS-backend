@@ -23,6 +23,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+        User::factory()->create([
+            'name' => 'Sales Director',
+            'email' => 'sales_director@mail.com',
+            'role' => 'sales-director'
+        ]);
         $this->call(ModuleSeeder::class);
         $this->call(LeedsFieldSeeder::class);
         // $this->call(SoftwareSkillSeeder::class);
