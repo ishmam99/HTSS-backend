@@ -11,7 +11,9 @@ use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\TrainingScheduleController;
+use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\TrainingSessionController;
+use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\SolutionTrainingController;
 use App\Http\Controllers\IndustryController;
 
@@ -43,10 +45,13 @@ Route::prefix('v1')->group(function () {
             Route::post('software-skills', [UserSoftwareSkillController::class, 'store']);
             Route::put('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'update']);
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
+            Route::apiResource('trainings', TrainingController::class);
+            Route::apiResource('training-sessions', TrainingSessionController::class);
+            Route::apiResource('training-enrollments', TrainingEnrollmentController::class);
         });
     });
 
-    
+
 
 
 });

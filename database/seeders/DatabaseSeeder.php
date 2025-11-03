@@ -19,20 +19,25 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Sales Director',
-            'email' => 'sales_director@mail.com',
-            'role' => 'sales-director',
-        ]);
-        User::factory()->create([
-            'name' => 'Sales Director',
-            'email' => 'sales_director@mail.com',
-            'role' => 'sales-director'
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Sales Director',
+        //     'email' => 'sales_director@mail.com',
+        //     'role' => 'sales-director',
+        // ]);
+        // User::factory()->create([
+        //     'name' => 'Sales Director',
+        //     'email' => 'sales_director@mail.com',
+        //     'role' => 'sales-director'
+        // ]);
         $this->call(ModuleSeeder::class);
         $this->call(LeedsFieldSeeder::class);
         // $this->call(SoftwareSkillSeeder::class);
         // $this->call(SoftwareSeeder::class);
         // $this->call(SolutionSeeder::class);
+        $this->call([
+            TrainingSeeder::class,
+            TrainingSessionSeeder::class,
+            TrainingEnrollmentSeeder::class,
+        ]);
     }
 }
