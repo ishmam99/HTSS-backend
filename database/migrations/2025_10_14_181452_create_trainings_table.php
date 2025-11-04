@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->foreignId('solution_id')->nullable()->constrained('solutions')->cascadeOnDelete();
+            $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained('customers')->cascadeOnDelete();
             $table->text('description')->nullable();
             $table->date('start_date')->nullable();

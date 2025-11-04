@@ -54,7 +54,6 @@ Route::prefix('v1')->group(function () {
             Route::put('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'update']);
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
 
-
         });
     });
 
