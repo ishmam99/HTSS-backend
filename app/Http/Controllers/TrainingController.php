@@ -2,96 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\TrainingResource;
-use App\Models\Customer;
 use App\Models\Training;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TrainingController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-       $customer = Customer::where('user_id', auth()->id())->first();
-       $query = Training::with('customer.user', 'software', 'solution', 'industry')->where('customer_id',$customer->id)->when('software_id', function ($query, $softwareId) {
-                return $query->where('software_id', $softwareId);
-            })->when('solution_id', function ($query, $solutionId) {
-                return $query->where('solution_id', $solutionId);
-            })->when('industry_id', function ($query, $industryId) {
-                return $query->where('industry_id', $industryId);
-            })->when('status', function ($query, $status) {
-                return $query->where('status', $status);
-            });
-        if($request->has('per_page')) {
-            $trainings = $query->paginate($request->per_page);
+        $query = Training::query();
+
+        if (request()->has('per_page')) {
+            $perPage = (int) request('per_page', 10); // default 10
+            $trainings = $query->paginate($perPage);
         } else {
             $trainings = $query->get();
         }
-        return TrainingResource::collection($trainings);
+
+        return response()->json($trainings);
     }
 
     public function store(Request $request)
     {
-        $customer = Customer::where('user_id', auth()->id())->first();
-        $training = Training::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'start_date' => Carbon::parse($request->start_date),
-            'end_date' => Carbon::parse($request->end_date),
-            'software_id' => $request->software_id,
-            'solution_id' => $request->solution_id,
-            'industry_id' => $request->industry_id,
-            'customer_id' => $customer->id,
-            'status' => $request->status ?? 0,
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'software_id' => 'required|exists:softwares,id',
+            'solution_id' => 'required|exists:softwares,id',
+            'customer_id' => 'nullable|exists:customers,id',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
-        return response()->json([
-            'status' => true,
-            'message' => 'Training created successfully',
-            'data' => $training
-        ], 201);
+
+        $training = Training::create($validated);
+
+        return response()->json($training, 201);
     }
 
     public function show(Training $training)
     {
-        return new TrainingResource($training->load('customer.user', 'software', 'solution', 'industry'));
+        return response()->json($training->load('sessions', 'enrollments'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Training $training)
     {
-        $customer = Customer::where('user_id', auth()->id())->first();
-
-        $training = Training::findOrFail($id);
-        if ($training->customer_id !== $customer->id) {
-            return response()->json(['message' => 'You cannot update.'], 403);
-        }
-
-        $training->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'start_date' => Carbon::parse($request->start_date),
-            'end_date' => Carbon::parse($request->end_date),
-            'software_id' => $request->software_id,
-            'solution_id' => $request->solution_id,
-            'industry_id' => $request->industry_id,
-            'customer_id' => $customer->id,
-            'status' => $request->status ?? 0,
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'status' => 'sometimes|integer',
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Training updated successfully',
-            'data' => $training
-        ], 200);
-    }
+        $training->update($validated);
 
+        return response()->json([
+            'message' => 'Training updated successfully.',
+            'data' => $training,
+        ]);
+    }
 
     public function destroy(Training $training)
     {
-        $customer = Customer::where('user_id', auth()->id())->first();
-        if ($training->customer_id !== $customer->id) {
-            return response()->json(['message' => 'You cannot update.'], 403);
-        }
         $training->delete();
+
         return response()->json(['message' => 'Training deleted successfully']);
     }
 }
