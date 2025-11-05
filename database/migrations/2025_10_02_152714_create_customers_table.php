@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
             $table->tinyInteger('status')->default(0);
+            $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
             $table->timestamps();
         });
     }
