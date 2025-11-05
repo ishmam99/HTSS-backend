@@ -151,7 +151,7 @@ public function convertModule($recordId)
         ]);
         $parent = Record::where('id',$request->parent_record_id)->with('module')->first();
         $child = Record::where('id',$request->child_record_id)->with('module')->first();
-        dd($parent,$child);
+       
         $relation_type = $parent->module->name.'-'.$child->module->name;
         RecordRelation::create([
             'parent_record_id' => $request->parent_record_id,
