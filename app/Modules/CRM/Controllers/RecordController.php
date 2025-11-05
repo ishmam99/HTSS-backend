@@ -116,6 +116,7 @@ public function convertModule($recordId)
             'values' => $data
         ],200);
     }
+
     public function updateValue(Request $request, $id)
     {
         $recordValue = RecordValue::find($id);
@@ -133,6 +134,24 @@ public function convertModule($recordId)
             'data' => $recordValue
         ],200);
     }
+    public function storeRecordValue(Request $request, $id)
+    {
+        $recordValue = RecordValue::find($id);
+        if (!$recordValue) {
+            return response()->json([
+                'message' => 'Record value not found'
+            ], 400);
+        }
+        $recordValue->update([
+            'value' => $request->value
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Value updated successfully',
+            'data' => $recordValue
+        ],200);
+    }
+
     public function addChild(Request $request){
         $request->validate([
             'parent_record_id' => 'required|exists:records,id',
