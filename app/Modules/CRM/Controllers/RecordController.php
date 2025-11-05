@@ -149,8 +149,8 @@ public function convertModule($recordId)
             'parent_record_id' => 'required|exists:records,id',
             'child_record_id' => 'required|exists:records,id',
         ]);
-        $parent = Record::find($request->parent_record_id)->with('module');
-        $child = Record::find($request->child_record_id)->with('module');
+        $parent = Record::where('id',$request->parent_record_id)->with('module')->first();
+        $child = Record::where('id',$request->child_record_id)->with('module')->first();
         dd($parent,$child);
         $relation_type = $parent->module->name.'-'.$child->module->name;
         RecordRelation::create([
