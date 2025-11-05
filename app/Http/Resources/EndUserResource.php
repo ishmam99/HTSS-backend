@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class EndUserResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'knowledge_level' => $this->knowledge_level,
+            'status' => $this->status,
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+            ],
+            'customer_id' => $this->customer_id,
+            'industry_id' => $this->industry_id,
+        ];
+    }
+}
