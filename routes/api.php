@@ -11,8 +11,13 @@ use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\IndustryController;
-
+use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\TrainingCourseController;
+use App\Http\Controllers\TrainingEnrollmentController;
+use App\Http\Controllers\TrainingEventController;
+use App\Http\Controllers\TrainingOfferController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -43,7 +48,13 @@ Route::prefix('v1')->group(function () {
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
         });
     });
+    Route::apiResource('end-users', EndUserController::class);
+    Route::apiResource('training-course', TrainingCourseController::class);
+    Route::apiResource('trainer', TrainerController::class);
+    Route::apiResource('training-event',TrainingEventController::class);
 
+    Route::apiResource('training-offer',TrainingOfferController::class);
+    Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
 
 
 

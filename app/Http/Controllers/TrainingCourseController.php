@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\TrainingCourse;
+use App\Http\Requests\TrainingCourseRequest;
+use App\Http\Resources\TrainingCourseResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+
+class TrainingCourseController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = TrainingCourse::when('status', function($query, $request) {
+            return $query->where('status', $request->status);
+        })->orderBy('id', 'desc');
+
+        if ($request->has('per_page')) {
+            $lists = $query->paginate($request->per_page);
+        } else {
+            $lists = $query->get();
+        }
+
+        return TrainingCourseResource::collection($lists);
+    }
+
+
+    public function store(TrainingCourseRequest $request)
+    {
+        $data = $request->validated();
+        $trainingCourse = TrainingCourse::create($data);
+        return response()->json([
+            'status' => true,
+            'message' => 'TrainingCourse created successfully',
+        ], 201);
+    }
+
+    public function show(TrainingCourse $trainingCourse)
+    {
+        return new TrainingCourseResource($trainingCourse);
+    }
+
+    public function update(TrainingCourseRequest $request, TrainingCourse $trainingCourse)
+    {
+        $data = $request->validated();
+        $trainingCourse->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'TrainingCourse updated successfully',
+        ], 200);
+    }
+
+    public function destroy(TrainingCourse $trainingCourse)
+    {
+        $trainingCourse->delete();
+        return response()->json(['status' => true,'message' => 'TrainingCourse deleted successfully'],200);
+    }
+}
