@@ -17,7 +17,7 @@ class TrainingEnrollmentRequest extends FormRequest
 
         return [
             'end_user_id' => 'required|exists:end_users,id',
-            'offer_id' => 'required|exists:training_offers,id',
+            'training_offer_id' => 'required|exists:training_offers,id',
             'status' => 'nullable|integer',
         ];
     }

@@ -15,4 +15,8 @@ class TrainingOffer extends Model
     {
         return $this->belongsTo(TrainingEvent::class);
     }
+
+
+
+
 }

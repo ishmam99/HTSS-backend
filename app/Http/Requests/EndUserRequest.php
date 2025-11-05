@@ -15,6 +15,7 @@ class EndUserRequest extends FormRequest
     {
         $endUserId = $this->route('end_user')?->id;
         return [
+            'name' => 'required|string|max:255',
             'username' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email,' . ($this->route('end_user')?->user_id ?? 'NULL'),
             'password' => 'nullable|string|min:8',
