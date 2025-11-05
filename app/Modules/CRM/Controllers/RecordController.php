@@ -151,6 +151,8 @@ public function convertModule($recordId)
         ]);
         $parent = Record::find($request->parent_record_id)->with('module');
         $child = Record::find($request->child_record_id)->with('module');
+        \Log::info($parent);
+        \Log::info($child);
         $relation_type = $parent->module->name.'-'.$child->module->name;
         RecordRelation::create([
             'parent_record_id' => $request->parent_record_id,
