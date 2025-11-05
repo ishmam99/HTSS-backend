@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->nullable()->constrained('customers')->cascadeOnDelete();
             $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
             $table->string('username')->nullable();
-            $table->string('knowledge_level')->nullable();
+            // $table->string('knowledge_level')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });

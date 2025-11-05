@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
+use App\Models\EndUser;
+use App\Models\EndUserSoftware;
 use App\Models\Industry;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,7 +22,7 @@ public function run(): void
 {
      DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Customer::truncate();
-
+        Industry::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     $industries = [
         'Aerospace & Defense',
@@ -67,7 +69,7 @@ public function run(): void
                 'password' => Hash::make('password123'),
             ]);
 
-            Customer::create([
+          $customer =  Customer::create([
                 'user_id' => $user->id,
                 'industry_id' => $industry->id,
                 'phone' => '01700000' . $i,
@@ -77,6 +79,29 @@ public function run(): void
                 'postal_code' => '1200' . $i,
                 'status' => 1,
             ]);
+            for($j = 1 ; $j <= 3; $j++)
+            {
+                 $formattedNumber1 = str_pad($j, 3, '0', STR_PAD_LEFT); // 001, 002, 003...
+              $userCode =  "User_{$shortCode}_{$formattedNumber1}";
+            $user = User::factory()->create([
+                'name' => $userCode,
+                'email' => strtolower($userCode) . '@mail.com',
+                'role' => 'end-user',
+                'password' => Hash::make('password123'),
+            ]);
+            $endUser = EndUser::create([
+                'user_id' => $user->id,
+                'industry_id' => $industry->id,
+                'customer_id' => $customer->id,
+            ]);
+            EndUserSoftware::creater([
+                'end_user_id' => $endUser->id,
+                'software_id' => $j,
+                'level' => $j == 1? 'Basic' : ($j == 2 ? 'Advance': 'Intermidiate')
+            ]);
+
+            }
+
         }
     }
 }
