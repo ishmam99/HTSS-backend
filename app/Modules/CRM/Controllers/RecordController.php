@@ -159,5 +159,12 @@ public function convertModule($recordId)
         ]);
         return response()->json('Child Data added successfully');
     }
+    public function getChild($record , $type){
+        $childs = RecordRelation::where('parent_record_id',$record)->where('relation_type',$type)->pluck('child_record_id');
+
+        $childData = Record::whereIn('id',$childs)->with('values.field')->get();
+
+        return response()->json(['data'=>$childData,'relation_type'=>$type]);
+    }
 
 }
