@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\DB;
 class EndUserController extends Controller
 {
     public function index(Request $request)
@@ -30,25 +30,32 @@ class EndUserController extends Controller
 
    public function store(EndUserRequest $request)
     {
-        $data = $request->validated();
+         $endUser = null;
 
-       
-        $userData = [
-            'name' => $request->username ?? 'EndUser', 
-            'email' => $request->email ?? 'user'.time().'@example.com', 
-            'password' => Hash::make($request->password ?? '12345678'),
-        ];
-        $user = User::create($userData);
-        $data['user_id'] = $user->id;
-        $endUser = EndUser::create($data);
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/endUser', 'public');
-            $endUser->update(['image' => $path]);
-        }
+        DB::transaction(function () use ($request, &$endUser) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password ?? '12345678'),
+            ]);
+
+            $data = $request->validated();
+            $data['user_id'] = $user->id;
+
+            // Create EndUser
+            $endUser = EndUser::create($data);
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('uploads/endUser', 'public');
+                $endUser->update(['image' => $path]);
+            }
+        });
+
         return response()->json([
             'status' => true,
             'message' => 'EndUser created successfully',
-            'data' => $endUser
+            'data' => $endUser,
         ], 201);
     }
 
