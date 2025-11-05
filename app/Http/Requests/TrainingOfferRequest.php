@@ -16,7 +16,7 @@ class TrainingOfferRequest extends FormRequest
         $offerId = $this->route('training_offer')?->id;
 
         return [
-            'event_id' => 'required|exists:training_events,id',
+            'training_event_id' => 'required|exists:training_events,id',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'location' => 'nullable|string|max:255',
@@ -29,8 +29,8 @@ class TrainingOfferRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'event_id.required' => 'Training event is required',
-            'event_id.exists' => 'Selected training event does not exist',
+            'training_event_id.required' => 'Training event is required',
+            'training_event_id.exists' => 'Selected training event does not exist',
             'start_date.required' => 'Start date is required',
             'start_date.date' => 'Start date must be a valid date',
             'end_date.date' => 'End date must be a valid date',
