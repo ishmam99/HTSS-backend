@@ -10,7 +10,6 @@ class TrainingOfferResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'training_event_id' => $this->training_event_id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'location' => $this->location,
