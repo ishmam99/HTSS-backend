@@ -37,10 +37,10 @@ class RecordController extends Controller
     }
     public function show(Record $record ,Request $request)
     {
-        
+
          $record->load(['values.field']);
 
-        return response()->json(['data'=>$record,'relational_data'=>$relational_data ]);
+        return response()->json(['data'=>$record]);
     }
 
 public function store(Request $request, Module $module)
