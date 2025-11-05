@@ -37,18 +37,7 @@ class RecordController extends Controller
     }
     public function show(Record $record ,Request $request)
     {
-        $relational_data = [];
-        if($request->has('relational_data'))
-        {
-           foreach( $request->relational_data as $relation)
-           {
-                $data = Record::where('record_id',$record->id)->where('module_id',$relation)->with('values')->get();
-                if($data)
-                {
-                    array_push($relational_data,['data'=>$data,'relation'=>$relation]);
-                }
-           }
-        }
+        
          $record->load(['values.field']);
 
         return response()->json(['data'=>$record,'relational_data'=>$relational_data ]);
@@ -151,7 +140,7 @@ public function convertModule($recordId)
         ]);
         $parent = Record::where('id',$request->parent_record_id)->with('module')->first();
         $child = Record::where('id',$request->child_record_id)->with('module')->first();
-       
+
         $relation_type = $parent->module->name.'-'.$child->module->name;
         RecordRelation::create([
             'parent_record_id' => $request->parent_record_id,
