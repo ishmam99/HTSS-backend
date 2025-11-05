@@ -31,8 +31,8 @@ class ModuleFieldController extends Controller
             'label' => 'required|string|max:255',
             'name' => 'required|string|max:255|unique:module_fields,name',
             'type' => 'required|string|in:text,select,date,number',
-            'required' => 'sometimes|boolean',
-            'unique' => 'sometimes|boolean',
+            'required' => 'nullable',
+            'unique' => 'nullable',
         ]);
 
         if ($validator->fails()) {
