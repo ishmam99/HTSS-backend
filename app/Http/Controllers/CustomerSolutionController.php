@@ -12,7 +12,7 @@ class CustomerSolutionController extends Controller
     //
   public function index(Request $request)
 {
-    $query = CustomerSolution::with(['customer', 'solution', 'solution.softwares'])
+    $query = CustomerSolution::with(['customer.user', 'solution', 'solution.softwares'])
         ->when(auth()->user()->role === 'customer', function ($q) {
             $q->where('customer_id', auth()->user()->customer->id);
         })
