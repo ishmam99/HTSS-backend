@@ -10,20 +10,21 @@ use Illuminate\Http\Request;
 
 class TrainingCourseController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = TrainingCourse::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+  public function index(Request $request)
+{
+    $query = TrainingCourse::when($request->status, function($query, $status) {
+        return $query->where('status', $status);
+    })->orderBy('id', 'asc');
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
-
-        return TrainingCourseResource::collection($lists);
+    if ($request->has('per_page')) {
+        $lists = $query->paginate($request->per_page);
+    } else {
+        $lists = $query->get();
     }
+
+    return TrainingCourseResource::collection($lists);
+}
+
 
 
     public function store(TrainingCourseRequest $request)

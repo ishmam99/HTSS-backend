@@ -18,21 +18,35 @@ class SoftwareSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $softwares = [
-            ['name' => 'MSC Nastran'],
-            ['name' => 'Patran'],
-            ['name' => 'Marc'],
-            ['name' => 'MSC Fatigue'],
-            ['name' => 'Adams'],
-            ['name' => 'Simufact Forming'],
-            ['name' => 'Digimat'],
-            ['name' => 'Apex'],
-            ['name' => 'SimXpert'],
-            ['name' => 'Actran'],
-            ['name' => 'Easy5'],
-            ['name' => 'SimDesigner'],
-            ['name' => 'MSC Simufact Welding'],
+    'Patran',
+    'Nastran',
+    'Marc',
+    'MSC Fatigue',
+    'Adams',
+    'Sim Manager',
+    'Dytran',
+    'MSC Apex',
+    'Romax',
+    'Easy 5',
+    'Elements',
+    'Actran',
+    'MSC Cradle CFD',
+    'MSCCoSim',
+    'VTDScale',
+    'VTD',
+    'Cloud',
+    'ODYSSEE',
+    'Simufact',
+    'FTI FormingSuite',
+    'MaterialCenter',
+    'Digimat',
+    'MaterialCenterDatabanks'
         ];
+        foreach($softwares as $software)
+        {
+             Software::create(['name'=>$software]);
+        }
 
-        Software::insert($softwares);
+
     }
 }

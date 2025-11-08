@@ -20,15 +20,19 @@ class SolutionSeeder extends Seeder
 
         $solutions = [
             ['name' => 'Aerospace Structural Analysis'],
+            ['name' => 'Structural Analysis'],
             ['name' => 'Automotive Crash Analysis'],
             ['name' => 'Thermal Analysis'],
             ['name' => 'System Dynamics'],
             ['name' => 'Fatigue & Durability'],
-            ['name' => 'Acoustics Simulation'],
+            ['name' => 'Acoustics'],
             ['name' => 'Composite Material Analysis'],
             ['name' => 'Manufacturing Simulation'],
             ['name' => 'Welding Simulation'],
-            ['name' => 'Fluid Dynamics'],
+            ['name' => 'Fluid'],
+            ['name' => 'VM&C'],
+            ['name' => 'Autonomuos'],
+            ['name' => 'ICME (Materials)'],
         ];
 
         // Insert all solutions at once
