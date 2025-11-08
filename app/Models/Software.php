@@ -16,7 +16,7 @@ class Software extends Model
 
     public function solutions()
     {
-        return $this->belongsToMany(Solution::class, 'software_solutions');
+        return $this->belongsToMany(Solution::class, 'industry_solutions');
     }
     public function industries()
     {
