@@ -15,7 +15,7 @@ class CustomerSolutionController extends Controller
             $request['customer_id'] = auth()->user()->customer->id;
         }
         $request->validate([
-            'software_id' => 'required|exists:softwares,id',
+            'solution_id' => 'required|exists:solutions,id',
             'customer_id' =>  'required|exists:customers,id',
         ]);
         CustomerSolution::create([

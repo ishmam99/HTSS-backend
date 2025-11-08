@@ -14,13 +14,21 @@ class SoftwareController extends Controller
    public function index()
     {
         // Get all software with related skill
-        if(request()->has('per_page')){
-            return response()->json(
-            Software::with('softwareSkill' , 'users')->paginate(request()->per_page)
-             );
+        $query = Software::query();
+         if(request()->has('solutions')){
+            $query->load('solutions');
         }
+         if(request()->has('industries')){
+            $query->load('industries');
+        }
+        if(request()->has('per_page')){
+
+         $softwares = $query->paginate(request()->per_page);
+
+        }
+        else  $softwares = $query->get();
         return response()->json(
-            Software::with('softwareSkill' , 'users')->get()
+          $softwares
         );
     }
 

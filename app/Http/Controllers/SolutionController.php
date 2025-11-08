@@ -9,14 +9,22 @@ class SolutionController extends Controller
 {
     public function index()
     {
-
-        if (request()->has('per_page')) {
-            return response()->json(
-                Solution::query()->with('users')->paginate(request()->per_page)
-            );
+        // Get all software with related skill
+        $query = Solution::query();
+         if(request()->has('softwares')){
+            $query->load('softwares');
         }
+         if(request()->has('industries')){
+            $query->load('industries');
+        }
+        if(request()->has('per_page')){
+
+         $solutions = $query->paginate(request()->per_page);
+
+        }
+        else  $solutions = $query->get();
         return response()->json(
-            Solution::query()->with('users')->get()
+          $solutions
         );
     }
 
