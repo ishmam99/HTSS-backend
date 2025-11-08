@@ -66,6 +66,8 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
 
     Route::apiResource('onsite-support-ticket',OnsiteSupportTicketController::class);
+    Route::get('customer-software',[CustomerSoftwareController::class, 'index'])->middleware('auth:sanctum');
     Route::post('customer-software',[CustomerSoftwareController::class, 'store'])->middleware('auth:sanctum');
     Route::post('customer-solution',[CustomerSolutionController::class, 'store'])->middleware('auth:sanctum');
+    Route::get('customer-solution',[CustomerSolutionController::class, 'index'])->middleware('auth:sanctum');
 });

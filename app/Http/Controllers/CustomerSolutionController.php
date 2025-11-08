@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 class CustomerSolutionController extends Controller
 {
     //
+    public function index(Request $request)
+    {
+       $query =  CustomerSolution::query();
+        if(auth()->user()->role == 'customer')
+        {
+           $data = $query->where('customer_id',auth()->user()->customer->id)->get();
+        }
+        if($request->has('customer_id'))
+        {
+            $data = $query->where('customer_id',$request->customer_id)->get();
+        }
+        if($request->has('solution_id'))
+        {
+            $data = $query->where('solution_id',$request->customer_id)->get();
+        }
+
+        return response()->json($data);
+
+    }
     public function store(Request $request)
     {
         if(auth()->user()->role == 'customer')
