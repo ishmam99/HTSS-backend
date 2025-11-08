@@ -90,7 +90,7 @@ class SoftwareController extends Controller
             'industry_id' => 'required|exists:industries,id',
             'software_id' => 'required|exists:softwares,id',
         ]);
-        IndustrySoftware::create([
+        IndustrySoftware::firstOrcreate([
             'industry_id' => $request->industry_id,
             'software_id' => $request->software_id,
         ]);
@@ -101,7 +101,7 @@ class SoftwareController extends Controller
             'solution_id' => 'required|exists:solutions,id',
             'software_id' => 'required|exists:softwares,id',
         ]);
-        SoftwareSolution::create([
+        SoftwareSolution::firstOrcreate([
             'solution_id' => $request->solution_id,
             'software_id' => $request->software_id,
         ]);
