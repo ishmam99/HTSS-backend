@@ -14,6 +14,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
+use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
@@ -61,5 +62,6 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('training-offer',TrainingOfferController::class);
     Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
-  
+
+    Route::apiResource('onsite-support-ticket',OnsiteSupportTicketController::class);
 });
