@@ -11,20 +11,23 @@ use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
-    public function index(Request $request)
-    {
-        $customers = Customer::with('user','industry')->when($request->status,function($query,$status){
-            $query->where('status',$status);
+   public function index(Request $request)
+{
+    $customers = Customer::with(['user', 'industry'])
+        ->when($request->filled('status'), function ($query) use ($request) {
+            $query->where('status', $request->status);
+        })
+        ->when($request->filled('industry_id'), function ($query) use ($request) {
+            $query->where('industry_id', $request->industry_id);
         });
-        if($request->has('industry_id'))
-            $customers = $customers->where('industry_id',$request->industry_id);
-        if ($request->has('per_page')) {
-            $lists = $customers->paginate($request->per_page);
-        } else {
-            $lists = $customers->get();
-        }
-        return CustomerResource::collection($lists);
-    }
+
+    $lists = $request->filled('per_page')
+        ? $customers->paginate($request->per_page)
+        : $customers->get();
+
+    return CustomerResource::collection($lists);
+}
+
 
     public function show($id)
     {
