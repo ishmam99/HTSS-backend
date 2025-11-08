@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EndUser;
 use App\Http\Requests\EndUserRequest;
 use App\Http\Resources\EndUserResource;
+use App\Models\EndUserSoftware;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -17,9 +18,12 @@ class EndUserController extends Controller
     $query = EndUser::query()
         ->when($request->status, function ($query, $status) {
             return $query->where('status', $status);
-        })
-        ->orderByDesc('id');
-
+        })->when($request->software_id, function ($query, $software_id) {
+            return $query->whereHas('softwares', function ($q) use ($software_id) {
+                $q->where('software_id', $software_id);
+            });
+        })->orderByDesc('id');
+        
     $lists = $request->per_page
         ? $query->paginate($request->per_page)
         : $query->get();
@@ -45,6 +49,18 @@ class EndUserController extends Controller
 
             // Create EndUser
             $endUser = EndUser::create($data);
+
+            if ($request->has('software_id')) {
+            $syncData = [];
+            foreach ($request->software_id as $index => $softwareId) {
+                $syncData[$softwareId] = [
+                    'level' => $request->level[$index] ?? null
+                ];
+            }
+            $endUser->softwares()->sync($syncData);
+        }
+
+
 
             // Handle image upload
             if ($request->hasFile('image')) {

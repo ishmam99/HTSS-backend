@@ -25,4 +25,9 @@ class EndUser extends Model
     {
         return $this->belongsTo(Industry::class);
     }
+
+    public function softwares()
+    {
+        return $this->belongsToMany(Software::class, 'end_user_software');
+    }
 }
