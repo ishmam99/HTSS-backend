@@ -14,7 +14,7 @@ class OnsiteSupportTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ticket_number' => 'nullable|string|max:255|unique:onsite_support_tickets,ticket_number,' . $this->route('onsite_support_ticket'),
+            'ticket_number' => 'nullable|string',
             'company_name' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'issue_type' => 'nullable|string|max:255',
