@@ -14,9 +14,17 @@ class IndustryController extends Controller
         return IndustryResource::collection($industries);
     }
 
-    public function show($id)
+    public function show(Request $request,$id)
     {
         $industry = Industry::findOrFail($id);
+          if($request->has('softwares'))
+        {
+           $industry->load('softwares');
+        }
+        if($request->has('solutions'))
+        {
+           $industry->load('solutions');
+        }
         return new IndustryResource($industry);
     }
 

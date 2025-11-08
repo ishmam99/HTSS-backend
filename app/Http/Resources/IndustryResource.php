@@ -22,6 +22,8 @@ class IndustryResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'solutions' =>$this->whenLoaded('solutions'),
+            'softwares' =>$this->whenLoaded('softwares'),
         ];
     }
 }
