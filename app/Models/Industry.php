@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Industry extends Model
 {
@@ -16,5 +17,14 @@ class Industry extends Model
     public function softwares()
     {
         return $this->belongsToMany(Software::class, 'industry_software');
+    }
+    /**
+     * Get all of the customers for the Industry
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function customers(): HasMany
+    {
+        return $this->hasMany(Customer::class);
     }
 }
