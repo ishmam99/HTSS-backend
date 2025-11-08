@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('onsite_support_tickets', function (Blueprint $table) {
             $table->id();
-            $table->string('ticket_number')->unique()->nullable();
+            $table->string('ticket_number')->nullable();
             $table->string('company_name')->nullable();
             $table->string('location')->nullable();
             $table->string('issue_type')->nullable();
