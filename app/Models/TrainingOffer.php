@@ -13,7 +13,7 @@ class TrainingOffer extends Model
 
     public function event()
     {
-        return $this->belongsTo(TrainingEvent::class);
+        return $this->belongsTo(TrainingEvent::class,'training_event_id');
     }
 
 
