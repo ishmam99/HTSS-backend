@@ -13,7 +13,7 @@ class TrainingOfferController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingOffer::when($request->status, function($query, $status) {
+        $query = TrainingOffer::with('event')->when($request->status, function($query, $status) {
             return $query->where('status', $status);
         })->orderBy('id', 'desc');
 

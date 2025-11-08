@@ -14,6 +14,8 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $customers = Customer::with('user','industry');
+        if($request->has('industry_id'))
+            $customers = $customers->where('industry_id',$request->industry_id);
         if ($request->has('per_page')) {
             $lists = $customers->paginate($request->per_page);
         } else {
