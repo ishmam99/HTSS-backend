@@ -61,15 +61,15 @@ class IssueTicketController extends Controller
         $data = $request->validated();
 
         
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('attachment')) {
            
-            if ($issueTicket->image && Storage::disk('public')->exists($issueTicket->image)) {
-                Storage::disk('public')->delete($issueTicket->image);
+            if ($issueTicket->attachment && Storage::disk('public')->exists($issueTicket->attachment)) {
+                Storage::disk('public')->delete($issueTicket->attachment);
             }
 
             
-            $path = $request->file('image')->store('uploads/issueTicket', 'public');
-            $data['image'] = $path;
+            $path = $request->file('attachment')->store('uploads/issueTicket', 'public');
+            $data['attachment'] = $path;
         }
         
 
