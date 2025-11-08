@@ -23,7 +23,7 @@ class EndUserController extends Controller
                 $q->where('software_id', $software_id);
             });
         })->orderByDesc('id');
-        
+
     $lists = $request->per_page
         ? $query->paginate($request->per_page)
         : $query->get();
@@ -51,12 +51,13 @@ class EndUserController extends Controller
             $endUser = EndUser::create($data);
 
             if ($request->has('software_id')) {
-            $syncData = [];
-            foreach ($request->software_id as $index => $softwareId) {
-                $syncData[$softwareId] = [
-                    'level' => $request->level[$index] ?? null
-                ];
-            }
+            $syncData = [['level' =>$request->level,'software_id'=>$request->software->id]];
+
+            // foreach ($request->software_id as $index => $softwareId) {
+            //     $syncData[$softwareId] = [
+            //         'level' => $request->level[$index] ?? null
+            //     ];
+            // }
             $endUser->softwares()->sync($syncData);
         }
 
