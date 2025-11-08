@@ -10,7 +10,10 @@ class IndustryController extends Controller
 {
     public function index(Request $request)
     {
-        $industries = Industry::paginate(10);
+        $query = Industry::query();
+       $industries = $request->per_page
+                ? $query->paginate($request->per_page)
+                : $query->get();
         return IndustryResource::collection($industries);
     }
 
