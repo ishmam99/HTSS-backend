@@ -52,6 +52,7 @@ Route::prefix('v1')->group(function () {
             Route::put('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'update']);
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
         });
+          Route::apiResource('issue-ticket',IssueTicketController::class);
     });
     Route::apiResource('end-users', EndUserController::class);
     Route::apiResource('training-course', TrainingCourseController::class);
@@ -60,5 +61,5 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('training-offer',TrainingOfferController::class);
     Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
-    Route::apiResource('issue-ticket',IssueTicketController::class);
+  
 });
