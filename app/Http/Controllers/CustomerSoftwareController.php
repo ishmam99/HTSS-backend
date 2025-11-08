@@ -10,7 +10,7 @@ class CustomerSoftwareController extends Controller
     //
      public function index(Request $request)
     {
-       $query =  CustomerSoftware::query();
+       $query =  CustomerSoftware::with('customer','software')->query();
         if(auth()->user()->role == 'customer')
         {
            $data = $query->where('customer_id',auth()->user()->customer->id)->get();

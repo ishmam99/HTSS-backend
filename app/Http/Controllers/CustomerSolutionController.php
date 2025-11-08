@@ -10,7 +10,7 @@ class CustomerSolutionController extends Controller
     //
     public function index(Request $request)
     {
-       $query =  CustomerSolution::query();
+       $query =  CustomerSolution::with('customer','solution')->query();
         if(auth()->user()->role == 'customer')
         {
            $data = $query->where('customer_id',auth()->user()->customer->id)->get();
