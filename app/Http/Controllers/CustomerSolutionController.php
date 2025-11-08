@@ -23,6 +23,10 @@ class CustomerSolutionController extends Controller
         {
             $data = $query->with('customer','solution')->where('solution_id',$request->customer_id)->get();
         }
+        if($request->has('softwares'))
+        {
+            $data = $query->with('customer','solution.softwares')->where('solution_id',$request->customer_id)->get();
+        }
 
         return response()->json($data);
 
