@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CustomerSolutionResource;
+use App\Http\Resources\CustomerSolutions;
 use App\Models\CustomerSolution;
 use Illuminate\Http\Request;
 
@@ -27,8 +29,8 @@ class CustomerSolutionController extends Controller
         {
             $data = $query->with('customer','solution.softwares')->where('solution_id',$request->customer_id)->get();
         }
-
-        return response()->json($data);
+        
+        return response()->json(CustomerSolutionResource::collection($data));
 
     }
     public function store(Request $request)
