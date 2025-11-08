@@ -13,7 +13,7 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $customers = Customer::with('user');
+        $customers = Customer::with('user','industry');
         if ($request->has('per_page')) {
             $lists = $customers->paginate($request->per_page);
         } else {
