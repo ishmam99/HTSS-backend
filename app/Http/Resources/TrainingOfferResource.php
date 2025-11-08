@@ -17,7 +17,7 @@ class TrainingOfferResource extends JsonResource
             'available_seats' => $this->available_seats,
             'status' => $this->status,
             'trainingEvent' => $this->whenLoaded('event'),
-            'trainingCourse' => $this->whenLoaded('event.trainingCourse')->trainingCourse->title,
+            'trainingCourse' => $this->whenLoaded('event.trainingCourse')->title,
             'solution_name' => $this->whenLoaded('event.trainingCourse.solution')->trainingCourse->solution->name,
             'software_name' => $this->whenLoaded('event.trainingCourse.software')->trainingCourse->software->name,
             'industry_name' => $this->whenLoaded('event.trainingCourse.industry')->trainingCourse->industry->name,
