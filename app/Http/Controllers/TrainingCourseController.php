@@ -21,7 +21,7 @@ class TrainingCourseController extends Controller
     } else {
         $lists = $query->get();
     }
-
+    $lists->load('solution','software','industry');
     return TrainingCourseResource::collection($lists);
 }
 
