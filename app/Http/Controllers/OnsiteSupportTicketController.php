@@ -17,7 +17,7 @@ class OnsiteSupportTicketController extends Controller
         })->
         when($request->status, function($query, $request) {
             return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+                })->orderBy('id', 'desc');
 
         $lists = $request->per_page
         ? $query->paginate($request->per_page)
