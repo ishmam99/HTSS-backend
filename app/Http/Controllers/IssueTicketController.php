@@ -14,8 +14,14 @@ class IssueTicketController extends Controller
     {
         $query = IssueTicket::when('status', function($query, $request) {
             return $query->where('status', $request->status);
+        })->when('priority_level', function($query, $request) {
+            return $query->where('priority_level', $request->priority_level);
+        })->when('issue_type', function($query, $request) {
+            return $query->where('issue_type', $request->issue_type);
+        })->when('user_id', function($query, $request) {
+            return $query->where('user_id', $request->user_id);
         })->orderBy('id', 'desc');
-
+        
         $lists = $request->per_page
         ? $query->paginate($request->per_page)
         : $query->get();
@@ -28,7 +34,7 @@ class IssueTicketController extends Controller
     public function store(IssueTicketRequest $request)
     {
         $data = $request->validated();
-
+        $data['user_id'] = auth()->id();
         $issueTicket = IssueTicket::create($data);
 
         

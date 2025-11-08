@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('issue_tickets', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('issue_type')->nullable();
             $table->string('priority_level')->nullable();
             $table->string('subject')->nullable();

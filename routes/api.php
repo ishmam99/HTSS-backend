@@ -61,6 +61,4 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('training-offer',TrainingOfferController::class);
     Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
     Route::apiResource('issue-ticket',IssueTicketController::class);
-
-
 });
