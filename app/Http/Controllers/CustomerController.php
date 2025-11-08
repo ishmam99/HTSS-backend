@@ -49,6 +49,7 @@ class CustomerController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make('12345678'),
+                'role' => 'customer'
             ]);
 
             if (!empty($validated['role'])) {
