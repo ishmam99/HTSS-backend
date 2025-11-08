@@ -12,7 +12,7 @@ class IssueTicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = IssueTicket::when($request->status, function($query, $status) {
+        $query = IssueTicket::with('user')->when($request->status, function($query, $status) {
             return $query->where('status', $status);
                 })->when($request->priority_level, function($query, $priority_level) {
                     return $query->where('priority_level', $priority_level);
