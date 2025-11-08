@@ -17,4 +17,4 @@ class TrainingEnrollmentResource extends JsonResource
             'updated_at' => $this->updated_at,
         ];
     }
-}endUser
+}
