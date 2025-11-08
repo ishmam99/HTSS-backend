@@ -11,13 +11,14 @@ return new class extends Migration
         Schema::create('training_courses', function (Blueprint $table) {
             $table->id();
              $table->foreignId('industry_id')->constrained('industries')->cascadeOnDelete();
+             $table->foreignId('solution_id')->constrained('solutions')->cascadeOnDelete();
+             $table->foreignId('software_id')->constrained('softwares')->cascadeOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained('customers')->cascadeOnDelete();
             $table->string('training_type')->nullable();
-            $table->string('solution_name');
-            $table->string('software_name');
+
             $table->string('training_level');
             $table->string('title');
-            $table->string('course_id')->nullable()->unique();
+            $table->string('course_id')->nullable();
             $table->string('course_code')->nullable();
             $table->text('description')->nullable();
             $table->string('duration')->nullable();
