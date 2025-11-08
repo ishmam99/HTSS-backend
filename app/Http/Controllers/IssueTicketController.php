@@ -12,15 +12,15 @@ class IssueTicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = IssueTicket::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
-        })->when('priority_level', function($query, $request) {
-            return $query->where('priority_level', $request->priority_level);
-        })->when('issue_type', function($query, $request) {
-            return $query->where('issue_type', $request->issue_type);
-        })->when('user_id', function($query, $request) {
-            return $query->where('user_id', $request->user_id);
-        })->orderBy('id', 'desc');
+        $query = IssueTicket::when($request->status, function($query, $status) {
+            return $query->where('status', $status);
+                })->when($request->priority_level, function($query, $priority_level) {
+                    return $query->where('priority_level', $priority_level);
+                })->when($request->issue_type, function($query, $issue_type) {
+                    return $query->where('issue_type', $issue_type);
+                })->when($request->user_id, function($query, $user_id) {
+                    return $query->where('user_id', $user_id);
+                })->orderBy('id', 'desc');
         
         $lists = $request->per_page
         ? $query->paginate($request->per_page)
