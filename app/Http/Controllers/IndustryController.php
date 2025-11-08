@@ -27,7 +27,7 @@ class IndustryController extends Controller
         }
         if($request->has('customers'))
         {
-           $industry->load('customers.user');
+           $industry->load('customers.user','customers.softwares','customers.softwares');
         }
         return new IndustryResource($industry);
     }

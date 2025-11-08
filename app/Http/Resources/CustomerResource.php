@@ -27,6 +27,8 @@ class CustomerResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user' => new \App\Http\Resources\UserResource($this->whenLoaded('user')),
+            'solutions' => $this->whenLoaded('solutions'),
+            'softwares' => $this->whenLoaded('softwares'),
         ];
     }
 }
