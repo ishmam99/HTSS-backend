@@ -11,19 +11,22 @@ use Illuminate\Http\Request;
 class TrainingEventController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = TrainingEvent::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+{
+    $query = TrainingEvent::query()
+        ->when($request->status, function ($query, $status) {
+            return $query->where('status', $status);
+        })
+        ->orderBy('id', 'desc');
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
-
-        return TrainingEventResource::collection($lists);
+    if ($request->has('per_page')) {
+        $lists = $query->paginate($request->per_page);
+    } else {
+        $lists = $query->get();
     }
+
+    return TrainingEventResource::collection($lists);
+}
+
 
 
     public function store(TrainingEventRequest $request)

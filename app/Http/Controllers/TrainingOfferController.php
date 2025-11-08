@@ -13,8 +13,8 @@ class TrainingOfferController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingOffer::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
+        $query = TrainingOffer::when($request->status, function($query, $status) {
+            return $query->where('status', $status);
         })->orderBy('id', 'desc');
 
         if ($request->has('per_page')) {

@@ -12,20 +12,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 class EndUserController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = EndUser::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+  public function index(Request $request)
+{
+    $query = EndUser::query()
+        ->when($request->status, function ($query, $status) {
+            return $query->where('status', $status);
+        })
+        ->orderByDesc('id');
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
+    $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
 
-        return EndUserResource::collection($lists);
-    }
+    return EndUserResource::collection($lists);
+}
+
 
 
    public function store(EndUserRequest $request)
