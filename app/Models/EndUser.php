@@ -30,4 +30,8 @@ class EndUser extends Model
     {
         return $this->belongsToMany(Software::class, 'end_user_software');
     }
+    public function softwareLevels()
+    {
+        return $this->hasMany(EndUserSoftware::class);
+    }
 }

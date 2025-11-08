@@ -42,6 +42,7 @@ class EndUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password ?? '12345678'),
+                'role' => 'end-user'
             ]);
 
             $data = $request->validated();
@@ -51,13 +52,12 @@ class EndUserController extends Controller
             $endUser = EndUser::create($data);
 
             if ($request->has('software_id')) {
-            $syncData = [['level' =>$request->level,'software_id'=>$request->software->id]];
-
-            // foreach ($request->software_id as $index => $softwareId) {
-            //     $syncData[$softwareId] = [
-            //         'level' => $request->level[$index] ?? null
-            //     ];
-            // }
+            $syncData = [];
+            foreach ($request->software_id as $index => $softwareId) {
+                $syncData[$softwareId] = [
+                    'level' => $request->level[$index] ?? null
+                ];
+            }
             $endUser->softwares()->sync($syncData);
         }
 

@@ -16,6 +16,7 @@ class CustomerSolutionResource extends JsonResource
     {
         return [
             'id'=>$this->id,
+            'status' => $this->status,
             'solution_name' => $this->solution?->name,
             'customer_name' => $this->customer?->load('user')->name,
             'softwares' => $this->solution->softwares
