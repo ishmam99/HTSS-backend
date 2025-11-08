@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         User::truncate();
-        Customer::truncate();
+       
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Dashboard-specific users
@@ -56,27 +56,6 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        // Customers
-        for ($i = 1; $i <= 5; $i++) {
-            $customerUser = User::factory()->create([
-                'name' => "Customer $i",
-                'email' => "customer$i@mail.com",
-                'role' => 'customer',
-                'password' => Hash::make('password123'),
-            ]);
 
-            // Create customer profile linked to this user
-            Customer::create([
-                'user_id' => $customerUser->id,
-                'phone' => '017000000' . $i,
-                'address' => "Address $i",
-                'city' => 'Dhaka',
-                'country' => 'Bangladesh',
-                'postal_code' => '1200' . $i,
-                'date_of_birth' => now()->subYears(20 + $i)->format('Y-m-d'),
-                'gender' => $i % 2 === 0 ? 'Female' : 'Male',
-                'status' => 1,
-            ]);
-        }
     }
 }

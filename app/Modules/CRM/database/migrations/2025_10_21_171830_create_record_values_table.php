@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('record_values', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('record_id')->constrained('records')->cascadeOnDelete();
+            $table->foreignId('record_id')->constrained('records')->cascadeOnDelete();
              $table->foreignId('field_id')->constrained('module_fields')->cascadeOnDelete();
              $table->text('value');
             $table->timestamps();

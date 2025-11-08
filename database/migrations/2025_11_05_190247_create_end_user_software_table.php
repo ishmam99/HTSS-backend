@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('training_enrollments', function (Blueprint $table) {
+        Schema::create('end_user_software', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('training_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->date('enrolled_on')->nullable();
-            $table->string('status')->default('active');
+            $table->foreignId('end_user_id')->constrained('end_users')->cascadeOnDelete();
+            $table->foreignId('software_id')->constrained('softwares')->cascadeOnDelete();
+            $table->string('level')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_enrollments');
+        Schema::dropIfExists('end_user_software');
     }
 };

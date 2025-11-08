@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Modules\CRM\Models\ModuleField;
 
 class ModuleFieldController extends Controller
@@ -29,10 +30,17 @@ class ModuleFieldController extends Controller
         $validator = Validator::make($request->all(), [
             'module_id' => 'required|integer|exists:modules,id',
             'label' => 'required|string|max:255',
-            'name' => 'required|string|max:255|unique:module_fields,name',
+             'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('module_fields')->where(function ($query) use ($request) {
+                return $query->where('module_id', $request->module_id);
+            }),
+        ],
             'type' => 'required|string|in:text,select,date,number',
-            'required' => 'sometimes|boolean',
-            'unique' => 'sometimes|boolean',
+            'required' => 'nullable',
+            'unique' => 'nullable',
         ]);
 
         if ($validator->fails()) {

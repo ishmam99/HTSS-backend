@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TrainingEnrollment extends Model
 {
+    use HasFactory;
 
+    protected $guarded = ['id'];
 
-   protected $guarded = ['id'];
-
-    public function training()
+    public function endUser()
     {
-        return $this->belongsTo(Training::class);
+        return $this->belongsTo(EndUser::class);
     }
 
-    public function user()
+    public function trainingOffer()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(TrainingOffer::class);
     }
 }

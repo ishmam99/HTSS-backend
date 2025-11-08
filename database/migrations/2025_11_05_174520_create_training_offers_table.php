@@ -6,27 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('training_sessions', function (Blueprint $table) {
+        Schema::create('training_offers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('training_id')->constrained()->cascadeOnDelete();
-            $table->string('session_title');
-            $table->dateTime('session_date');
+            $table->foreignId('training_event_id')->constrained('training_events')->cascadeOnDelete();
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
             $table->string('location')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+            $table->integer('available_seats')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('training_sessions');
+        Schema::dropIfExists('training_offers');
     }
 };
