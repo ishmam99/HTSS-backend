@@ -52,6 +52,7 @@ class IssueTicketController extends Controller
 
     public function show(IssueTicket $issueTicket)
     {
+        $issueTicket->load('user');
         return new IssueTicketResource($issueTicket);
     }
 
