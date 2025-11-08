@@ -10,18 +10,18 @@ class CustomerSolutionController extends Controller
     //
     public function index(Request $request)
     {
-       $query =  CustomerSolution::with('customer','solution')->query();
+       $query =  CustomerSolution::query();
         if(auth()->user()->role == 'customer')
         {
-           $data = $query->where('customer_id',auth()->user()->customer->id)->get();
+           $data = $query->with('customer','solution')->where('customer_id',auth()->user()->customer->id)->get();
         }
         if($request->has('customer_id'))
         {
-            $data = $query->where('customer_id',$request->customer_id)->get();
+            $data = $query->with('customer','solution')->where('customer_id',$request->customer_id)->get();
         }
         if($request->has('solution_id'))
         {
-            $data = $query->where('solution_id',$request->customer_id)->get();
+            $data = $query->with('customer','solution')->where('solution_id',$request->customer_id)->get();
         }
 
         return response()->json($data);
