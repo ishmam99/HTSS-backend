@@ -34,7 +34,7 @@ class IndustryController extends Controller
         }
          if($request->has('trainings'))
         {
-           $industry->load('trainings');
+           $industry->load('trainings.software','trainings.solution');
         }
         return new IndustryResource($industry);
     }

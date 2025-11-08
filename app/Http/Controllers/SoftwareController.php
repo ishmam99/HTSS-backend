@@ -52,7 +52,7 @@ class SoftwareController extends Controller
         }
         if($request->has('trainings'))
         {
-           $software->load('trainings');
+            $software->load('trainings.industry','trainings.solution');
         }
         return response()->json($software->load('softwareSkill', 'users'));
     }
