@@ -16,6 +16,7 @@ class IssueTicketResource extends JsonResource
             'description' => $this->description,
             'attachment' => $this->attachment ? asset('storage/' . $this->attachment) : null,
             'status' => $this->status,
+            "user" => new UserResource($this->whenLoaded('user')),
         ];
     }
 }
