@@ -22,7 +22,7 @@ class Customer extends Model
      */
     public function softwares(): BelongsToMany
     {
-        return $this->belongsToMany(Software::class, 'customer_softwares');
+        return $this->belongsToMany(Software::class, 'customer_software');
     }
     public function solutions(): BelongsToMany
     {
