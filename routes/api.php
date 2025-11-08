@@ -11,6 +11,8 @@ use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerSoftwareController;
+use App\Http\Controllers\CustomerSolutionController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
@@ -64,4 +66,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
 
     Route::apiResource('onsite-support-ticket',OnsiteSupportTicketController::class);
+    Route::post('customer-software',[CustomerSoftwareController::class, 'store'])->middleware('auth:sanctum');
+    Route::post('customer-solution',[CustomerSolutionController::class, 'store'])->middleware('auth:sanctum');
 });

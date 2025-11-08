@@ -23,7 +23,7 @@ class TrainingEventController extends Controller
     } else {
         $lists = $query->get();
     }
-
+    $lists->load('trainingCourse');
     return TrainingEventResource::collection($lists);
 }
 
