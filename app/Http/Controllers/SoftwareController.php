@@ -39,8 +39,17 @@ class SoftwareController extends Controller
         return response()->json($software->load('softwareSkill', 'users'), 201);
     }
 
-    public function show(Software $software)
+    public function show(Request $request,Software $software)
     {
+
+        if($request->has('solutions'))
+        {
+           $software->load('solutions');
+        }
+        if($request->has('industries'))
+        {
+           $software->load('industries');
+        }
         return response()->json($software->load('softwareSkill', 'users'));
     }
 
@@ -98,4 +107,5 @@ class SoftwareController extends Controller
         ]);
         return response()->json('Data added successfully');
     }
+
 }

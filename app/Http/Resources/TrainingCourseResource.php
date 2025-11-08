@@ -11,8 +11,8 @@ class TrainingCourseResource extends JsonResource
          return [
             'id' => $this->id,
             'training_type' => $this->training_type,
-            'solution_name' => $this->solution_name,
-            'software_name' => $this->software_name,
+            'solution_name' => $this->whenLoaded('solution')->solution?->name,
+            'software_name' => $this->whenLoaded('software')->software?->name,
             'training_level' => $this->training_level,
             'title' => $this->title,
             'course_id' => $this->course_id,

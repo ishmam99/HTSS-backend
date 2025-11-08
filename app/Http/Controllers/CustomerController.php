@@ -158,4 +158,11 @@ class CustomerController extends Controller
             ], 500);
         }
     }
+
+    public function stats()
+    {
+        $customers = Customer::all();
+        $pending_customer = $customers->where('status',0)->count();
+        $pending_customer = $customers->where('status',0)->count();
+    }
 }

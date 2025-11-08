@@ -11,4 +11,12 @@ class Solution extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+     public function softwares()
+    {
+        return $this->belongsToMany(Software::class, 'software_solutions');
+    }
+    public function industries()
+    {
+        return $this->belongsToMany(Industry::class, 'industry_software');
+    }
 }
