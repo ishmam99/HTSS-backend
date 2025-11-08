@@ -30,6 +30,10 @@ class TrainingCourseController extends Controller
     public function store(TrainingCourseRequest $request)
     {
         $data = $request->validated();
+       $user = auth()->user();
+       if($user->role == 'customer'){
+        $data['customer_id'] = $user->customer->id;
+       }
         $trainingCourse = TrainingCourse::create($data);
         return response()->json([
             'status' => true,

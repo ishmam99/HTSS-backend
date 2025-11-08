@@ -53,4 +53,9 @@ class User extends Authenticatable
                     ->withPivot('proficiency_level', 'experience_years')
                     ->withTimestamps();
     }
+
+     public function customer()
+    {
+        return $this->hasOne(Customer::class);
+    }
 }
