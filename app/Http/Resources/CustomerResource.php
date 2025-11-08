@@ -26,8 +26,6 @@ class CustomerResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'name' => $this->load('user')->name,
-            'name' => $this->load('user')->email,
             'user' => new \App\Http\Resources\UserResource($this->whenLoaded('user')),
         ];
     }
