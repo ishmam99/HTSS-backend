@@ -32,6 +32,10 @@ class IndustryController extends Controller
         {
            $industry->load('customers.user','customers.softwares','customers.solutions');
         }
+         if($request->has('trainings'))
+        {
+           $industry->load('trainings');
+        }
         return new IndustryResource($industry);
     }
 

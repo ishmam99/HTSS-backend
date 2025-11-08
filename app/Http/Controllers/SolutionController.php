@@ -46,6 +46,10 @@ class SolutionController extends Controller
         {
            $solution->load('industries');
         }
+         if($request->has('trainings'))
+        {
+           $solution->load('trainings');
+        }
         return response()->json($solution->load('users'));
     }
 

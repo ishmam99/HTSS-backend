@@ -24,6 +24,7 @@ class IndustryResource extends JsonResource
             'updated_at' => $this->updated_at,
             'solutions' =>$this->whenLoaded('solutions'),
             'softwares' =>$this->whenLoaded('softwares'),
+            'trainings' =>$this->whenLoaded('trainings'),
             'customers' =>CustomerResource::collection($this->whenLoaded('customers')),
         ];
     }

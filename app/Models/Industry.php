@@ -27,4 +27,8 @@ class Industry extends Model
     {
         return $this->hasMany(Customer::class);
     }
+      public function trainings(): HasMany
+    {
+        return $this->hasMany(TrainingCourse::class);
+    }
 }

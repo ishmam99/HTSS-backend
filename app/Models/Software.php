@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Software extends Model
 {
@@ -25,5 +26,14 @@ class Software extends Model
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    /**
+     * Get all of the trainings for the Software
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function trainings(): HasMany
+    {
+        return $this->hasMany(TrainingCourse::class);
     }
 }

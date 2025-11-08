@@ -50,6 +50,10 @@ class SoftwareController extends Controller
         {
            $software->load('industries');
         }
+        if($request->has('trainings'))
+        {
+           $software->load('trainings');
+        }
         return response()->json($software->load('softwareSkill', 'users'));
     }
 

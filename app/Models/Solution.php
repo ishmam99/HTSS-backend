@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Solution extends Model
 {
@@ -18,5 +19,9 @@ class Solution extends Model
     public function industries()
     {
         return $this->belongsToMany(Industry::class, 'industry_solutions');
+    }
+      public function trainings(): HasMany
+    {
+        return $this->hasMany(TrainingCourse::class);
     }
 }
