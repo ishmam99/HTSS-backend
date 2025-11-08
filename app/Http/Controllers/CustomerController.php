@@ -13,7 +13,9 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $customers = Customer::with('user','industry');
+        $customers = Customer::with('user','industry')->when($request->status,function($query,$status){
+            $query->where('status',$status);
+        });
         if($request->has('industry_id'))
             $customers = $customers->where('industry_id',$request->industry_id);
         if ($request->has('per_page')) {
