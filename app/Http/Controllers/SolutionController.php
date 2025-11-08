@@ -36,8 +36,16 @@ class SolutionController extends Controller
         return response()->json($solution->load('users'), 201);
     }
 
-    public function show(Solution $solution)
+    public function show(Request $request,Solution $solution)
     {
+          if($request->has('softwares'))
+        {
+           $solution->load('softwares');
+        }
+        if($request->has('industries'))
+        {
+           $solution->load('industries');
+        }
         return response()->json($solution->load('users'));
     }
 
