@@ -13,7 +13,7 @@ class OnsiteSupportTicketController extends Controller
     public function index(Request $request)
     {
         $query = OnsiteSupportTicket::when($request->has('company_name'), function($query) use ($request) {
-        return $query->where('company_name', 'like', '%' . $request->company_name . '%');
+        return $query->where('company_name', $request->company_name);
     })->when($request->status !== null, function($query, $status) {
         return $query->where('status', $status);
     })->orderBy('id', 'desc');
