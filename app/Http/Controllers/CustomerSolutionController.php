@@ -10,29 +10,27 @@ use Illuminate\Http\Request;
 class CustomerSolutionController extends Controller
 {
     //
-    public function index(Request $request)
-    {
-       $query =  CustomerSolution::query();
-        if(auth()->user()->role == 'customer')
-        {
-           $data = $query->with('customer','solution')->where('customer_id',auth()->user()->customer->id)->get();
-        }
-        if($request->has('customer_id'))
-        {
-            $data = $query->with('customer','solution')->where('customer_id',$request->customer_id)->get();
-        }
-        if($request->has('solution_id'))
-        {
-            $data = $query->with('customer','solution')->where('solution_id',$request->customer_id)->get();
-        }
-        if($request->has('softwares'))
-        {
-            $data = $query->with('customer','solution.softwares')->where('solution_id',$request->customer_id)->get();
-        }
-        
-        return response()->json(CustomerSolutionResource::collection($data));
+  public function index(Request $request)
+{
+    $query = CustomerSolution::with(['customer', 'solution', 'solution.softwares'])
+        ->when(auth()->user()->role === 'customer', function ($q) {
+            $q->where('customer_id', auth()->user()->customer->id);
+        })
+        ->when($request->filled('customer_id'), function ($q) use ($request) {
+            $q->where('customer_id', $request->customer_id);
+        })
+        ->when($request->filled('solution_id'), function ($q) use ($request) {
+            $q->where('solution_id', $request->solution_id);
+        })
+        ->when($request->filled('softwares'), function ($q) {
+            $q->with('solution.softwares');
+        });
 
-    }
+    $data = $query->get();
+
+    return response()->json(CustomerSolutionResource::collection($data));
+}
+
     public function store(Request $request)
     {
         if(auth()->user()->role == 'customer')
