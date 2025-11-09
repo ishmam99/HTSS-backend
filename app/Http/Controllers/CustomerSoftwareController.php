@@ -37,7 +37,7 @@ class CustomerSoftwareController extends Controller
             'software_id' => 'required|exists:softwares,id',
             'customer_id' =>  'required|exists:customers,id',
         ]);
-        CustomerSoftware::create([
+        CustomerSoftware::firstOrcreate([
             'customer_id' => $request->customer_id,
             'software_id' => $request->software_id
         ]);

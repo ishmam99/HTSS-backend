@@ -41,7 +41,7 @@ class CustomerSolutionController extends Controller
             'solution_id' => 'required|exists:solutions,id',
             'customer_id' =>  'required|exists:customers,id',
         ]);
-        CustomerSolution::create([
+        CustomerSolution::firstOrcreate([
             'customer_id' => $request->customer_id,
             'solution_id' => $request->solution_id
         ]);
