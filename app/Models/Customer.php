@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,8 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Customer extends Model
 {
     use HasFactory;
+    use HasAdvancedQuery;
     protected $guarded = [];
-
+     protected array $searchable = ['user.name','user.email', 'phone', 'address','city','industry_id','industry.name','status'];
+    // protected array $relations = ['user', 'industry', 'softwares', 'solutions'];
     public function user()
     {
         return $this->belongsTo(User::class);

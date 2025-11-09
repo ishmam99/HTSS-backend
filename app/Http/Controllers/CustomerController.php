@@ -11,22 +11,17 @@ use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
-   public function index(Request $request)
-{
-    $customers = Customer::with(['user', 'industry'])
-        ->when($request->filled('status'), function ($query) use ($request) {
-            $query->where('status', $request->status);
-        })
-        ->when($request->filled('industry_id'), function ($query) use ($request) {
-            $query->where('industry_id', $request->industry_id);
-        });
-
-    $lists = $request->filled('per_page')
-        ? $customers->paginate($request->per_page)
-        : $customers->get();
-
-    return CustomerResource::collection($lists);
-}
+    public function index(Request $request)
+    {
+        $query = Customer::advancedQuery($request);
+         $customers = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $customers,
+        ]);
+    }
 
 
     public function show($id)
