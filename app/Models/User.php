@@ -46,7 +46,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     public function softwareSkills()
     {
         return $this->belongsToMany(SoftwareSkill::class, 'user_software_skills')
@@ -57,5 +57,9 @@ class User extends Authenticatable
      public function customer()
     {
         return $this->hasOne(Customer::class);
+    }
+     public function endUser()
+    {
+        return $this->hasOne(EndUser::class);
     }
 }

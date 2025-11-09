@@ -24,9 +24,27 @@ trait HasAdvancedQuery
         $instance->applySorting($query, $request);
         $instance->applyGrouping($query, $request);
         $instance->applyCustomConditions($query, $request);
-
+        $instance->applyPluck($query, $request);
         return $query;
     }
+    protected function applyPluck(Builder $query, Request $request)
+{
+    if (!$request->filled('pluck')) {
+        return;
+    }
+
+    // Simple pluck: ?pluck=name
+    // Or key-value: ?pluck=name,id
+    $columns = explode(',', $request->input('pluck'));
+
+    if (count($columns) === 1) {
+        $query->select($columns[0]);
+    } else {
+        // Laravel pluck requires key, value format
+        $query->select([$columns[0], $columns[1]]);
+    }
+}
+
 
   protected function applyRelationships(Builder $query, Request $request): void
 {
@@ -104,32 +122,54 @@ trait HasAdvancedQuery
         }
     }
 
-    protected function applySorting(Builder $query, Request $request): void
-    {
-        $sortBy = $request->input('sort_by', 'id');
-        $sortOrder = $request->input('sort_order', 'desc');
-        $query->orderBy($sortBy, in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
-    }
+   protected function applySorting(Builder $query, Request $request): void
+{
+    $sortBy = $request->input('sort_by', 'id');
+    $sortOrder = $request->input('sort_order', 'desc');
 
-    protected function applyGrouping(Builder $query, Request $request): void
-    {
-        if (!$request->filled('group_by')) return;
-
-        $fields = explode(',', $request->input('group_by'));
-        $query->select(array_merge($fields, [DB::raw('COUNT(*) as total')]))
-              ->groupBy($fields);
-
-        if ($request->has('having')) {
-            $havings = json_decode($request->input('having'), true);
-            foreach ($havings as $h) {
-                $query->having($h['column'], $h['operator'], $h['value']);
-            }
+    // Skip sorting by columns not in GROUP BY if grouping
+    if ($request->filled('group_by')) {
+        $groupFields = explode(',', $request->input('group_by'));
+        if (!in_array($sortBy, $groupFields)) {
+            return; // ignore invalid sort
         }
     }
+
+    $query->orderBy($sortBy, in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
+}
+
+
+    protected function applyGrouping(Builder $query, Request $request): void
+{
+    if (!$request->filled('group_by')) return;
+
+    $groupFields = explode(',', $request->input('group_by'));
+    $selects = [];
+    $groupBys = [];
+
+    foreach ($groupFields as $field) {
+        if (str_contains($field, '.')) {
+            // relation.column
+            [$relation, $column] = explode('.', $field);
+            $relationTable = $this->$relation()->getRelated()->getTable();
+            $query->join($relationTable, "$relationTable.id", '=', "customers.{$relation}_id");
+            $selects[] = "$relationTable.$column";
+            $groupBys[] = "$relationTable.$column";
+        } else {
+            $selects[] = $field;
+            $groupBys[] = $field;
+        }
+    }
+
+    $query->select(array_merge($selects, [DB::raw('COUNT(*) as total')]))
+          ->groupBy($groupBys);
+}
+
 
     protected function applyCustomConditions(Builder $query, Request $request): void
     {
         if ($request->has('where')) {
+
             foreach (json_decode($request->input('where'), true) as $condition) {
                 $query->where($condition['column'], $condition['operator'], $condition['value']);
             }

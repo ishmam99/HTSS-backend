@@ -11,6 +11,7 @@ class Industry extends Model
 {
     use HasFactory,HasAdvancedQuery;
     protected $guarded = ['id'];
+        protected array $searchable = ['software.name','solution.name', 'name','status'];
       public function solutions()
     {
         return $this->belongsToMany(Solution::class, 'industry_solutions');
