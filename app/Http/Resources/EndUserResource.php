@@ -20,7 +20,7 @@ class EndUserResource extends JsonResource
             ],
             'customer_id' => $this->customer_id,
             'industry_id' => $this->industry_id,
-            // 'softwares' => $this->softwares,
+            'softwares' => $this->softwares,
             'softwareLevels' => $this->softwareLevels->load('software')
         ];
     }
