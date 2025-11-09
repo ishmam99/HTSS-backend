@@ -14,11 +14,21 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id'=> $this->id,
             'name'=> $this->name,
             'email'=> $this->email,
             'role'=> $this->role,
+
         ];
+        if($this->role == 'customer')
+        {
+            $data['customer'] = CustomerResource::make($this->customer);
+        }
+        if($this->role == 'end-user')
+        {
+            $data['profile'] = EndUserResource::make($this->endUser);
+        }
+        return $data;
     }
 }
