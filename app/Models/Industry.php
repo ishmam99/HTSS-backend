@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Industry extends Model
 {
     use HasFactory;
+      use HasAdvancedQuery;
     protected $guarded = ['id'];
+        protected array $searchable = ['software.name','solution.name', 'name','status'];
       public function solutions()
     {
         return $this->belongsToMany(Solution::class, 'industry_solutions');
