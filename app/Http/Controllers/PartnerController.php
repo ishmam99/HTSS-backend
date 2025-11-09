@@ -14,14 +14,14 @@ class PartnerController extends Controller
 {
     public function index(Request $request)
     {
-        $partners = Partner::with('user');
-
-        if ($request->has('per_page')) {
-            $lists = $partners->paginate($request->per_page);
-        } else {
-            $lists = $partners->get();
-        }
-        return PartnerResource::collection($lists);
+        $query = Partner::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
     public function show($id)
     {

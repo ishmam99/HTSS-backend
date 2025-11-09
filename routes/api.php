@@ -13,6 +13,7 @@ use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
+use App\Http\Controllers\CustomerStatsController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
@@ -70,4 +71,7 @@ Route::prefix('v1')->group(function () {
     Route::post('customer-software',[CustomerSoftwareController::class, 'store'])->middleware('auth:sanctum');
     Route::post('customer-solution',[CustomerSolutionController::class, 'store'])->middleware('auth:sanctum');
     Route::get('customer-solution',[CustomerSolutionController::class, 'index'])->middleware('auth:sanctum');
+
+    Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
+
 });

@@ -12,22 +12,15 @@ class IssueTicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = IssueTicket::with('user')->when($request->status, function($query, $status) {
-            return $query->where('status', $status);
-                })->when($request->priority_level, function($query, $priority_level) {
-                    return $query->where('priority_level', $priority_level);
-                })->when($request->issue_type, function($query, $issue_type) {
-                    return $query->where('issue_type', $issue_type);
-                })->when($request->user_id, function($query, $user_id) {
-                    return $query->where('user_id', $user_id);
-                })->orderBy('id', 'desc');
-        
+        $query = IssueTicket::advancedQuery($request);
         $lists = $request->per_page
-        ? $query->paginate($request->per_page)
-        : $query->get();
+            ? $query->paginate($request->per_page)
+            : $query->get();
 
-
-        return IssueTicketResource::collection($lists);
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
 
 

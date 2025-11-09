@@ -15,20 +15,16 @@ class EndUserController extends Controller
 {
   public function index(Request $request)
 {
-    $query = EndUser::query()
-        ->when($request->status, function ($query, $status) {
-            return $query->where('status', $status);
-        })->when($request->software_id, function ($query, $software_id) {
-            return $query->whereHas('softwares', function ($q) use ($software_id) {
-                $q->where('software_id', $software_id);
-            });
-        })->orderByDesc('id');
+    $query = EndUser::advancedQuery($request);
 
     $lists = $request->per_page
         ? $query->paginate($request->per_page)
         : $query->get();
 
-    return EndUserResource::collection($lists);
+     return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
 }
 
 

@@ -11,25 +11,17 @@ use Illuminate\Http\Request;
 
 class SoftwareController extends Controller
 {
-   public function index()
+   public function index(Request $request)
     {
         // Get all software with related skill
-        $query = Software::query();
-         if(request()->has('solutions')){
-            $query->load('solutions');
-        }
-         if(request()->has('industries')){
-            $query->load('industries');
-        }
-        if(request()->has('per_page')){
-
-         $softwares = $query->paginate(request()->per_page);
-
-        }
-        else  $softwares = $query->get();
-        return response()->json(
-          $softwares
-        );
+        $query = Software::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
 
     public function store(Request $request)

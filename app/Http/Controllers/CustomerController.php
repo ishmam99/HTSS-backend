@@ -15,8 +15,8 @@ class CustomerController extends Controller
     {
         $query = Customer::advancedQuery($request);
          $customers = $request->per_page
-        ? $query->paginate($request->per_page)
-        : $query->get();
+            ? $query->paginate($request->per_page)
+            : $query->get();
         return response()->json([
             'success' => true,
             'data' => $customers,

@@ -12,17 +12,15 @@ class TrainingCourseController extends Controller
 {
   public function index(Request $request)
 {
-    $query = TrainingCourse::when($request->status, function($query, $status) {
-        return $query->where('status', $status);
-    })->orderBy('id', 'asc');
+    $query = TrainingCourse::advancedQuery($request);
+    $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
 
-    if ($request->has('per_page')) {
-        $lists = $query->paginate($request->per_page);
-    } else {
-        $lists = $query->get();
-    }
-    $lists->load('solution','software','industry');
-    return TrainingCourseResource::collection($lists);
+    return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
 }
 
 

@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Customer extends Model
 {
-    use HasFactory;
-    use HasAdvancedQuery;
+    use HasFactory,HasAdvancedQuery;
     protected $guarded = [];
      protected array $searchable = ['user.name','user.email', 'phone', 'address','city','industry_id','industry.name','status'];
     // protected array $relations = ['user', 'industry', 'softwares', 'solutions'];

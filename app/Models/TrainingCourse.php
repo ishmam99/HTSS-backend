@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TrainingCourse extends Model
 {
-    use HasFactory;
+    use HasFactory,HasAdvancedQuery;
 
     protected $guarded = ['id'];
     /**

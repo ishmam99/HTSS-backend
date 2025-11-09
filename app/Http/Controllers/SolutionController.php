@@ -10,22 +10,8 @@ class SolutionController extends Controller
     public function index()
     {
         // Get all software with related skill
-        $query = Solution::query();
-         if(request()->has('softwares')){
-            $query->load('softwares');
-        }
-         if(request()->has('industries')){
-            $query->load('industries');
-        }
-        if(request()->has('per_page')){
-
-         $solutions = $query->paginate(request()->per_page);
-
-        }
-        else  $solutions = $query->get();
-        return response()->json(
-          $solutions
-        );
+        $query = Solution::advancedQuery($request);
+        
     }
 
     public function store(Request $request)
