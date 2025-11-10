@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EndUserSoftware;
+use App\Models\EndUserSolution;
 use Illuminate\Http\Request;
 
 class EndUserSoftwareController extends Controller
@@ -35,7 +36,7 @@ class EndUserSoftwareController extends Controller
             'solution_id' => 'required|exists:solutions,id',
             'end_user_id' =>  'required|exists:end_users,id',
         ]);
-        EndUserSoftware::firstOrcreate([
+        EndUserSolution::firstOrcreate([
             'end_user_id' => $request->end_user_id,
             'solution_id' => $request->solution_id
         ]);
