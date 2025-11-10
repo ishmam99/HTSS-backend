@@ -73,7 +73,7 @@ Route::prefix('v1')->group(function () {
     Route::get('customer-solution',[CustomerSolutionController::class, 'index']);
 
     Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
-    Route::post('end-user-software-add',[EndUserSoftwareController::class, 'addSofteware']);
+    Route::post('end-user-software-add',[EndUserSoftwareController::class, 'addSoftware']);
     Route::post('end-user-solution-add',[EndUserSoftwareController::class, 'addSolution']);
     });
 
