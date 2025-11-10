@@ -74,6 +74,8 @@ Route::prefix('v1')->group(function () {
 
     Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
     Route::post('end-user-software-add',[EndUserSoftwareController::class, 'addSoftware']);
+    Route::get('end-user-software-list',[EndUserSoftwareController::class, 'getSoftwares']);
+    Route::get('end-user-solution-list',[EndUserSoftwareController::class, 'getSolutions']);
     Route::post('end-user-solution-add',[EndUserSoftwareController::class, 'addSolution']);
     });
 
