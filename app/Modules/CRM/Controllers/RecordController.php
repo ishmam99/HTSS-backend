@@ -5,11 +5,13 @@ namespace Modules\CRM\Controllers;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Modules\CRM\Models\Module;
 use Modules\CRM\Models\Record;
 use Modules\CRM\Models\RecordRelation;
+use Modules\CRM\Models\RecordUserAssignment;
 use Modules\CRM\Models\RecordValue;
 
 class RecordController extends Controller
@@ -30,7 +32,7 @@ class RecordController extends Controller
 
         // return response()->json($result);
          $records = $module->records()
-            ->with(['values.field'])
+            ->with(['values.field','assignments'])
             ->get();
 
         return response()->json($records);
@@ -38,7 +40,7 @@ class RecordController extends Controller
     public function show(Record $record ,Request $request)
     {
 
-         $record->load(['values.field']);
+         $record->load(['values.field','assignments']);
 
         return response()->json(['data'=>$record]);
     }
@@ -171,9 +173,34 @@ public function convertModule($recordId)
     public function getChild($record , $type){
         $childs = RecordRelation::where('parent_record_id',$record)->where('relation_type',$type)->pluck('child_record_id');
 
-        $childData = Record::whereIn('id',$childs)->with('values.field')->get();
+        $childData = Record::whereIn('id',$childs)->with('values.field','assignments')->get();
 
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
+
+    public function assignRecord(Record $record, Request $request)
+        {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'role' => 'required|string|max:50',
+                'permission_level' => 'required|string|max:50',
+            ]);
+        $assignment = RecordUserAssignment::updateOrCreate(
+            ['record_id' => $record->id, 'user_id' => $request->user_id],
+            [
+                'assigned_by' => Auth::id(),
+                'role' => $request->role,
+                'permission_level' => $request->permission_level,
+                'assigned_at' => now(),
+            ]
+        );
+
+
+
+            return response()->json([
+                'message' => 'Record assigned successfully.',
+                'data' => $assignment,
+            ]);
+        }
 
 }
