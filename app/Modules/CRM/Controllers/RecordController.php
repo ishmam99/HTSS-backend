@@ -32,7 +32,7 @@ class RecordController extends Controller
 
         // return response()->json($result);
          $records = $module->records()
-            ->with(['values.field','assignments'])
+            ->with(['values.field','assignments.user'])
             ->get();
 
         return response()->json($records);
@@ -40,7 +40,7 @@ class RecordController extends Controller
     public function show(Record $record ,Request $request)
     {
 
-         $record->load(['values.field','assignments']);
+         $record->load(['values.field','assignments.user']);
 
         return response()->json(['data'=>$record]);
     }
@@ -173,7 +173,7 @@ public function convertModule($recordId)
     public function getChild($record , $type){
         $childs = RecordRelation::where('parent_record_id',$record)->where('relation_type',$type)->pluck('child_record_id');
 
-        $childData = Record::whereIn('id',$childs)->with('values.field','assignments')->get();
+        $childData = Record::whereIn('id',$childs)->with('values.field','assignments.user')->get();
 
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
