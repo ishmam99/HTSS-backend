@@ -59,10 +59,10 @@ enum RoleEnum: string
     case CRM_MANAGEMENT_SYSTEM_EXECUTIVE = 'crm_management_system_executive';
 
     // Sales Management System
-    case SALES_MANAGEMENT_SYSTEM_VP = 'sales_management_system_vp';
-    case SALES_MANAGEMENT_SYSTEM_MANAGER = 'sales_management_system_manager';
-    case SALES_MANAGEMENT_SYSTEM_DIRECTOR = 'sales_management_system_director';
-    case SALES_MANAGEMENT_SYSTEM_EXECUTIVE = 'sales_management_system_executive';
+    case SALES_MANAGEMENT_SYSTEM_VP = 'sales-vp';
+    case SALES_MANAGEMENT_SYSTEM_MANAGER = 'sales-manager';
+    case SALES_MANAGEMENT_SYSTEM_DIRECTOR = 'sales-director';
+    case SALES_MANAGEMENT_SYSTEM_EXECUTIVE = 'sales-executive';
 
     // Training Management System
     case TRAINING_MANAGEMENT_SYSTEM_VP = 'training_management_system_vp';
