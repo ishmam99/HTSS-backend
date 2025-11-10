@@ -15,6 +15,7 @@ use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
 use App\Http\Controllers\CustomerStatsController;
 use App\Http\Controllers\EndUserController;
+use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\OnsiteSupportTicketController;
@@ -39,7 +40,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customers', CustomerController::class);
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
-
+        Route::get('users',[AuthController::class,'index']);
         Route::post('add-industry-solutions', [SoftwareController::class, 'industrySolution']);
         Route::post('add-industry-softwares', [SoftwareController::class, 'industrySoftware']);
         Route::post('add-software-solutions', [SoftwareController::class, 'softwareSolution']);
@@ -56,22 +57,24 @@ Route::prefix('v1')->group(function () {
             Route::put('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'update']);
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
         });
-          Route::apiResource('issue-ticket',IssueTicketController::class)->middleware('auth:sanctum');
-    });
-    Route::apiResource('end-users', EndUserController::class)->middleware('auth:sanctum');
-    Route::apiResource('training-course', TrainingCourseController::class)->middleware('auth:sanctum');
-    Route::apiResource('trainer', TrainerController::class)->middleware('auth:sanctum');
-    Route::apiResource('training-event',TrainingEventController::class)->middleware('auth:sanctum');
+    Route::apiResource('issue-ticket',IssueTicketController::class);
+    Route::apiResource('end-users', EndUserController::class);
+    Route::apiResource('training-course', TrainingCourseController::class);
+    Route::apiResource('trainer', TrainerController::class);
+    Route::apiResource('training-event',TrainingEventController::class);
 
-    Route::apiResource('training-offer',TrainingOfferController::class)->middleware('auth:sanctum');
-    Route::apiResource('training-enrollment',TrainingEnrollmentController::class)->middleware('auth:sanctum');
+    Route::apiResource('training-offer',TrainingOfferController::class);
+    Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
 
-    Route::apiResource('onsite-support-ticket',OnsiteSupportTicketController::class)->middleware('auth:sanctum');
-    Route::get('customer-software',[CustomerSoftwareController::class, 'index'])->middleware('auth:sanctum');
-    Route::post('customer-software',[CustomerSoftwareController::class, 'store'])->middleware('auth:sanctum');
-    Route::post('customer-solution',[CustomerSolutionController::class, 'store'])->middleware('auth:sanctum');
-    Route::get('customer-solution',[CustomerSolutionController::class, 'index'])->middleware('auth:sanctum');
+    Route::apiResource('onsite-support-ticket',OnsiteSupportTicketController::class);
+    Route::get('customer-software',[CustomerSoftwareController::class, 'index']);
+    Route::post('customer-software',[CustomerSoftwareController::class, 'store']);
+    Route::post('customer-solution',[CustomerSolutionController::class, 'store']);
+    Route::get('customer-solution',[CustomerSolutionController::class, 'index']);
 
     Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
+    Route::post('end-user-software-add',[EndUserSoftwareController::class, 'addSofteware']);
+    Route::post('end-user-solution-add',[EndUserSoftwareController::class, 'addSolution']);
+    });
 
 });

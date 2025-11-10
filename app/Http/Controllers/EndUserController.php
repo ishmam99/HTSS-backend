@@ -86,6 +86,12 @@ class EndUserController extends Controller
                 'password' => bcrypt($request->password),
             ]);
         }
+        if($request->filled('name'))
+        {
+        $endUser->user->update([
+                        'name' => bcrypt($request->name),
+                    ]);
+        }
         if ($request->hasFile('image')) {
             if ($endUser->image && Storage::disk('public')->exists($endUser->image)) {
                 Storage::disk('public')->delete($endUser->image);
