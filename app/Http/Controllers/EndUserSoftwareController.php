@@ -10,7 +10,10 @@ class EndUserSoftwareController extends Controller
 {
     public function getSoftwares()
     {
-        $softewares = auth()->user()->endUser->softwares->load('solutions','industries');
+        $softewares = auth()->user()->endUser->softwares->load('solutions','industries')->map(function ($software) {
+            $software->pivot_data = $software->pivot; // expose pivot fields
+            return $software;
+        });
         return response()->json(['data'=>$softewares]);
     }
     public function getSolutions()
