@@ -42,6 +42,11 @@ class EndUserController extends Controller
             ]);
 
             $data = $request->validated();
+            if(auth()->user()->role == 'customer')
+            {
+                $data['customer_id'] = auth()->user()->customer->id;
+                $data['industry_id'] = auth()->user()->customer->industry_id;
+            }
             $data['user_id'] = $user->id;
 
             // Create EndUser
