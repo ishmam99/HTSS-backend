@@ -91,15 +91,13 @@ class ProposalController extends Controller
 
     public function updateStatus($dealId, $proposalId, Request $request)
     {
-        $request->validate([
-            'status' => 'required|integer',
-        ]);
+        
 
         $proposal = Proposal::where('id', $proposalId)
             ->firstOrFail();
 
             $proposal->update([
-            'status' => $request->status,
+            'status' => 1,
             ]);
         $proposal->where('deal_id', $dealId)
         ->where('id', '!=', $proposalId)
