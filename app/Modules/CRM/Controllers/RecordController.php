@@ -120,7 +120,7 @@ public function convertModule($recordId)
         }
         return response()->json([
             'status' => true,
-                'record' => $record,
+                'assignments' => $record->assignments,
             'record_id' => $recordId,
             'values' => $data
         ],200);
