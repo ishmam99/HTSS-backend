@@ -37,6 +37,8 @@ class ProposalController extends Controller
         $data = $request->validated();
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
+        $data['terms_and_conditions'] = json_encode($data['terms_and_conditions'] ?? []);
+        $data['special_terms_and_conditions'] = json_encode($data['special_terms_and_conditions'] ?? []);
         $proposal = Proposal::create($data);
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('uploads/proposal', 'public');
@@ -58,7 +60,8 @@ class ProposalController extends Controller
     public function update(ProposalRequest $request, Proposal $proposal)
     {
         $data = $request->validated();
-
+        $data['terms_and_conditions'] =  json_encode($data['terms_and_conditions']) ?? $proposal->terms_and_conditions; ;
+        $data['special_terms_and_conditions'] = json_encode($data['special_terms_and_conditions']) ?? $proposal->special_terms_and_conditions; ;
         
         if ($request->hasFile('image')) {
            
