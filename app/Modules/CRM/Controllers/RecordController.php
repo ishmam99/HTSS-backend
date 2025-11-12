@@ -210,4 +210,23 @@ public function convertModule($recordId)
             ]);
         }
 
+    public function updateRecordAssignment($id, Request $request)
+    {
+        $assignment = RecordUserAssignment::find($id);
+        if (!$assignment) {
+            return response()->json([
+                'message' => 'Assignment not found'
+            ], 400);    
+        }
+
+        $assignment->update([
+            'user_id' => $request->user_id,
+            'permission_level' => $request->permission_level,
+        ]);  
+        return response()->json([
+            'message' => 'Assignment updated successfully',
+            'data' => $assignment
+        ]);
+    }
+
 }
