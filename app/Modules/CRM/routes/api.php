@@ -7,7 +7,7 @@ use Modules\CRM\Controllers\RecordController;
 use Modules\CRM\src\Controllers\LeadController;
 
 Route::prefix('api/v1')->middleware('api')->group(function () {
-    Route::prefix('crm')->group(function () {
+    Route::prefix('crm')->middleware('auth:sanctum')->group(function () {
        //add api routes for module
        Route::apiResource('module',ModuleController::class);
        Route::apiResource('field',ModuleFieldController::class);
@@ -25,5 +25,5 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::post('/record-child-create', [RecordController::class, 'addChild']);
         Route::get('/record-child-get/{record}/{type}', [RecordController::class, 'getChild']);
         Route::put('/record-values/{id}', [RecordController::class, 'updateValue']);
-    })->middleware('auth:sanctum');
+    });
 });
