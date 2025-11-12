@@ -35,7 +35,8 @@ class ProposalController extends Controller
     public function store(ProposalRequest $request)
     {
         $data = $request->validated();
-
+        $data['created_by'] = auth()->id();
+        $data['updated_by'] = auth()->id();
         $proposal = Proposal::create($data);
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('uploads/proposal', 'public');
