@@ -108,7 +108,7 @@ public function convertModule($recordId)
 
     public function getByRecord($recordId)
     {
-        $data = RecordValue::with('field','assignments.user')
+        $data = RecordValue::with('field','record.assignments.user')
             ->where('record_id', $recordId)
             ->get();
 
