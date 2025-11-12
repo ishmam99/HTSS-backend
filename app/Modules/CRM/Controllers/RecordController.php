@@ -220,8 +220,8 @@ public function convertModule($recordId)
         }
 
         $assignment->update([
-            'user_id' => $request->user_id,
-            'permission_level' => $request->permission_level,
+            'user_id' => $request->user_id ?? $assignment->user_id,
+            'permission_level' => $request->permission_level ?? $assignment->permission_level,
         ]);  
         return response()->json([
             'message' => 'Assignment updated successfully',
