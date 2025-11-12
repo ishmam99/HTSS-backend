@@ -108,7 +108,8 @@ public function convertModule($recordId)
 
     public function getByRecord($recordId)
     {
-        $data = RecordValue::with('field','record.assignments.user')
+        $record = Record::where('id',$recordId)->with('assignments.user')->first();
+        $data = RecordValue::with('field')
             ->where('record_id', $recordId)
             ->get();
 
@@ -119,6 +120,7 @@ public function convertModule($recordId)
         }
         return response()->json([
             'status' => true,
+                'record' => $record,
             'record_id' => $recordId,
             'values' => $data
         ],200);
