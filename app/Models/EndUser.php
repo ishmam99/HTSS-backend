@@ -29,7 +29,12 @@ class EndUser extends Model
 
     public function softwares()
     {
-        return $this->belongsToMany(Software::class, 'end_user_software');
+        return $this->belongsToMany(Software::class, 'end_user_software')->withPivot('level') // include pivot column
+        ->withTimestamps();
+    }
+    public function solutions()
+    {
+        return $this->belongsToMany(Solution::class, 'end_user_solutions');
     }
     public function softwareLevels()
     {

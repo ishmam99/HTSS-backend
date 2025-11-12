@@ -5,11 +5,13 @@ namespace Modules\CRM\Controllers;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Modules\CRM\Models\Module;
 use Modules\CRM\Models\Record;
 use Modules\CRM\Models\RecordRelation;
+use Modules\CRM\Models\RecordUserAssignment;
 use Modules\CRM\Models\RecordValue;
 
 class RecordController extends Controller
@@ -27,18 +29,23 @@ class RecordController extends Controller
         //     }
         //     return $data;
         // });
-
-        // return response()->json($result);
-         $records = $module->records()
-            ->with(['values.field'])
+          $records = $module->records()
+            ->with(['values.field','assignments.user'])
             ->get();
+        $myRecord = RecordUserAssignment::where('user_id',auth()->id())->pluck('record_id');
+        if(auth()->user()->role == 'sales-manager' || auth()->user()->role == 'sales-executive')
+        {
+            $records = $records->whereIn('id', $myRecord);
+        }
+        // return response()->json($result);
+
 
         return response()->json($records);
     }
     public function show(Record $record ,Request $request)
     {
 
-         $record->load(['values.field']);
+         $record->load(['values.field','assignments.user']);
 
         return response()->json(['data'=>$record]);
     }
@@ -101,6 +108,7 @@ public function convertModule($recordId)
 
     public function getByRecord($recordId)
     {
+        $record = Record::where('id',$recordId)->with('assignments.user')->first();
         $data = RecordValue::with('field')
             ->where('record_id', $recordId)
             ->get();
@@ -112,6 +120,7 @@ public function convertModule($recordId)
         }
         return response()->json([
             'status' => true,
+                'assignments' => $record->assignments,
             'record_id' => $recordId,
             'values' => $data
         ],200);
@@ -171,9 +180,34 @@ public function convertModule($recordId)
     public function getChild($record , $type){
         $childs = RecordRelation::where('parent_record_id',$record)->where('relation_type',$type)->pluck('child_record_id');
 
-        $childData = Record::whereIn('id',$childs)->with('values.field')->get();
+        $childData = Record::whereIn('id',$childs)->with('values.field','assignments.user')->get();
 
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
+
+    public function assignRecord(Record $record, Request $request)
+        {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'role' => 'required|string|max:50',
+                'permission_level' => 'required|string|max:50',
+            ]);
+        $assignment = RecordUserAssignment::updateOrCreate(
+            ['record_id' => $record->id, 'user_id' => $request->user_id],
+            [
+                'assigned_by' => Auth::id(),
+                'role' => $request->role,
+                'permission_level' => $request->permission_level,
+                'assigned_at' => now(),
+            ]
+        );
+
+
+
+            return response()->json([
+                'message' => 'Record assigned successfully.',
+                'data' => $assignment,
+            ]);
+        }
 
 }

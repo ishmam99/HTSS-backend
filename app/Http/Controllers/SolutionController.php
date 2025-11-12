@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 
 class SolutionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get all software with related skill
         $query = Solution::advancedQuery($request);
-        
+        $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
+
+    return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
+
     }
 
     public function store(Request $request)

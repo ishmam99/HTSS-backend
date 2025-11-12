@@ -16,4 +16,8 @@ class Record extends Model
     {
         return $this->belongsTo(Module::class,'module_id');
     }
+    public function assignments()
+    {
+        return $this->hasMany(RecordUserAssignment::class);
+    }
 }

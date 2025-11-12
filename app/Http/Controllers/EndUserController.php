@@ -42,6 +42,11 @@ class EndUserController extends Controller
             ]);
 
             $data = $request->validated();
+            if(auth()->user()->role == 'customer')
+            {
+                $data['customer_id'] = auth()->user()->customer->id;
+                $data['industry_id'] = auth()->user()->customer->industry_id;
+            }
             $data['user_id'] = $user->id;
 
             // Create EndUser
@@ -85,6 +90,12 @@ class EndUserController extends Controller
             $endUser->user->update([
                 'password' => bcrypt($request->password),
             ]);
+        }
+        if($request->filled('name'))
+        {
+        $endUser->user->update([
+                        'name' => bcrypt($request->name),
+                    ]);
         }
         if ($request->hasFile('image')) {
             if ($endUser->image && Storage::disk('public')->exists($endUser->image)) {
