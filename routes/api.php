@@ -19,6 +19,7 @@ use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\OnsiteSupportTicketController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
@@ -77,6 +78,9 @@ Route::prefix('v1')->group(function () {
     Route::get('end-user-software-list',[EndUserSoftwareController::class, 'getSoftwares']);
     Route::get('end-user-solution-list',[EndUserSoftwareController::class, 'getSolutions']);
     Route::post('end-user-solution-add',[EndUserSoftwareController::class, 'addSolution']);
+
+     Route::apiResource('proposal',ProposalController::class);
+     Route::put('status-update-proposal/{dealId}/{proposalId}', [ProposalController::class, 'updateStatus']);
     });
 
 });
