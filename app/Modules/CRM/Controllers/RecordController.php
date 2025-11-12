@@ -29,11 +29,16 @@ class RecordController extends Controller
         //     }
         //     return $data;
         // });
-
-        // return response()->json($result);
-         $records = $module->records()
+          $records = $module->records()
             ->with(['values.field','assignments.user'])
             ->get();
+        $myRecord = RecordUserAssignment::where('user_id',auth()->id())->pluck('record_id');
+        if(auth()->user()->role == 'sales-manager' || auth()->user()->role == 'sales-executive')
+        {
+            $records = $records->whereIn('id', $myRecord);
+        }
+        // return response()->json($result);
+
 
         return response()->json($records);
     }

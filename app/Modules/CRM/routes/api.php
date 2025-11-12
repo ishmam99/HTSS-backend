@@ -25,5 +25,5 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::post('/record-child-create', [RecordController::class, 'addChild']);
         Route::get('/record-child-get/{record}/{type}', [RecordController::class, 'getChild']);
         Route::put('/record-values/{id}', [RecordController::class, 'updateValue']);
-    });
+    })->middleware('auth:sanctum');
 });
