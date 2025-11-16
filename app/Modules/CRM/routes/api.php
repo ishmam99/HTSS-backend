@@ -14,7 +14,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
 
         Route::prefix('modules/{module}')->group(function () {
             Route::get('/records', [RecordController::class, 'index']);
-            Route::get('/record/{record}', [RecordController::class, 'show']);
+            Route::get('/records/{record}', [RecordController::class, 'show']);
             Route::post('/records', [RecordController::class, 'store'])->middleware('auth:sanctum');
             Route::get('/fields', [ModuleFieldController::class, 'getByModule']);
         });
