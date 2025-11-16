@@ -171,15 +171,10 @@ public function convertModule($recordId)
     }
     public function storeRecordValue(Request $request, $id)
     {
-        $recordValue = RecordValue::find($id);
-        if (!$recordValue) {
-            return response()->json([
-                'message' => 'Record value not found'
-            ], 400);
-        }
-        $recordValue->update([
-            'value' => $request->value
-        ]);
+         $recordValue = RecordValue::updateOrCreate(
+            ['record_id' => $id, 'field_id' => $request->field_id],
+            ['value' => $request->value]);
+            
         return response()->json([
             'status' => true,
             'message' => 'Value updated successfully',

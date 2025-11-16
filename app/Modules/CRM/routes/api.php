@@ -23,6 +23,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::get('/record-values/{recordId}', [RecordController::class, 'getByRecord']);
         Route::post('/record-child-create', [RecordController::class, 'addChild']);
         Route::get('/record-child-get/{record}/{type}', [RecordController::class, 'getChild']);
+        Route::post('/create-values/{id}', [RecordController::class, 'storeRecordValue']);
         Route::put('/record-values/{id}', [RecordController::class, 'updateValue']);
         Route::put('/assign-record-update/{id}', [RecordController::class, 'updateRecordAssignment']);
         Route::delete('/record/{record}', [RecordController::class, 'destroy']);
