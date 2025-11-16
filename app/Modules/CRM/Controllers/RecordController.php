@@ -30,20 +30,31 @@ class RecordController extends Controller
     //     // return response()->json($result);
     //     return response()->json($records);
     // }
-   public function index(Module $module)
+public function index(Module $module)
 {
     $query = $module->records()
         ->with(['values.field', 'assignments.user']);
 
-    $dateFieldName = request()->date_field;
+    if (request()->date_field && request()->start_date && request()->end_date) {
 
-    if ($dateFieldName && request()->start_date && request()->end_date) {
+        $dateFieldName = request()->date_field;
+
         $query->whereHas('values', function ($q) use ($dateFieldName) {
             $q->whereHas('field', fn($f) => $f->where('name', $dateFieldName))
-              ->whereBetween('value', [
-                  request()->start_date,
-                  request()->end_date
-              ]);
+                ->whereBetween('value', [
+                    request()->start_date,
+                    request()->end_date
+                ]);
+        });
+    }
+    if (request()->field && request()->value) {
+
+        $fieldName = request()->field;
+        $fieldValue = request()->value;
+
+        $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
+            $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
+                ->where('value', $fieldValue);
         });
     }
 
@@ -54,6 +65,7 @@ class RecordController extends Controller
 
     return response()->json($query->get());
 }
+
 
 
     public function show(Record $record ,Request $request)
