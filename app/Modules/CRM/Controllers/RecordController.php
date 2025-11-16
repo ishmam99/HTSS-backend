@@ -16,32 +16,46 @@ use Modules\CRM\Models\RecordValue;
 
 class RecordController extends Controller
 {
-    public function index(Module $module)
-    {
-        // $records = Record::with(['values.field'])
-        //     ->where('module_id', $module->id)
-        //     ->get();
+    // public function index(Module $module)
+    // {
 
-        // $result = $records->map(function ($rec) {
-        //     $data = ['id' => $rec->id];
-        //     foreach ($rec->values as $v) {
-        //         $data[$v->field->name] = $v->value;
-        //     }
-        //     return $data;
-        // });
-          $records = $module->records()
-            ->with(['values.field','assignments.user'])
-            ->get();
-        $myRecord = RecordUserAssignment::where('user_id',auth()->id())->pluck('record_id');
-        if(auth()->user()->role == 'sales-manager' || auth()->user()->role == 'sales-executive')
-        {
-            $records = $records->whereIn('id', $myRecord);
-        }
-        // return response()->json($result);
+    //       $records = $module->records()
+    //         ->with(['values.field','assignments.user'])
+    //         ->get();
+    //     $myRecord = RecordUserAssignment::where('user_id',auth()->id())->pluck('record_id');
+    //     if(auth()->user()->role == 'sales-manager' || auth()->user()->role == 'sales-executive')
+    //     {
+    //         $records = $records->whereIn('id', $myRecord);
+    //     }
+    //     // return response()->json($result);
+    //     return response()->json($records);
+    // }
+   public function index(Module $module)
+{
+    $query = $module->records()
+        ->with(['values.field', 'assignments.user']);
 
+    $dateFieldName = request()->date_field;
 
-        return response()->json($records);
+    if ($dateFieldName && request()->start_date && request()->end_date) {
+        $query->whereHas('values', function ($q) use ($dateFieldName) {
+            $q->whereHas('field', fn($f) => $f->where('name', $dateFieldName))
+              ->whereBetween('value', [
+                  request()->start_date,
+                  request()->end_date
+              ]);
+        });
     }
+
+    if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+        $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
+        $query->whereIn('id', $mine);
+    }
+
+    return response()->json($query->get());
+}
+
+
     public function show(Record $record ,Request $request)
     {
 
@@ -216,13 +230,13 @@ public function convertModule($recordId)
         if (!$assignment) {
             return response()->json([
                 'message' => 'Assignment not found'
-            ], 400);    
+            ], 400);
         }
 
         $assignment->update([
             'user_id' => $request->user_id ?? $assignment->user_id,
             'permission_level' => $request->permission_level ?? $assignment->permission_level,
-        ]);  
+        ]);
         return response()->json([
             'message' => 'Assignment updated successfully',
             'data' => $assignment
