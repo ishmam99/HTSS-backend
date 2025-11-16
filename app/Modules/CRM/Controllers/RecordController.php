@@ -68,9 +68,8 @@ public function index(Module $module)
 
 
 
-    public function show(Record $record ,Request $request)
+    public function show(Record $record)
     {
-
          $record->load(['values.field','assignments.user']);
 
         return response()->json(['data'=>$record]);
@@ -174,7 +173,7 @@ public function convertModule($recordId)
          $recordValue = RecordValue::updateOrCreate(
             ['record_id' => $id, 'field_id' => $request->field_id],
             ['value' => $request->value]);
-            
+
         return response()->json([
             'status' => true,
             'message' => 'Value updated successfully',
