@@ -101,8 +101,8 @@ class ProposalController extends Controller
             'status' => 1,
             ]);
         $proposal->where('deal_id', $dealId)
-        ->where('id', '!=', $proposal->id)
-        ->update(['status' => 0]);
+            ->where('id', '!=', $proposal->id)
+            ->update(['status' => 0]);
            
         return response()->json([
             'status' => true,

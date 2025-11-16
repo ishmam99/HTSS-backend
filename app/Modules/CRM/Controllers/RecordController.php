@@ -229,4 +229,12 @@ public function convertModule($recordId)
         ]);
     }
 
+    public function destroy(Record $record)
+    {
+        $record->delete();
+        return response()->json([
+            'message' => 'Record deleted successfully'
+        ]);
+    }
+
 }
