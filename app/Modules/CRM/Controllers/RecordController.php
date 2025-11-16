@@ -65,12 +65,13 @@ public function index(Module $module)
     if(request()->per_page)
     {
         $data = $query->paginate(request()->per_page);
+           return response()->json($data);
     }
     else
         $data = $query->get();
 
+      return response()->json(['data'=>$data]);
 
-    return response()->json($data);
 }
 
 
