@@ -68,9 +68,10 @@ public function index(Module $module)
 
 
 
-    public function show(Record $record)
+    public function show($id)
     {
-         $record->load(['values.field','assignments.user']);
+        $record = Record::where('id',$id)->with('values.field','assignments.user')->first();
+        //  $record->load([]);
 
         return response()->json(['data'=>$record]);
     }
