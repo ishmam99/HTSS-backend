@@ -62,16 +62,24 @@ public function index(Module $module)
         $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
         $query->whereIn('id', $mine);
     }
+    if(request()->per_page)
+    {
+        $data = $query->paginate(request()->per_page);
+           return response()->json($data);
+    }
+    else
+        $data = $query->get();
 
-    return response()->json($query->get());
+      return response()->json(['data'=>$data]);
+
 }
 
 
 
-    public function show(Record $record ,Request $request)
+    public function show(Module $module,$id)
     {
-
-         $record->load(['values.field','assignments.user']);
+        $record = Record::where('id',$id)->with('values.field','assignments.user')->first();
+        //  $record->load([]);
 
         return response()->json(['data'=>$record]);
     }
@@ -174,7 +182,7 @@ public function convertModule($recordId)
          $recordValue = RecordValue::updateOrCreate(
             ['record_id' => $id, 'field_id' => $request->field_id],
             ['value' => $request->value]);
-            
+
         return response()->json([
             'status' => true,
             'message' => 'Value updated successfully',
