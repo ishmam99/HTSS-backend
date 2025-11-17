@@ -44,7 +44,7 @@ public function index(Module $module)
                 ->whereBetween('value', [
                     request()->start_date,
                     request()->end_date
-                ])->orderBy('order', 'asc');
+                ]);
         });
     }
     if (request()->field && request()->value) {
