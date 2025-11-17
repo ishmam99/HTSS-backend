@@ -33,7 +33,11 @@ class RecordController extends Controller
 public function index(Module $module)
 {
     $query = $module->records()
-        ->with(['values.field', 'assignments.user']);
+        ->with([ 'values' => function ($q) {
+        $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+          ->orderBy('module_fields.order', 'asc')
+          ->select('record_values.*');
+    },'assignments.user']);
 
     if (request()->date_field && request()->start_date && request()->end_date) {
 
