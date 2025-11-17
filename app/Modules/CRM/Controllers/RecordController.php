@@ -33,7 +33,11 @@ class RecordController extends Controller
 public function index(Module $module)
 {
     $query = $module->records()
-        ->with(['values.field', 'assignments.user']);
+        ->with([ 'values' => function ($q) {
+        $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+          ->orderBy('module_fields.order', 'asc')
+          ->select('record_values.*');
+    },'assignments.user']);
 
     if (request()->date_field && request()->start_date && request()->end_date) {
 
@@ -44,7 +48,7 @@ public function index(Module $module)
                 ->whereBetween('value', [
                     request()->start_date,
                     request()->end_date
-                ])->orderBy('order', 'asc');
+                ]);
         });
     }
     if (request()->field && request()->value) {
@@ -54,7 +58,7 @@ public function index(Module $module)
 
         $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
             $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
-                ->where('value', $fieldValue)->orderBy('order', 'asc');
+                ->where('value', $fieldValue);
         });
     }
 
@@ -76,13 +80,23 @@ public function index(Module $module)
 
 
 
-    public function show(Module $module,$id)
-    {
-        $record = Record::where('id',$id)->with('values.field','assignments.user')->first();
-        //  $record->load([]);
+   public function show(Module $module, $id)
+{
+    $record = Record::where('id', $id)
+        ->with([
+            'values' => function ($q) {
+                $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+                  ->orderBy('module_fields.order', 'asc')
+                  ->select('record_values.*'); // prevent column collision
+            },
+            'values.field',
+            'assignments.user'
+        ])
+        ->firstOrFail();
 
-        return response()->json(['data'=>$record]);
-    }
+    return response()->json(['data' => $record]);
+}
+
 
 public function store(Request $request, Module $module)
 {
