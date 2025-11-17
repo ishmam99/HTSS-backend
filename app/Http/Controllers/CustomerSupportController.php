@@ -12,18 +12,16 @@ class CustomerSupportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CustomerSupport::when($request->has('type'), function($query, $request) {
-            return $query->where('type', $request->type);
-        })->
-        when($request->has('status'), function($query, $request) {
-            return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+        $query = CustomerSupport::with(['solution', 'software'])
+            ->when($request->type, function ($query, $type) {
+                $query->where('type', $type);
+            })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->orderBy('id', 'desc');
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
+        $lists = $request->per_page ? $query->paginate($request->per_page) : $query->get();
 
         return CustomerSupportResource::collection($lists);
     }

@@ -10,4 +10,14 @@ class CustomerSupport extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function solution()
+    {
+        return $this->belongsTo(Solution::class);
+    }
+
+    public function software()
+    {
+        return $this->belongsTo(Software::class);
+    }
 }
