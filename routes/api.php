@@ -14,6 +14,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
 use App\Http\Controllers\CustomerStatsController;
+use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\IndustryController;
@@ -80,5 +81,5 @@ Route::prefix('v1')->group(function () {
 
 
     });
-
+    Route::apiResource('customer-support',CustomerSupportController::class);
 });
