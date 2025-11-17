@@ -13,6 +13,8 @@ class CustomerSupportResource extends JsonResource
             'type' => $this->type,
             'solution' => $this->whenLoaded('solution'),
             'software' => $this->whenLoaded('software'),
+            'end_user' => $this->whenLoaded('endUser'),
+            'customer' => $this->whenLoaded('customer'),
             'title' => $this->title,
             'description' => $this->description,
             'issue_type' => $this->issue_type,
@@ -36,6 +38,7 @@ class CustomerSupportResource extends JsonResource
             'ticket_number' => $this->ticket_number,
             'company_name' => $this->company_name,
             'location' => $this->location,
+
         ];
     }
 }

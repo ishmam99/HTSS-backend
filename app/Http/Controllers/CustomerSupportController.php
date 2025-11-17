@@ -12,9 +12,15 @@ class CustomerSupportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CustomerSupport::with(['solution', 'software'])
+        $query = CustomerSupport::with(['solution', 'software','endUser','customer'])
             ->when($request->type, function ($query, $type) {
                 $query->where('type', $type);
+            })
+            ->when($request->customer_id, function ($query, $customer_id) {
+                $query->where('customer_id', $customer_id);
+            }
+            )->when($request->end_user_id, function ($query, $end_user_id) {
+                $query->where('end_user_id', $end_user_id);
             })
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);

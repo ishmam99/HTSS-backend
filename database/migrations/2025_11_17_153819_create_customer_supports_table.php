@@ -11,6 +11,8 @@ return new class extends Migration
         Schema::create('customer_supports', function (Blueprint $table) {
             $table->id();
             $table->string('type');
+            $table->foreignId('end_user_id')->constrained('end_users')->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->foreignId('solution_id')->nullable()->constrained('solutions')->cascadeOnDelete();
             $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->string('title')->nullable();

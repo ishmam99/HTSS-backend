@@ -14,6 +14,8 @@ class CustomerSupportRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'end_user_id'       => 'required|exists:end_users,id',
+            'customer_id'       => 'required|exists:customers,id',
             'type'               => 'required|string',
             'solution_id'        => 'nullable|exists:solutions,id',
             'software_id'        => 'nullable|exists:softwares,id',
