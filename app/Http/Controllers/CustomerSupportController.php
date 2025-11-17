@@ -10,27 +10,28 @@ use Illuminate\Http\Request;
 
 class CustomerSupportController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = CustomerSupport::with(['solution', 'software','endUser','customer'])
-            ->when($request->type, function ($query, $type) {
-                $query->where('type', $type);
-            })
-            ->when($request->customer_id, function ($query, $customer_id) {
-                $query->where('customer_id', $customer_id);
-            }
-            )->when($request->end_user_id, function ($query, $end_user_id) {
-                $query->where('end_user_id', $end_user_id);
-            })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
-            })
-            ->orderBy('id', 'desc');
+  public function index(Request $request)
+{
+    $query = CustomerSupport::with(['solution', 'software','endUser.user','customer.user'])
+        ->when($request->filled('type'), function ($query) use ($request) {
+            $query->where('type', $request->type);
+        })
+        ->when($request->filled('customer_id'), function ($query) use ($request) {
+            $query->where('customer_id', $request->customer_id);
+        })
+        ->when($request->filled('end_user_id'), function ($query) use ($request) {
+            $query->where('end_user_id', $request->end_user_id);
+        })
+        ->when($request->filled('status'), function ($query) use ($request) {
+            $query->where('status', $request->status);
+        })
+        ->orderBy('id', 'desc');
 
-        $lists = $request->per_page ? $query->paginate($request->per_page) : $query->get();
+    $lists = $request->per_page ? $query->paginate($request->per_page) : $query->get();
 
-        return CustomerSupportResource::collection($lists);
-    }
+    return CustomerSupportResource::collection($lists);
+}
+
 
 
     public function store(CustomerSupportRequest $request)
@@ -39,12 +40,12 @@ class CustomerSupportController extends Controller
 
         $customerSupport = CustomerSupport::create($data);
 
-        
+
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('uploads/customerSupport', 'public');
             $customerSupport->update(['attachment' => $path]);
         }
-       
+
 
         return response()->json([
             'status' => true,
@@ -61,14 +62,14 @@ class CustomerSupportController extends Controller
     {
         $data = $request->validated();
 
-        
+
         if ($request->hasFile('attachment')) {
-           
+
             if ($customerSupport->attachment && Storage::disk('public')->exists($customerSupport->attachment)) {
                 Storage::disk('public')->delete($customerSupport->attachment);
             }
 
-            
+
             $path = $request->file('attachment')->store('uploads/customerSupport', 'public');
             $data['attachment'] = $path;
         }
