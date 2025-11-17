@@ -54,7 +54,7 @@ public function index(Module $module)
 
         $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
             $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
-                ->where('value', $fieldValue)->orderBy('order', 'asc');
+                ->where('value', $fieldValue);
         });
     }
 
