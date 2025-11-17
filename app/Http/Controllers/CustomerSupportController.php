@@ -80,4 +80,19 @@ class CustomerSupportController extends Controller
         $customerSupport->delete();
         return response()->json(['status' => true,'message' => 'CustomerSupport deleted successfully'],200);
     }
+
+    public function statusUpdate(Request $request, CustomerSupport $customerSupport)
+    {
+        $request->validate([
+            'status' => 'required',
+        ]);
+
+        $customerSupport->status = $request->status;
+        $customerSupport->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'CustomerSupport status updated successfully',
+        ], 200);
+    }
 }
