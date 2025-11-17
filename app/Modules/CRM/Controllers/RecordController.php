@@ -76,13 +76,23 @@ public function index(Module $module)
 
 
 
-    public function show(Module $module,$id)
-    {
-        $record = Record::where('id',$id)->with('values.field','assignments.user')->first();
-        //  $record->load([]);
+   public function show(Module $module, $id)
+{
+    $record = Record::where('id', $id)
+        ->with([
+            'values' => function ($q) {
+                $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+                  ->orderBy('module_fields.order', 'asc')
+                  ->select('record_values.*'); // prevent column collision
+            },
+            'values.field',
+            'assignments.user'
+        ])
+        ->firstOrFail();
 
-        return response()->json(['data'=>$record]);
-    }
+    return response()->json(['data' => $record]);
+}
+
 
 public function store(Request $request, Module $module)
 {
