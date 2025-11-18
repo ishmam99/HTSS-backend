@@ -29,4 +29,8 @@ class TrainingCourse extends Model
     {
         return $this->belongsTo(Industry::class);
     }
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }
