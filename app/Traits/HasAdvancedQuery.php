@@ -11,7 +11,7 @@ trait HasAdvancedQuery
     /**
      * Bootable entrypoint — returns a prepared query builder
      */
-    public static function advancedQuery(Request $request): Builder
+    public static function advancedQuery(Request $request): Builder|int
     {
         $instance = new static();
         $query = static::query();
