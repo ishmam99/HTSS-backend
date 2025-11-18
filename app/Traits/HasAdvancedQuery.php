@@ -15,7 +15,9 @@ trait HasAdvancedQuery
     {
         $instance = new static();
         $query = static::query();
-
+           if ($request->boolean('count_only')) {
+        return $query->count();
+    }
         $instance->applyRelationships($query, $request);
         $instance->applySearch($query, $request);
         $instance->applyFilters($query, $request);
