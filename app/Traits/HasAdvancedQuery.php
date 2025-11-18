@@ -11,13 +11,11 @@ trait HasAdvancedQuery
     /**
      * Bootable entrypoint — returns a prepared query builder
      */
-    public static function advancedQuery(Request $request): Builder|int
+    public static function advancedQuery(Request $request): Builder
     {
         $instance = new static();
         $query = static::query();
-           if ($request->filled('count_only')) {
-        return $query->count();
-    }
+        
         $instance->applyRelationships($query, $request);
         $instance->applySearch($query, $request);
         $instance->applyFilters($query, $request);
