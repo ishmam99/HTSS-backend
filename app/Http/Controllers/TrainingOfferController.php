@@ -13,9 +13,7 @@ class TrainingOfferController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingOffer::with('event.trainingCourse.solution','event.trainingCourse.industry','event.trainingCourse.software')->when($request->status, function($query, $status) {
-            return $query->where('status', $status);
-        })->orderBy('id', 'desc');
+        $query = TrainingOffer::advancedQuery($request);
 
         if ($request->has('per_page')) {
             $lists = $query->paginate($request->per_page);
