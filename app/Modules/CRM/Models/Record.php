@@ -9,11 +9,15 @@ class Record extends Model
     protected $guarded = [];
      public function values()
     {
-        return $this->hasMany(RecordValue::class,'record_id');
+        return $this->hasMany(RecordValue::class,'record_id')->with('field');
     }
 
     public function module()
     {
         return $this->belongsTo(Module::class,'module_id');
+    }
+    public function assignments()
+    {
+        return $this->hasMany(RecordUserAssignment::class);
     }
 }

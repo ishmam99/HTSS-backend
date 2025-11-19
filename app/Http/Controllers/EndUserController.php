@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EndUser;
 use App\Http\Requests\EndUserRequest;
 use App\Http\Resources\EndUserResource;
+use App\Models\EndUserSoftware;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -12,20 +13,20 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 class EndUserController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = EndUser::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+  public function index(Request $request)
+{
+    $query = EndUser::advancedQuery($request);
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
+    $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
 
-        return EndUserResource::collection($lists);
-    }
+     return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
+}
+
 
 
    public function store(EndUserRequest $request)
@@ -37,13 +38,31 @@ class EndUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password ?? '12345678'),
+                'role' => 'end-user'
             ]);
 
             $data = $request->validated();
+            if(auth()->user()->role == 'customer')
+            {
+                $data['customer_id'] = auth()->user()->customer->id;
+                $data['industry_id'] = auth()->user()->customer->industry_id;
+            }
             $data['user_id'] = $user->id;
 
             // Create EndUser
             $endUser = EndUser::create($data);
+
+            if ($request->has('software_id')) {
+            $syncData = [];
+            foreach ($request->software_id as $index => $softwareId) {
+                $syncData[$softwareId] = [
+                    'level' => $request->level[$index] ?? null
+                ];
+            }
+            $endUser->softwares()->sync($syncData);
+        }
+
+
 
             // Handle image upload
             if ($request->hasFile('image')) {
@@ -71,6 +90,12 @@ class EndUserController extends Controller
             $endUser->user->update([
                 'password' => bcrypt($request->password),
             ]);
+        }
+        if($request->filled('name'))
+        {
+        $endUser->user->update([
+                        'name' => bcrypt($request->name),
+                    ]);
         }
         if ($request->hasFile('image')) {
             if ($endUser->image && Storage::disk('public')->exists($endUser->image)) {

@@ -11,17 +11,17 @@ use Illuminate\Http\Request;
 
 class SoftwareController extends Controller
 {
-   public function index()
+   public function index(Request $request)
     {
         // Get all software with related skill
-        if(request()->has('per_page')){
-            return response()->json(
-            Software::with('softwareSkill' , 'users')->paginate(request()->per_page)
-             );
-        }
-        return response()->json(
-            Software::with('softwareSkill' , 'users')->get()
-        );
+        $query = Software::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
 
     public function store(Request $request)
@@ -39,8 +39,21 @@ class SoftwareController extends Controller
         return response()->json($software->load('softwareSkill', 'users'), 201);
     }
 
-    public function show(Software $software)
+    public function show(Request $request,Software $software)
     {
+
+        if($request->has('solutions'))
+        {
+           $software->load('solutions');
+        }
+        if($request->has('industries'))
+        {
+           $software->load('industries');
+        }
+        if($request->has('trainings'))
+        {
+            $software->load('trainings.industry','trainings.solution');
+        }
         return response()->json($software->load('softwareSkill', 'users'));
     }
 
@@ -70,7 +83,7 @@ class SoftwareController extends Controller
             'industry_id' => 'required|exists:industries,id',
             'solution_id' => 'required|exists:solutions,id',
         ]);
-        IndustrySolution::create([
+        IndustrySolution::firstOrcreate([
             'industry_id' => $request->industry_id,
             'solution_id' => $request->solution_id,
         ]);
@@ -81,7 +94,7 @@ class SoftwareController extends Controller
             'industry_id' => 'required|exists:industries,id',
             'software_id' => 'required|exists:softwares,id',
         ]);
-        IndustrySoftware::create([
+        IndustrySoftware::firstOrcreate([
             'industry_id' => $request->industry_id,
             'software_id' => $request->software_id,
         ]);
@@ -92,10 +105,11 @@ class SoftwareController extends Controller
             'solution_id' => 'required|exists:solutions,id',
             'software_id' => 'required|exists:softwares,id',
         ]);
-        SoftwareSolution::create([
+        SoftwareSolution::firstOrcreate([
             'solution_id' => $request->solution_id,
             'software_id' => $request->software_id,
         ]);
         return response()->json('Data added successfully');
     }
+
 }

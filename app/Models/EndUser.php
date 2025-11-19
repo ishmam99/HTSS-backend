@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class EndUser extends Model
 {
-    use HasFactory;
+    use HasFactory,HasAdvancedQuery;
 
     protected $guarded = ['id'];
 
@@ -24,5 +25,19 @@ class EndUser extends Model
     public function industry()
     {
         return $this->belongsTo(Industry::class);
+    }
+
+    public function softwares()
+    {
+        return $this->belongsToMany(Software::class, 'end_user_software')->withPivot('level') // include pivot column
+        ->withTimestamps();
+    }
+    public function solutions()
+    {
+        return $this->belongsToMany(Solution::class, 'end_user_solutions');
+    }
+    public function softwareLevels()
+    {
+        return $this->hasMany(EndUserSoftware::class);
     }
 }

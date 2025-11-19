@@ -12,17 +12,15 @@ class TrainingCourseController extends Controller
 {
   public function index(Request $request)
 {
-    $query = TrainingCourse::when($request->status, function($query, $status) {
-        return $query->where('status', $status);
-    })->orderBy('id', 'asc');
+    $query = TrainingCourse::advancedQuery($request);
+    $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
 
-    if ($request->has('per_page')) {
-        $lists = $query->paginate($request->per_page);
-    } else {
-        $lists = $query->get();
-    }
-
-    return TrainingCourseResource::collection($lists);
+    return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
 }
 
 
@@ -30,6 +28,10 @@ class TrainingCourseController extends Controller
     public function store(TrainingCourseRequest $request)
     {
         $data = $request->validated();
+       $user = auth()->user();
+       if($user->role == 'customer'){
+        $data['customer_id'] = $user->customer->id;
+       }
         $trainingCourse = TrainingCourse::create($data);
         return response()->json([
             'status' => true,

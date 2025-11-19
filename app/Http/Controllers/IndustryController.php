@@ -8,15 +8,38 @@ use App\Http\Resources\IndustryResource;
 
 class IndustryController extends Controller
 {
-    public function index(Request $request)
+     public function index(Request $request)
     {
-        $industries = Industry::paginate(10);
-        return IndustryResource::collection($industries);
+        // Get all software with related skill
+        $query = Industry::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
 
-    public function show($id)
+    public function show(Request $request,$id)
     {
         $industry = Industry::findOrFail($id);
+          if($request->has('softwares'))
+        {
+           $industry->load('softwares');
+        }
+        if($request->has('solutions'))
+        {
+           $industry->load('solutions');
+        }
+        if($request->has('customers'))
+        {
+           $industry->load('customers.user','customers.softwares','customers.solutions');
+        }
+         if($request->has('trainings'))
+        {
+           $industry->load('trainings.software','trainings.solution');
+        }
         return new IndustryResource($industry);
     }
 

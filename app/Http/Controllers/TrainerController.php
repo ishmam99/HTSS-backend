@@ -14,17 +14,16 @@ class TrainerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Trainer::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
-        })->orderBy('id', 'desc');
+        $query = Trainer::advancedQuery($request);
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
 
-        return TrainerResource::collection($lists);
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
 
 

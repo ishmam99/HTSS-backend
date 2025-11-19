@@ -18,6 +18,7 @@ return new class extends Migration
             $table->tinyInteger('required');
             $table->tinyInteger('unique');
             $table->integer('order')->nullable();
+            $table->integer('order_group')->default(0);
             $table->timestamps();
         });
     }

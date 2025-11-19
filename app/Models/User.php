@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable , HasApiTokens;
+    use HasFactory, Notifiable , HasApiTokens , HasAdvancedQuery;
 
     /**
      * The attributes that are mass assignable.
@@ -46,11 +48,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     public function softwareSkills()
     {
         return $this->belongsToMany(SoftwareSkill::class, 'user_software_skills')
                     ->withPivot('proficiency_level', 'experience_years')
                     ->withTimestamps();
+    }
+
+     public function customer()
+    {
+        return $this->hasOne(Customer::class);
+    }
+     public function endUser()
+    {
+        return $this->hasOne(EndUser::class);
     }
 }

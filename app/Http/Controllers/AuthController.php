@@ -12,6 +12,17 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = User::advancedQuery($request);
+         $customers = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $customers,
+        ]);
+    }
     public function register(Request $request)
     {
         $request->validate([

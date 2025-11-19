@@ -13,14 +13,16 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $customers = Customer::with('user');
-        if ($request->has('per_page')) {
-            $lists = $customers->paginate($request->per_page);
-        } else {
-            $lists = $customers->get();
-        }
-        return CustomerResource::collection($lists);
+        $query = Customer::advancedQuery($request);
+         $customers = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $customers,
+        ]);
     }
+
 
     public function show($id)
     {
@@ -49,6 +51,7 @@ class CustomerController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make('12345678'),
+                'role' => 'customer'
             ]);
 
             if (!empty($validated['role'])) {
@@ -157,5 +160,12 @@ class CustomerController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function stats()
+    {
+        $customers = Customer::all();
+        $pending_customer = $customers->where('status',0)->count();
+        $pending_customer = $customers->where('status',0)->count();
     }
 }

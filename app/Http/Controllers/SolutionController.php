@@ -7,17 +7,19 @@ use Illuminate\Http\Request;
 
 class SolutionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Get all software with related skill
+        $query = Solution::advancedQuery($request);
+        $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
 
-        if (request()->has('per_page')) {
-            return response()->json(
-                Solution::query()->with('users')->paginate(request()->per_page)
-            );
-        }
-        return response()->json(
-            Solution::query()->with('users')->get()
-        );
+    return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
+
     }
 
     public function store(Request $request)
@@ -36,8 +38,20 @@ class SolutionController extends Controller
         return response()->json($solution->load('users'), 201);
     }
 
-    public function show(Solution $solution)
+    public function show(Request $request,Solution $solution)
     {
+          if($request->has('softwares'))
+        {
+           $solution->load('softwares');
+        }
+        if($request->has('industries'))
+        {
+           $solution->load('industries');
+        }
+         if($request->has('trainings'))
+        {
+             $solution->load('trainings.software','trainings.industry');
+        }
         return response()->json($solution->load('users'));
     }
 

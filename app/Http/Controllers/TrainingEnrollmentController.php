@@ -12,8 +12,8 @@ class TrainingEnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingEnrollment::when('status', function($query, $request) {
-            return $query->where('status', $request->status);
+        $query = TrainingEnrollment::when($request->status, function($query, $status) {
+            return $query->where('status', $status);
         })->orderBy('id', 'desc');
 
         if ($request->has('per_page')) {
@@ -32,12 +32,12 @@ class TrainingEnrollmentController extends Controller
 
         $trainingEnrollment = TrainingEnrollment::create($data);
 
-        
+
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/trainingEnrollment', 'public');
             $trainingEnrollment->update(['image' => $path]);
         }
-       
+
 
         return response()->json([
             'status' => true,
@@ -54,18 +54,18 @@ class TrainingEnrollmentController extends Controller
     {
         $data = $request->validated();
 
-        
+
         if ($request->hasFile('image')) {
-           
+
             if ($trainingEnrollment->image && Storage::disk('public')->exists($trainingEnrollment->image)) {
                 Storage::disk('public')->delete($trainingEnrollment->image);
             }
 
-            
+
             $path = $request->file('image')->store('uploads/trainingEnrollment', 'public');
             $data['image'] = $path;
         }
-        
+
 
         $trainingEnrollment->update($data);
 

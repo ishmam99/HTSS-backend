@@ -30,6 +30,7 @@ class ModuleFieldController extends Controller
         $validator = Validator::make($request->all(), [
             'module_id' => 'required|integer|exists:modules,id',
             'label' => 'required|string|max:255',
+            'order_group' => 'nullable|integer',
              'name' => [
             'required',
             'string',
@@ -68,6 +69,7 @@ class ModuleFieldController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'label' => 'sometimes|required|string|max:255',
+            'order_group'=> 'sometimes|nullable|integer',
             'name' => 'sometimes|required|string|max:255|unique:module_fields,name,' . $field->id,
             'type' => 'sometimes|required|string|in:text,select,date,number',
             'required' => 'sometimes|boolean',
