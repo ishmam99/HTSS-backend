@@ -17,6 +17,7 @@ use App\Http\Controllers\CustomerStatsController;
 use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\EndUserSoftwareController;
+use App\Http\Controllers\EndUserTrainingController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\OnsiteSupportTicketController;
@@ -79,6 +80,7 @@ Route::prefix('v1')->group(function () {
     Route::get('end-user-software-list',[EndUserSoftwareController::class, 'getSoftwares']);
     Route::get('end-user-solution-list',[EndUserSoftwareController::class, 'getSolutions']);
     Route::post('end-user-solution-add',[EndUserSoftwareController::class, 'addSolution']);
+    Route::apiResource('end-user-trainings',EndUserTrainingController::class)->middleware('auth:sanctum');
 
 
     });
