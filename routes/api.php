@@ -50,6 +50,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('software-skills', SoftwareSkillController::class);
         Route::apiResource('solutions', SolutionController::class);
         Route::apiResource('softwares', SoftwareController::class);
+        Route::get('software-stats',[ SoftwareController::class,'stats']);
         // Route::apiResource('training-sessions', TrainingSessionController::class);
         // Route::apiResource('training-enrollments', TrainingEnrollmentController::class);
         Route::prefix('users/{userId}')->group(function () {

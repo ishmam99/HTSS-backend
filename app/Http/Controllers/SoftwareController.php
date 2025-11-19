@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Industry;
 use App\Models\IndustrySoftware;
 use App\Models\IndustrySolution;
 use App\Models\Software;
 use App\Models\SoftwareSkill;
 use App\Models\SoftwareSolution;
+use App\Models\Solution;
 use Illuminate\Http\Request;
 
 class SoftwareController extends Controller
@@ -111,5 +113,16 @@ class SoftwareController extends Controller
         ]);
         return response()->json('Data added successfully');
     }
-
+    public function stats(){
+        $softwares = Software::count();
+        $solutions = Solution::count();
+        $industries = Industry::count();
+        $skills = SoftwareSkill::count();
+        return response()->json([
+            'softwares' =>$softwares,
+            'solutions' => $solutions,
+            'industries' => $industries,
+            'skills' => $skills
+        ]);
+    }
 }
