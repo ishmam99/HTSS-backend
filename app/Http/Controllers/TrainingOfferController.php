@@ -21,7 +21,11 @@ class TrainingOfferController extends Controller
             $lists = $query->get();
         }
 
-        return TrainingOfferResource::collection($lists);
+          return response()->json([
+            'success' => true,
+            'data' => $lists,
+             'total' => TrainingOffer::count()
+        ]);
     }
 
 

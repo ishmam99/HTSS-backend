@@ -24,6 +24,7 @@ class EndUserController extends Controller
      return response()->json([
             'success' => true,
             'data' => $lists,
+           'total' => EndUser::count()
         ]);
 }
 

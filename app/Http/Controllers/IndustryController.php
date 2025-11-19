@@ -18,6 +18,7 @@ class IndustryController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => Industry::count()
         ]);
     }
 

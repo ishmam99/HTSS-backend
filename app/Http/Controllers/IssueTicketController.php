@@ -20,6 +20,7 @@ class IssueTicketController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => IssueTicket::count()
         ]);
     }
 
@@ -30,12 +31,12 @@ class IssueTicketController extends Controller
         $data['user_id'] = auth()->id();
         $issueTicket = IssueTicket::create($data);
 
-        
+
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('uploads/issueTicket', 'public');
             $issueTicket->update(['attachment' => $path]);
         }
-       
+
 
         return response()->json([
             'status' => true,
@@ -53,18 +54,18 @@ class IssueTicketController extends Controller
     {
         $data = $request->validated();
 
-        
+
         if ($request->hasFile('attachment')) {
-           
+
             if ($issueTicket->attachment && Storage::disk('public')->exists($issueTicket->attachment)) {
                 Storage::disk('public')->delete($issueTicket->attachment);
             }
 
-            
+
             $path = $request->file('attachment')->store('uploads/issueTicket', 'public');
             $data['attachment'] = $path;
         }
-        
+
 
         $issueTicket->update($data);
 

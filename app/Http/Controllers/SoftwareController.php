@@ -23,6 +23,7 @@ class SoftwareController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+            'total' => Software::count()
         ]);
     }
 

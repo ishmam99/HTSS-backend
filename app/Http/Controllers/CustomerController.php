@@ -20,6 +20,7 @@ class CustomerController extends Controller
         return response()->json([
             'success' => true,
             'data' => $customers,
+             'total' => Customer::count()
         ]);
     }
 

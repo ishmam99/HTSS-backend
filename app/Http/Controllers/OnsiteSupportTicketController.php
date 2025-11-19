@@ -20,6 +20,7 @@ class OnsiteSupportTicketController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => OnsiteSupportTicket::count()
         ]);
     }
 
@@ -30,12 +31,12 @@ class OnsiteSupportTicketController extends Controller
 
         $onsiteSupportTicket = OnsiteSupportTicket::create($data);
 
-        
+
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('uploads/onsiteSupportTicket', 'public');
             $onsiteSupportTicket->update(['attachment' => $path]);
         }
-       
+
 
         return response()->json([
             'status' => true,
@@ -52,18 +53,18 @@ class OnsiteSupportTicketController extends Controller
     {
         $data = $request->validated();
 
-        
+
         if ($request->hasFile('attachment')) {
-           
+
             if ($onsiteSupportTicket->attachment && Storage::disk('public')->exists($onsiteSupportTicket->attachment)) {
                 Storage::disk('public')->delete($onsiteSupportTicket->attachment);
             }
 
-            
+
             $path = $request->file('attachment')->store('uploads/onsiteSupportTicket', 'public');
             $data['attachment'] = $path;
         }
-        
+
 
         $onsiteSupportTicket->update($data);
 

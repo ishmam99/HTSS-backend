@@ -18,6 +18,7 @@ class SolutionController extends Controller
     return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => Solution::count()
         ]);
 
     }

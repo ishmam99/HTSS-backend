@@ -21,6 +21,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'data' => $customers,
+            'total' => User::count()
         ]);
     }
     public function register(Request $request)

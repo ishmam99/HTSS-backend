@@ -23,6 +23,7 @@ class TrainerController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => Trainer::count()
         ]);
     }
 

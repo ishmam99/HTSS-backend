@@ -17,6 +17,7 @@ class SoftwareSkillController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => SoftwareSkill::count()
         ]);
     }
 
