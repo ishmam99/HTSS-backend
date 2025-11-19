@@ -9,10 +9,7 @@ class SoftwareSkill extends Model
 {
      use HasAdvancedQuery;
     protected $guarded = ['id'];
-    // public function users()
-    // {
-    //     return $this->belongsToMany(User::class, 'user_software_skills');
-    // }
+       protected array $searchable = ['software.name','name','status'];
 
     public function software()
     {
