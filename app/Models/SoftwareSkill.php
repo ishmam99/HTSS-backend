@@ -15,7 +15,7 @@ class SoftwareSkill extends Model
 
     public function software()
     {
-        return $this->hasMany(Software::class);
+        return $this->belongsTo(Software::class);
     }
     public function users()
     {

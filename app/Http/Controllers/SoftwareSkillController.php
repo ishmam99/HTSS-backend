@@ -7,15 +7,17 @@ use Illuminate\Http\Request;
 
 class SoftwareSkillController extends Controller
 {
-    public function index()
+     public function index(Request $request)
     {
-        if (request()->has('per_page')) {
-            return response()->json(
-                SoftwareSkill::query()->paginate(request()->per_page)
-            );
-        }
-
-        return response()->json(SoftwareSkill::all());
+        // Get all software with related skill
+        $query = SoftwareSkill::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
     }
 
     public function store(Request $request)
