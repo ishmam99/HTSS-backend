@@ -19,7 +19,7 @@ class EndUserResource extends JsonResource
                 'email' => $this->user->email,
             ],
             'customer_name' => $this->load('customer.user')->customer->user->name,
-            'industry_name' => $this->load('industry')->industry->name,
+            'industry' => $this->load('industry'),
             'customer_id' => $this->customer_id,
             'industry_id' => $this->industry_id,
             'softwares' => $this->softwares,
