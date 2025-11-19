@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
 
 class SoftwareSkill extends Model
 {
-
+     use HasAdvancedQuery;
     protected $guarded = ['id'];
     // public function users()
     // {
