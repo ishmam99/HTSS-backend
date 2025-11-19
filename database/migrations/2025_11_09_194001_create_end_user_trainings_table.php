@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('end_user_trainings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('end_user_id')->constrained('end_users')->cascadeOnDelete();
-            $table->foreignId('training_course_id')->constrained('training_courses')->cascadeOnDelete();
+            $table->foreignId('training_offer_id')->constrained('training_offers')->cascadeOnDelete();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });

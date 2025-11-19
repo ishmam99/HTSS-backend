@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EndUser extends Model
 {
@@ -39,5 +40,14 @@ class EndUser extends Model
     public function softwareLevels()
     {
         return $this->hasMany(EndUserSoftware::class);
+    }
+    /**
+     * Get all of the trainingEnrollment for the EndUser
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function trainingEnrollment(): HasMany
+    {
+        return $this->hasMany(EndUserTraining::class , 'end_user_id');
     }
 }
