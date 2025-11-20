@@ -15,6 +15,7 @@ class EndUserTrainingResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id'=> $this->id,
             'end_user' =>new EndUserResource($this->user),
             'training_offer' => new TrainingOfferResource($this->offer)
         ];

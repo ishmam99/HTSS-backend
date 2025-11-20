@@ -21,7 +21,7 @@ class EndUserTraining extends Model
    */
   public function user(): BelongsTo
   {
-      return $this->belongsTo(EndUser::class);
+      return $this->belongsTo(EndUser::class,'end_user_id');
   }
   public function offer(): BelongsTo
   {
