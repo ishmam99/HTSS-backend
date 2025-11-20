@@ -16,8 +16,8 @@ class EndUserTrainingResource extends JsonResource
     {
         return [
             'id'=> $this->id,
-            'end_user' =>new EndUserResource($this->user),
-            'training_offer' => new TrainingOfferResource($this->offer)
+            'end_user' => new EndUserResource($this->whenLoaded('user')),
+            'training_offer' => new TrainingOfferResource($this->whenLoaded('offer'))
         ];
     }
 }
