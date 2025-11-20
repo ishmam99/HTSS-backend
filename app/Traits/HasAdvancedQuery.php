@@ -94,7 +94,7 @@ trait HasAdvancedQuery
     // Existing filters
     foreach ($request->all() as $key => $value) {
         if (in_array($key, [
-            'search', 'sort_by', 'sort_order', 'page', 'per_page',
+            'search', 'sort_by', 'sort_order', 'page', 'per_page','pluck',
             'with', 'group_by', 'group_select', 'where', 'or_where',
             'relation', 'relation_field', 'relation_value', 'filter'
         ])) continue;
