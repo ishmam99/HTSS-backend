@@ -139,80 +139,72 @@ trait HasAdvancedQuery
     $query->orderBy($sortBy, in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 }
 
-
- protected function applyGrouping(Builder $query, Request $request): void
+protected function applyGrouping(Builder $query, Request $request): void
 {
     if (!$request->filled('group_by')) return;
 
-    $model = $query->getModel();
+    $model       = $query->getModel();
     $parentTable = $model->getTable();
-
     $groupFields = explode(',', $request->input('group_by'));
+
+    $selects = [];
+    $groupBys = [];
 
     foreach ($groupFields as $field) {
 
-        // ─────────────────────────────────────────────
-        // CASE 1: Simple column
-        // ─────────────────────────────────────────────
-        if (!str_contains($field, '.')) {
-            $query->selectRaw("$parentTable.$field");
-            $query->groupBy("$parentTable.$field");
-            continue;
-        }
+        // CASE 1: relation.column  (including pivot)
+        if (str_contains($field, '.')) {
 
-        // ─────────────────────────────────────────────
-        // CASE 2: relation.column or relation.pivotColumn
-        // ─────────────────────────────────────────────
-        [$relationName, $column] = explode('.', $field);
+            [$relation, $column] = explode('.', $field);
 
-        if (!method_exists($model, $relationName)) {
-            continue; // skip invalid relations
-        }
-
-        $relation = $model->$relationName();
-        $relatedTable = $relation->getRelated()->getTable();
-
-        // ─────────────────────────────────────────────
-        // HANDLE MANY-TO-MANY
-        // ─────────────────────────────────────────────
-        if ($relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
-
-            $pivot = $relation->getTable(); // pivot table name
-            $foreignKey = $relation->getForeignPivotKeyName(); // pivot.user_id
-            $relatedKey = $relation->getRelatedPivotKeyName(); // pivot.software_id
-
-            // Join pivot table
-            $query->leftJoin($pivot, "$pivot.$foreignKey", '=', "$parentTable.id");
-
-            // Join related table
-            $query->leftJoin($relatedTable, "$relatedTable.id", '=', "$pivot.$relatedKey");
-
-            // If the column exists in pivot
-            if (Schema::hasColumn($pivot, $column)) {
-                $query->selectRaw("$pivot.$column");
-                $query->groupBy("$pivot.$column");
-            }
-            // or in related table
-            elseif (Schema::hasColumn($relatedTable, $column)) {
-                $query->selectRaw("$relatedTable.$column");
-                $query->groupBy("$relatedTable.$column");
+            if (!method_exists($model, $relation)) {
+                continue; // invalid relation
             }
 
-            continue;
+            $relationObj = $model->$relation();
+            $relatedTable = $relationObj->getRelated()->getTable();
+
+            // belongsToMany → pivot grouping supported
+            if ($relationObj instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
+                $pivot = $relationObj->getTable(); // pivot table name
+
+                // join pivot
+                $query->leftJoin($pivot, "$pivot.{$relationObj->getForeignPivotKeyName()}", '=', "$parentTable.id");
+
+                // join related table
+                $query->leftJoin($relatedTable, "$relatedTable.id", '=', "$pivot.{$relationObj->getRelatedPivotKeyName()}");
+
+                $selects[] = "$relatedTable.$column";
+                $groupBys[] = "$relatedTable.$column";
+            }
+
+            // belongsTo / hasOne / hasMany
+            else {
+                $foreignKey = $relationObj->getForeignKeyName();
+                $localKey   = $relationObj->getOwnerKeyName();
+
+                $query->leftJoin($relatedTable, "$relatedTable.$localKey", '=', "$parentTable.$foreignKey");
+
+                $selects[] = "$relatedTable.$column";
+                $groupBys[] = "$relatedTable.$column";
+            }
         }
 
-        // ─────────────────────────────────────────────
-        // HANDLE BELONGS-TO / HAS-ONE / HAS-MANY
-        // ─────────────────────────────────────────────
-        $parentKey = $relation->getQualifiedForeignKeyName();  // users.profile_id
-        $ownerKey  = $relation->getQualifiedOwnerKeyName();    // profiles.id
-
-        $query->leftJoin($relatedTable, $ownerKey, '=', $parentKey);
-
-        $query->selectRaw("$relatedTable.$column");
-        $query->groupBy("$relatedTable.$column");
+        // CASE 2: simple column on parent table
+        else {
+            $selects[] = "$parentTable.$field";
+            $groupBys[] = "$parentTable.$field";
+        }
     }
+
+    // ADD COUNT (this is what was missing)
+    $query->select(array_merge($selects, [
+        DB::raw('COUNT(*) AS total')
+    ]));
+
+    $query->groupBy($groupBys);
 }
+
 
 
     protected function applyCustomConditions(Builder $query, Request $request): void
