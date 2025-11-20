@@ -30,6 +30,7 @@ class CustomerResource extends JsonResource
             'user' => new \App\Http\Resources\UserResource($this->whenLoaded('user')),
             'solutions' => $this->whenLoaded('solutions'),
             'softwares' => $this->whenLoaded('softwares'),
+            'tickets' => $this->whenLoaded('tickets'),
 
         ];
     }

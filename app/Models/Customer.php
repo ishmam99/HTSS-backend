@@ -6,6 +6,7 @@ use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -33,5 +34,14 @@ class Customer extends Model
     public function solutions(): BelongsToMany
     {
         return $this->belongsToMany(Solution::class, 'customer_solutions');
+    }
+    /**
+     * Get all of the tickets for the Customer
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(CustomerSupport::class);
     }
 }
