@@ -26,11 +26,11 @@ class EndUserTrainingController extends Controller
 
     public function index(Request $request)
     {
-        $query = EndUserTraining::with(['user','offer'])->when($request->end_user_id, function ($query, $request) {
-            return $query->where('end_user_id', $request->end_user_id);
-        })->when($request->training_offer_id, function ($query, $request) {
-            return $query->where('training_offer_id', $request->training_offer_id);
-        })->orderBy('id', 'desc');
+       $query = EndUserTraining::with(['user','offer'])
+    ->when($request->end_user_id, fn($q) => $q->where('end_user_id', $request->end_user_id))
+    ->when($request->training_offer_id, fn($q) => $q->where('training_offer_id', $request->training_offer_id))
+    ->orderBy('id', 'desc');
+
 
            $lists = $request->has('per_page')
         ? $query->paginate($request->per_page)
