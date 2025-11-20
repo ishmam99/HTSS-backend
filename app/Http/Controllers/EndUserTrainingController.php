@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EndUserTrainingResource;
 use App\Models\EndUserTraining;
 use Illuminate\Http\Request;
 
@@ -21,5 +22,21 @@ class EndUserTrainingController extends Controller
         ]);
         $req =  EndUserTraining::create($data);
         return response()->json(['message'=>'Enrolled Successfull','data'=>$req]);
+    }
+
+    public function index(Request $request)
+    {
+        $query = EndUserTraining::with(['user','offer'])->when($request->end_user_id, function ($query, $request) {
+            return $query->where('end_user_id', $request->end_user_id);
+        })->when($request->training_offer_id, function ($query, $request) {
+            return $query->where('training_offer_id', $request->training_offer_id);
+        })->orderBy('id', 'desc');
+
+           $lists = $request->has('per_page')
+        ? $query->paginate($request->per_page)
+        : $query->get();
+
+        return EndUserTrainingResource::collection($lists);
+        
     }
 }
