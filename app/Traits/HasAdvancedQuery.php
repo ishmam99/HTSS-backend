@@ -5,6 +5,7 @@ namespace App\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 trait HasAdvancedQuery
 {
@@ -15,7 +16,7 @@ trait HasAdvancedQuery
     {
         $instance = new static();
         $query = static::query();
-        
+
         $instance->applyRelationships($query, $request);
         $instance->applySearch($query, $request);
         $instance->applyFilters($query, $request);
@@ -139,30 +140,78 @@ trait HasAdvancedQuery
 }
 
 
-    protected function applyGrouping(Builder $query, Request $request): void
+ protected function applyGrouping(Builder $query, Request $request): void
 {
     if (!$request->filled('group_by')) return;
 
+    $model = $query->getModel();
+    $parentTable = $model->getTable();
+
     $groupFields = explode(',', $request->input('group_by'));
-    $selects = [];
-    $groupBys = [];
 
     foreach ($groupFields as $field) {
-        if (str_contains($field, '.')) {
-            // relation.column
-            [$relation, $column] = explode('.', $field);
-            $relationTable = $this->$relation()->getRelated()->getTable();
-            $query->join($relationTable, "$relationTable.id", '=', "customers.{$relation}_id");
-            $selects[] = "$relationTable.$column";
-            $groupBys[] = "$relationTable.$column";
-        } else {
-            $selects[] = $field;
-            $groupBys[] = $field;
-        }
-    }
 
-    $query->select(array_merge($selects, [DB::raw('COUNT(*) as total')]))
-          ->groupBy($groupBys);
+        // ─────────────────────────────────────────────
+        // CASE 1: Simple column
+        // ─────────────────────────────────────────────
+        if (!str_contains($field, '.')) {
+            $query->selectRaw("$parentTable.$field");
+            $query->groupBy("$parentTable.$field");
+            continue;
+        }
+
+        // ─────────────────────────────────────────────
+        // CASE 2: relation.column or relation.pivotColumn
+        // ─────────────────────────────────────────────
+        [$relationName, $column] = explode('.', $field);
+
+        if (!method_exists($model, $relationName)) {
+            continue; // skip invalid relations
+        }
+
+        $relation = $model->$relationName();
+        $relatedTable = $relation->getRelated()->getTable();
+
+        // ─────────────────────────────────────────────
+        // HANDLE MANY-TO-MANY
+        // ─────────────────────────────────────────────
+        if ($relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
+
+            $pivot = $relation->getTable(); // pivot table name
+            $foreignKey = $relation->getForeignPivotKeyName(); // pivot.user_id
+            $relatedKey = $relation->getRelatedPivotKeyName(); // pivot.software_id
+
+            // Join pivot table
+            $query->leftJoin($pivot, "$pivot.$foreignKey", '=', "$parentTable.id");
+
+            // Join related table
+            $query->leftJoin($relatedTable, "$relatedTable.id", '=', "$pivot.$relatedKey");
+
+            // If the column exists in pivot
+            if (Schema::hasColumn($pivot, $column)) {
+                $query->selectRaw("$pivot.$column");
+                $query->groupBy("$pivot.$column");
+            }
+            // or in related table
+            elseif (Schema::hasColumn($relatedTable, $column)) {
+                $query->selectRaw("$relatedTable.$column");
+                $query->groupBy("$relatedTable.$column");
+            }
+
+            continue;
+        }
+
+        // ─────────────────────────────────────────────
+        // HANDLE BELONGS-TO / HAS-ONE / HAS-MANY
+        // ─────────────────────────────────────────────
+        $parentKey = $relation->getQualifiedForeignKeyName();  // users.profile_id
+        $ownerKey  = $relation->getQualifiedOwnerKeyName();    // profiles.id
+
+        $query->leftJoin($relatedTable, $ownerKey, '=', $parentKey);
+
+        $query->selectRaw("$relatedTable.$column");
+        $query->groupBy("$relatedTable.$column");
+    }
 }
 
 
