@@ -66,6 +66,12 @@ public function index(Module $module)
         $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
         $query->whereIn('id', $mine);
     }
+
+    if (request()->has('lite')) {
+        return response()->json([
+            'total' => $query->count()
+        ]);
+    }
     if(request()->per_page)
     {
         $data = $query->paginate(request()->per_page);

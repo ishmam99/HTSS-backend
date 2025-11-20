@@ -11,7 +11,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
        //add api routes for module
        Route::apiResource('module',ModuleController::class);
        Route::apiResource('field',ModuleFieldController::class);
-
+        Route::get('stats',[ModuleController::class,'stats']);
         Route::prefix('modules/{module}')->group(function () {
             Route::get('/records', [RecordController::class, 'index']);
             Route::get('/records/{id}', [RecordController::class, 'show']);
