@@ -12,7 +12,7 @@ class TrainingEnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingEnrollment::with(['endUser.user','trainingOffer'])->when($request->status, function($query, $status) {
+        $query = TrainingEnrollment::with(['endUser.user','trainingOffer.event'])->when($request->status, function($query, $status) {
             return $query->where('status', $status);
         })->when($request->customer_id, function($q, $customerId) {
             return $q->whereHas('endUser', function($q2) use ($customerId) {
