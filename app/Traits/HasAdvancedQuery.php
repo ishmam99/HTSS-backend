@@ -86,18 +86,37 @@ trait HasAdvancedQuery
 }
 
 
-    protected function applyFilters(Builder $query, Request $request): void
-    {
-        foreach ($request->all() as $key => $value) {
-            if (in_array($key, [
-                'search', 'sort_by', 'sort_order', 'page', 'per_page',
-                'with', 'group_by', 'group_select', 'where', 'or_where'
-            ])) continue;
+  protected function applyFilters(Builder $query, Request $request): void
+{
+    $model = $query->getModel();
+    $parentTable = $model->getTable();
 
-            if (is_array($value)) $query->whereIn($key, $value);
-            else $query->where($key, $value);
-        }
+    // Existing filters
+    foreach ($request->all() as $key => $value) {
+        if (in_array($key, [
+            'search', 'sort_by', 'sort_order', 'page', 'per_page',
+            'with', 'group_by', 'group_select', 'where', 'or_where',
+            'relation', 'relation_field', 'relation_value', 'filter'
+        ])) continue;
+
+        if (is_array($value)) $query->whereIn($key, $value);
+        else $query->where($key, $value);
     }
+
+    // --------------------------
+    // DYNAMIC MANY-TO-MANY FILTER
+    // --------------------------
+    $relation      = $request->input('relation');        // e.g., 'softwares'
+    $relationField = $request->input('relation_field');  // e.g., 'id'
+    $relationValue = $request->input('relation_value');  // e.g., 1
+
+    if ($relation && $relationField && $relationValue && method_exists($model, $relation)) {
+        $query->whereHas($relation, function ($q) use ($relationField, $relationValue) {
+            $q->where($relationField, $relationValue);
+        });
+    }
+}
+
 
     protected function applyDateFilters(Builder $query, Request $request): void
     {
