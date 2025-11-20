@@ -10,7 +10,7 @@ class CustomerSupport extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-
+        protected array $searchable = ['user.name','user.email', 'user.phone', 'user.address','city','industry_id','industry.name','status'];
     public function solution()
     {
         return $this->belongsTo(Solution::class);
