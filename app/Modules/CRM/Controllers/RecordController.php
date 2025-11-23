@@ -74,6 +74,23 @@ public function index(Module $module)
         });
     }
 }
+    if (request()->has('date_filters') && is_array(request()->date_filters)) {
+
+    foreach (request()->date_filters as $fieldName => $range) {
+
+        if (!isset($range['start']) || !isset($range['end'])) {
+            continue; // skip invalid ranges
+        }
+
+        $start = $range['start'];
+        $end   = $range['end'];
+
+        $query->whereHas('values', function ($q) use ($fieldName, $start, $end) {
+            $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
+              ->whereBetween('value', [$start, $end]);
+        });
+    }
+}
 
 
     if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
