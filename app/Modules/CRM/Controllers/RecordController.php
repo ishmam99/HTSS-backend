@@ -260,8 +260,18 @@ public function convertModule($recordId)
     public function getChild($record , $type){
         $childs = RecordRelation::where('parent_record_id',$record)->where('relation_type',$type)->pluck('child_record_id');
 
-        $childData = Record::whereIn('id',$childs)->with('values.field','assignments.user')->get();
+        $query = Record::whereIn('id',$childs)->with('values.field','assignments.user')->get();
+         if (request()->field && request()->value) {
 
+        $fieldName = request()->field;
+        $fieldValue = request()->value;
+
+        $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
+            $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
+                ->where('value', $fieldValue);
+        });
+    }
+    $childData = $query;
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
 
