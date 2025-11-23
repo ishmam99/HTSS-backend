@@ -270,9 +270,9 @@ public function convertModule($recordId)
             $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
                 ->where('value', $fieldValue);
         });
-        
+
     }
-    else
+    
     $childData = $query->get();
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
