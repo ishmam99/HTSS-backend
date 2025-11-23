@@ -61,6 +61,20 @@ public function index(Module $module)
                 ->where('value', $fieldValue);
         });
     }
+    if (request()->has('filters') && is_array(request()->filters)) {
+
+    foreach (request()->filters as $fieldName => $fieldValue) {
+
+        $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
+            $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
+
+            is_array($fieldValue)
+                ? $q->whereIn('value', $fieldValue)
+                : $q->where('value', $fieldValue);
+        });
+    }
+}
+
 
     if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
         $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
