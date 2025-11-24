@@ -30,5 +30,6 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::put('/record-values/{id}', [RecordController::class, 'updateValue']);
         Route::put('/assign-record-update/{id}', [RecordController::class, 'updateRecordAssignment']);
         Route::delete('/record/{record}', [RecordController::class, 'destroy']);
+        Route::get('convert-deal-to-project/{dealId}',[RecordController::class,'convertDealToProject']);
     });
 });

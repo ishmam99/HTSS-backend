@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Modules\CRM\Models\Module;
+use Modules\CRM\Models\ModuleField;
 use Modules\CRM\Models\Record;
 use Modules\CRM\Models\RecordRelation;
 use Modules\CRM\Models\RecordUserAssignment;
@@ -387,5 +388,51 @@ public function convertModule($recordId)
             'message' => 'Record deleted successfully'
         ]);
     }
+   public function convertDealToProject($dealId)
+{
+    DB::beginTransaction();
+
+    try {
+        // 1. Create the project
+        $project =  Record::create([
+            'module_id' => 7,
+            'created_by' => auth()->id(),
+            // 'record_id' => $request->parent_id,
+            // 'relation_type' => $request->relation_type,
+        ]);
+
+        // 2. Copy dynamic fields
+        // Fetch project module fields
+        $projectFields = ModuleField::where('module', 7)->get()->keyBy('name');
+        $deal =Record::where('id',$dealId)->with('values.field')->first();
+        foreach ($deal->values as $dealValue) {
+            // Try to find a matching project field by name (or key)
+            if (isset($projectFields[$dealValue->field->name])) {
+                $field = $projectFields[$dealValue->field->name];
+
+                $project->values()->create([
+                    'field_id' => $field->id,
+                    'value' => $dealValue->value,
+                ]);
+            }
+        }
+        $relations = RecordRelation::where('parent_record_id',$dealId)->with('child.module')->get();
+        foreach($relations as $relation)
+        {
+            RecordRelation::create([
+                'parent_record_id' => $project->id,
+                'child_record_id' => $relation->child_record_id,
+                'relation_type' =>  'Projects'.'-'.$relation->child->module->name
+            ]);
+        }
+        DB::commit();
+
+        return $project;
+    } catch (\Exception $e) {
+        DB::rollBack();
+        throw $e;
+    }
+}
+
 
 }
