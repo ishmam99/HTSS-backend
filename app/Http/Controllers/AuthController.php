@@ -71,7 +71,7 @@ class AuthController extends Controller
         {
 
               logActivity('login', 'auth', null, [
-            'email' => $user->email
+            'data' => 'Logged in to Sales Dashboard'
         ],'user-login',$user);
         }
 
