@@ -31,8 +31,17 @@ class EnumController extends Controller
         ]);
     }
 
-    public function roleWiseList()
+    public function roleWiseList(Request $request)
     {
+        if ($request->filled('role')) {
+            $users = User::where('role', $request->role)->get();
+
+            return response()->json([
+                'status' => true,
+                'role' => $request->role,
+                'data' => $users,
+            ]);
+        }
         $data = User::all()->groupBy('role');
 
         return response()->json([
