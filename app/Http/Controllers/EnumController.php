@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\EnumHelper;
 use App\Enums\RoleEnum;
+use App\Models\User;
+use Illuminate\Container\Attributes\DB;
 use Illuminate\Http\JsonResponse;
 
 class EnumController extends Controller
@@ -13,6 +15,18 @@ class EnumController extends Controller
     {
         return response()->json([
             'roles' => EnumHelper::toArray(RoleEnum::class)
+        ]);
+    }
+
+    public function roleWiseCount()
+    {
+        $data = User::select('role', DB::raw('count(*) as total'))
+            ->groupBy('role')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
         ]);
     }
 }

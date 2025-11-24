@@ -86,4 +86,5 @@ Route::prefix('v1')->group(function () {
     });
     Route::apiResource('customer-support',CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}',[CustomerSupportController::class,'statusUpdate']);
+    Route::get('/users/role-count', [EnumController::class, 'roleWiseCount']);
 });
