@@ -39,6 +39,17 @@ class ActivityController extends Controller
             });
         }
 
+        if ($request->filled('today')) {
+            $query->whereDate('created_at', $request->today);
+        }
+        
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
+
         $perPage = $request->get('per_page', 20);
 
         $activities = $query->with('user')->latest()->paginate($perPage);
