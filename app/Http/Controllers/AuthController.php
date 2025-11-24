@@ -67,9 +67,7 @@ class AuthController extends Controller
             ]);
         }
 
-        if($user && in_array($user->role, ['sales-manager', 'sales-executive']))
-        {
-
+              if ($user && in_array($user->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
               logActivity('login', 'auth', null, [
             'data' => 'Logged in to Sales Dashboard'
         ],'user-login',$user);

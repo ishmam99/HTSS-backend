@@ -131,7 +131,7 @@ public function index(Module $module)
             'assignments.user'
         ])
         ->firstOrFail();
-      if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+      if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
         try {
     logActivity('viewed', $module->name, $id);
 } catch (\Exception $e) {
@@ -177,7 +177,7 @@ public function store(Request $request, Module $module)
 
         DB::commit();
 
-    if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+    if (in_array(auth()->user()->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
         logActivity(
             'created',
             $module->name,
@@ -242,7 +242,7 @@ public function convertModule($recordId)
             $recordValue->update([
                 'value' => $request->value
             ]);
-
+              if (in_array(auth()->user()->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
             logActivity(
                 'updated-field',
                 'record-value',
@@ -253,7 +253,7 @@ public function convertModule($recordId)
                     'new_value' => $request->value
                 ]
             );
-
+        }
         return response()->json([
             'status' => true,
             'message' => 'Value updated successfully',
@@ -267,7 +267,7 @@ public function convertModule($recordId)
             ['value' => $request->value]);
 
 
-             if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+             if (in_array(auth()->user()->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
           logActivity(
                 'updated-field',
                 'record-value',
@@ -300,7 +300,7 @@ public function convertModule($recordId)
             'child_record_id' => $request->child_record_id,
             'relation_type' => $relation_type
         ]);
-        if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+         if (in_array(auth()->user()->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
         logActivity(
             'added-child',
             $parent->module->name,
@@ -381,7 +381,7 @@ public function convertModule($recordId)
     public function destroy(Record $record)
     {
         $record->delete();
-        if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+          if (in_array(auth()->user()->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
         logActivity('deleted', $record->module->name, $record->id);
     }
         return response()->json([
