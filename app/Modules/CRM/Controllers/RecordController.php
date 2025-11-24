@@ -430,8 +430,8 @@ public function convertModule($recordId)
         {
             RecordRelation::create([
                 'child_record_id' => $project->id,
-                'parent_record_id' => $relation->child_record_id,
-                'relation_type' => $relation->child->module->name .'-'.'Projects'
+                'parent_record_id' => $relation->parent_record_id,
+                'relation_type' => $relation->parent->module->name .'-'.'Projects'
             ]);
         }
         DB::commit();
