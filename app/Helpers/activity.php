@@ -16,7 +16,7 @@ if (! function_exists('logActivity')) {
     {
         if(!$user)
         $user = Auth::user();
-
+        
         return ModelsActivity::create([
             'user_id'    => $user ? $user->id : null,
             'action'     => $action,

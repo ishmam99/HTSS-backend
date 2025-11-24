@@ -66,13 +66,13 @@ class AuthController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-         
+
         if($user && in_array($user->role, ['sales-manager', 'sales-executive']))
         {
 
               logActivity('login', 'auth', null, [
             'email' => $user->email
-        ],'user-login',$user->id);
+        ],'user-login',$user);
         }
 
         $token = $user->createToken('api_token')->plainTextToken;
