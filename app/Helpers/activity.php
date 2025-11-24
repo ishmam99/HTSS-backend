@@ -12,8 +12,9 @@ if (! function_exists('logActivity')) {
      * @param string|null $meta
      * @return Activity
      */
-    function logActivity(string $action, ?string $module = null, $recordId = null, ?array $details = null, ?string $meta = null)
+    function logActivity(string $action, ?string $module = null, $recordId = null, ?array $details = null, ?string $meta = null,?int $user=null)
     {
+        if(!$user)
         $user = Auth::user();
 
         return ModelsActivity::create([
