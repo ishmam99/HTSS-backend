@@ -417,12 +417,21 @@ public function convertModule($recordId)
             }
         }
         $relations = RecordRelation::where('parent_record_id',$dealId)->with('child.module')->get();
+        $relations2 = RecordRelation::where('child_record_id',$dealId)->with('parent.module')->get();
         foreach($relations as $relation)
         {
             RecordRelation::create([
                 'parent_record_id' => $project->id,
                 'child_record_id' => $relation->child_record_id,
                 'relation_type' =>  'Projects'.'-'.$relation->child->module->name
+            ]);
+        }
+        foreach($relations2 as $relation)
+        {
+            RecordRelation::create([
+                'child_record_id' => $project->id,
+                'parent_record_id' => $relation->child_record_id,
+                'relation_type' => $relation->child->module->name .'-'.'Projects'
             ]);
         }
         DB::commit();
