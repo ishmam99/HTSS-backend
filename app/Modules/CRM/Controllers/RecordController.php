@@ -403,7 +403,7 @@ public function convertModule($recordId)
 
         // 2. Copy dynamic fields
         // Fetch project module fields
-        $projectFields = ModuleField::where('module', 7)->get()->keyBy('name');
+        $projectFields = ModuleField::where('module_id', 7)->get()->keyBy('name');
         $deal =Record::where('id',$dealId)->with('values.field')->first();
         foreach ($deal->values as $dealValue) {
             // Try to find a matching project field by name (or key)
