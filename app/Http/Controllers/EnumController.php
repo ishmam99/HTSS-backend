@@ -33,8 +33,7 @@ class EnumController extends Controller
 
     public function roleWiseList()
     {
-        $data = User::groupBy('role')
-            ->get();
+        $data = User::all()->groupBy('role');
 
         return response()->json([
             'status' => true,
