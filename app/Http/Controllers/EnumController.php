@@ -30,4 +30,15 @@ class EnumController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function roleWiseList()
+    {
+        $data = User::groupBy('role')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+        ]);
+    }
 }
