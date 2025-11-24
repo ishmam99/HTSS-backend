@@ -130,7 +130,14 @@ public function index(Module $module)
             'assignments.user'
         ])
         ->firstOrFail();
+      if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+        try {
+    logActivity('viewed', $module->name, $id);
+} catch (\Exception $e) {
+    // optionally log error or skip silently
+}
 
+    }
     return response()->json(['data' => $record]);
 }
 
@@ -169,6 +176,16 @@ public function store(Request $request, Module $module)
 
         DB::commit();
 
+    if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+        logActivity(
+            'created',
+            $module->name,
+            $record->id,
+            $details = [
+                'data' => $request->all()
+            ]
+        );
+    }
         return response()->json($record->load('values.field'));
     } catch (\Exception $e) {
         DB::rollBack();
@@ -219,9 +236,23 @@ public function convertModule($recordId)
                 'message' => 'Record value not found'
             ], 400);
         }
-        $recordValue->update([
-            'value' => $request->value
-        ]);
+       $oldValue = $recordValue->value;
+
+            $recordValue->update([
+                'value' => $request->value
+            ]);
+
+            logActivity(
+                'updated-field',
+                'record-value',
+                $recordValue->record_id,
+                [
+                    'field_id' => $recordValue->field_id,
+                    'old_value' => $oldValue,
+                    'new_value' => $request->value
+                ]
+            );
+
         return response()->json([
             'status' => true,
             'message' => 'Value updated successfully',
@@ -233,6 +264,19 @@ public function convertModule($recordId)
          $recordValue = RecordValue::updateOrCreate(
             ['record_id' => $id, 'field_id' => $request->field_id],
             ['value' => $request->value]);
+
+
+             if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+          logActivity(
+                'updated-field',
+                'record-value',
+                $id,
+                [
+                    'field_id' => $request->field_id,
+                    'new_value' => $request->value
+                ]
+            );
+        }
 
         return response()->json([
             'status' => true,
@@ -255,6 +299,18 @@ public function convertModule($recordId)
             'child_record_id' => $request->child_record_id,
             'relation_type' => $relation_type
         ]);
+        if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+        logActivity(
+            'added-child',
+            $parent->module->name,
+            $request->parent_record_id,
+            [
+                'child_record_id' => $request->child_record_id,
+                'child_module' => $child->module->name,
+                'relation_type' => $relation_type
+            ]
+        );
+    }
         return response()->json('Child Data added successfully');
     }
     public function getChild($record , $type){
@@ -272,7 +328,7 @@ public function convertModule($recordId)
         });
 
     }
-    
+
     $childData = $query->get();
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
@@ -324,6 +380,9 @@ public function convertModule($recordId)
     public function destroy(Record $record)
     {
         $record->delete();
+        if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+        logActivity('deleted', $record->module->name, $record->id);
+    }
         return response()->json([
             'message' => 'Record deleted successfully'
         ]);

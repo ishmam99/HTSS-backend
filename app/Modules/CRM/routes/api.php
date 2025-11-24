@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\CRM\Controllers\ActivityController;
 use Modules\CRM\Controllers\ModuleController;
 use Modules\CRM\Controllers\ModuleFieldController;
 use Modules\CRM\Controllers\RecordController;
@@ -9,6 +10,8 @@ use Modules\CRM\src\Controllers\LeadController;
 Route::prefix('api/v1')->middleware('api')->group(function () {
     Route::prefix('crm')->middleware('auth:sanctum')->group(function () {
        //add api routes for module
+        Route::get('activities', [ActivityController::class, 'index']);
+        Route::get('activities/{id}', [ActivityController::class, 'show']);
        Route::apiResource('module',ModuleController::class);
        Route::apiResource('field',ModuleFieldController::class);
         Route::get('stats',[ModuleController::class,'stats']);
