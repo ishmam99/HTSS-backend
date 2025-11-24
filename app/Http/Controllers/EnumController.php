@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Helpers\EnumHelper;
 use App\Enums\RoleEnum;
 use App\Models\User;
-use Illuminate\Container\Attributes\DB;
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Http\JsonResponse;
 
 class EnumController extends Controller
