@@ -20,17 +20,13 @@ class AttendanceTimeResource extends JsonResource
             'notes' => $this->notes,
             'total_minute' => $this->total_minute,
             'status' => $this->status,
-            'attachment' => $this->attachment 
-                ? asset('storage/' . $this->attachment) 
+            'attachment' => $this->attachment
+                ? asset('storage/' . $this->attachment)
                 : null,
-            'record' => $this->record ? [
+            'account' => $this->record ? [
                 'id' => $this->record->id,
-                'module' => $this->record->module ? [
-                    'id' => $this->record->module->id,
-                    'name' => $this->record->module->name,
-                    'label' => $this->record->module->label,
-                    'icon' => $this->record->module->icon,
-                ] : null,
+                'name' => $this->values->where('field_id',1)->first()->value
+
             ] : null,
         ];
     }
