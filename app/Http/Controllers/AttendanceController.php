@@ -94,13 +94,13 @@ class AttendanceController extends Controller
 
         try {
             $attendance = Attendance::findOrFail($id);
-            
+
             $attendance->update([
                 'date' => $request->date,
                 'user_id' => $request->user_id,
                 'status' => $request->status ?? 1,
             ]);
-
+            if($request->has('times')){
             $oldTimes = DB::table('attendance_times')->where('attendance_id', $attendance->id)->get();
             foreach ($oldTimes as $oldTime) {
                 if ($oldTime->attachment && Storage::disk('public')->exists($oldTime->attachment)) {
@@ -139,6 +139,7 @@ class AttendanceController extends Controller
             $attendance->update([
                 'total_working_minute' => $totalWorkingMinutes,
             ]);
+        }
 
             DB::commit();
 
