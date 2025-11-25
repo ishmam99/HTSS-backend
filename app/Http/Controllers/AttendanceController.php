@@ -27,7 +27,7 @@ class AttendanceController extends Controller
             })->when($request->has('date'), function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
 
-            })->when($request->has('sttaus'), function ($q) use ($request) {
+            })->when($request->has('status'), function ($q) use ($request) {
                 $q->where('status', $request->status);
             })
             ->orderBy('date', 'desc');
