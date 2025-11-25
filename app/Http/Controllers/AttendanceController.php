@@ -39,7 +39,7 @@ class AttendanceController extends Controller
         try {
             $attendance = Attendance::create([
                 'date' => $request->date,
-                'user_id' => $request->user_id,
+                'user_id' => auth()->id(),
                 'status' =>  $request->status,
                 'total_working_minute' => 0,
             ]);
