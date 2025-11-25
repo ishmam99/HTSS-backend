@@ -5,6 +5,7 @@ use Modules\CRM\Controllers\ActivityController;
 use Modules\CRM\Controllers\ModuleController;
 use Modules\CRM\Controllers\ModuleFieldController;
 use Modules\CRM\Controllers\RecordController;
+use Modules\CRM\Controllers\RecordValueController;
 use Modules\CRM\src\Controllers\LeadController;
 
 Route::prefix('api/v1')->middleware('api')->group(function () {
@@ -31,5 +32,6 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::put('/assign-record-update/{id}', [RecordController::class, 'updateRecordAssignment']);
         Route::delete('/record/{record}', [RecordController::class, 'destroy']);
         Route::get('convert-deal-to-project/{dealId}',[RecordController::class,'convertDealToProject']);
+        Route::post('bulk-update-records',[RecordValueController::class,'bulkUpdateOrCreate']);
     });
 });
