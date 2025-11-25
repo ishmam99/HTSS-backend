@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EnumController;
@@ -88,4 +88,8 @@ Route::prefix('v1')->group(function () {
     Route::put('customer-support-status-update/{customerSupport}',[CustomerSupportController::class,'statusUpdate']);
     Route::get('/users/role-count', [EnumController::class, 'roleWiseCount']);
     Route::get('/users/role-get', [EnumController::class, 'roleWiseList']);
+
+    Route::apiResource('attendance',AttendanceController::class)->middleware('auth:sanctum');
+    Route::put('status-update-attendance/{attendanceId}',[AttendanceController::class,'attendanceStatusUpdate']);
+    Route::put('status-update-attendance-time/{attendanceTimeId}',[AttendanceController::class,'attendanceTimeStatusUpdate']);
 });
