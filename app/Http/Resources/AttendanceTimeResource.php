@@ -24,6 +24,7 @@ class AttendanceTimeResource extends JsonResource
             'attachment' => $this->attachment 
                 ? asset('storage/' . $this->attachment) 
                 : null,
+                
         ];
     }
 }
