@@ -16,7 +16,7 @@ class AttendanceController extends Controller
 
     public function index(Request $request)
     {
-        $attendances = Attendance::with('times')
+        $attendances = Attendance::with(['times.record','user'])
             ->when($request->has('user_id'), function ($q) use ($request) {
                 $q->where('user_id', $request->user_id);
             })

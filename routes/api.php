@@ -92,6 +92,4 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('attendance',AttendanceController::class)->middleware('auth:sanctum');
     Route::put('status-update-attendance/{attendanceId}',[AttendanceController::class,'attendanceStatusUpdate']);
     Route::put('status-update-attendance-time/{attendanceTimeId}',[AttendanceController::class,'attendanceTimeStatusUpdate']);
-
-
 });
