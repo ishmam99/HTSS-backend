@@ -26,6 +26,9 @@ class AttendanceController extends Controller
                 $q->whereBetween('date', [$request->start_date, $request->end_date]);
             })->when($request->has('date'), function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
+
+            })->when($request->has('sttaus'), function ($q) use ($request) {
+                $q->where('status', $request->status);
             })
             ->orderBy('date', 'desc');
              $lists = $request->per_page
