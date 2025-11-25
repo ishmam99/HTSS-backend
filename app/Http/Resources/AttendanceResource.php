@@ -18,6 +18,12 @@ class AttendanceResource extends JsonResource
             'id' => $this->id,
             'date' => $this->date,
             'user_id' => $this->user_id,
+            'user' => $this->user? [
+                 'id' => $this->user->id,
+                    'name' => $this->user->name,
+                    'email' => $this->user->email,
+                    'role'=> $this->user->role,
+            ]:null,
             'total_working_minute' => $this->total_working_minute,
             'status' => $this->status,
             'times' => AttendanceTimeResource::collection($this->times),

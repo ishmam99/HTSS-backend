@@ -16,7 +16,6 @@ class AttendanceTimeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'record_id' => $this->record_id,
             'type_of_work' => $this->type_of_work,
             'notes' => $this->notes,
             'total_minute' => $this->total_minute,
@@ -24,7 +23,15 @@ class AttendanceTimeResource extends JsonResource
             'attachment' => $this->attachment 
                 ? asset('storage/' . $this->attachment) 
                 : null,
-                
+            'record' => $this->record ? [
+                'id' => $this->record->id,
+                'module' => $this->record->module ? [
+                    'id' => $this->record->module->id,
+                    'name' => $this->record->module->name,
+                    'label' => $this->record->module->label,
+                    'icon' => $this->record->module->icon,
+                ] : null,
+            ] : null,
         ];
     }
 }
