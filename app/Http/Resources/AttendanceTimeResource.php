@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\CRM\Models\RecordValue;
 
 class AttendanceTimeResource extends JsonResource
 {
@@ -25,7 +26,7 @@ class AttendanceTimeResource extends JsonResource
                 : null,
             'account' => $this->record ? [
                 'id' => $this->record->id,
-                'name' => $this->values
+                'name' => RecordValue::where('record_id',$this->record_id)->where('field_id',2)->first()?->value
 
             ] : null,
         ];
