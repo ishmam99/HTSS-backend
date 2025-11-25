@@ -23,6 +23,7 @@ class AttendanceRequest extends FormRequest
     {
          return [
             'date' => 'required|date',
+            'status' => 'nullable|integer',
             'times' => 'required|array',
             'times.*.record_id' => 'required|exists:users,id',
             'times.*.type_of_work' => 'nullable|string',
