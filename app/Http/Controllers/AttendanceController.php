@@ -27,10 +27,13 @@ class AttendanceController extends Controller
             })->when($request->has('date'), function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
             })
-            ->orderBy('date', 'desc')
-            ->get();
+            ->orderBy('date', 'desc');
+             $lists = $request->per_page
+                ? $attendances->paginate($request->per_page)
+                : $attendances->get();
+            
 
-        return AttendanceResource::collection($attendances);
+        return AttendanceResource::collection($lists);
     }
 
     public function store(AttendanceRequest $request)
