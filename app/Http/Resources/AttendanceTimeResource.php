@@ -25,7 +25,7 @@ class AttendanceTimeResource extends JsonResource
                 : null,
             'account' => $this->record ? [
                 'id' => $this->record->id,
-                'name' => $this->values->where('field_id',1)->first()->value
+                'name' => $this->values
 
             ] : null,
         ];
