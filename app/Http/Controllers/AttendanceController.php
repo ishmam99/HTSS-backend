@@ -40,7 +40,7 @@ class AttendanceController extends Controller
             $attendance = Attendance::create([
                 'date' => $request->date,
                 'user_id' => auth()->id(),
-                'status' =>  $request->status,
+                'status' =>  $request->status ?? 0,
                 'total_working_minute' => 0,
             ]);
             $bulkInsertData = [];
@@ -57,7 +57,7 @@ class AttendanceController extends Controller
                     'type_of_work' => $time['type_of_work'],
                     'notes' => $time['notes'] ?? null,
                     'total_minute' => $time['total_minute'],
-                    'status' => $time['status'],
+                    'status' => $time['status'] ?? 0,
                     'attachment' => $attachmentPath,
                     'created_at' => now(),
                     'updated_at' => now(),
