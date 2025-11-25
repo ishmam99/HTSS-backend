@@ -31,7 +31,7 @@ class AttendanceController extends Controller
              $lists = $request->per_page
                 ? $attendances->paginate($request->per_page)
                 : $attendances->get();
-            
+
 
         return AttendanceResource::collection($lists);
     }
@@ -88,13 +88,13 @@ class AttendanceController extends Controller
         }
     }
 
-    public function update(AttendanceRequest $request, $id)
+    public function update(Request $request, $id)
     {
         DB::beginTransaction();
 
         try {
             $attendance = Attendance::findOrFail($id);
-
+            
             $attendance->update([
                 'date' => $request->date,
                 'user_id' => $request->user_id,
