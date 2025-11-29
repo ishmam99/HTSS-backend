@@ -17,6 +17,13 @@ class CustomViewController extends Controller
         $views = CustomView::where('user_id',auth()->id())->get();
         return response()->json($views);
     }
+
+   public function show($id)
+   {
+    $view = CustomView::with('rootGroup.childrenRecursive.conditions')->find($id);
+    return response()->json($view);
+   }
+
    public function store(Request $request)
 {
     DB::transaction(function () use ($request) {

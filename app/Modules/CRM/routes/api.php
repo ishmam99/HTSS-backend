@@ -37,5 +37,6 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::post('bulk-update-records',[RecordValueController::class,'bulkUpdateOrCreate']);
         Route::post('custom-views',[CustomViewController::class,'store']);
         Route::get('my-custom-views',[CustomViewController::class,'index']);
+        Route::get('my-custom-views/{id}',[CustomViewController::class,'show']);
     });
 });
