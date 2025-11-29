@@ -49,7 +49,7 @@ private function saveGroup($customViewId, $parentId, $groupData)
     ]);
 
     // Save conditions
-    if (!empty($groupData['conditions'])) {
+    if (!empty($groupData['conditions']) && $group) {
         foreach ($groupData['conditions'] as $index => $cond) {
             CustomViewCondition::create([
                 'group_id' => $group->id,
@@ -62,7 +62,7 @@ private function saveGroup($customViewId, $parentId, $groupData)
     }
 
     // Save nested groups (recursion)
-    if (!empty($groupData['groups'])) {
+    if (!empty($groupData['groups']) && $group) {
         foreach ($groupData['groups'] as $childGroup) {
             $this->saveGroup($customViewId, $group->id, $childGroup);
         }
