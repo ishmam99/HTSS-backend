@@ -9,7 +9,7 @@ class CustomViewGroup extends Model
     protected $guarded = [];
       public function conditions()
     {
-        return $this->hasMany(CustomViewCondition::class, 'group_id');
+        return $this->hasMany(CustomViewCondition::class, 'custom_view_group_id');
     }
 
     public function children()

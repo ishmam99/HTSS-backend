@@ -27,14 +27,14 @@ public function index(Module $module)
           ->orderBy('module_fields.order', 'asc')
           ->select('record_values.*');
     },'assignments.user']);
-    \Log::info(['custom',request()->custom_view_id]);
+
     if (request()->custom_view_id) {
     // Apply custom view filter
     $viewId = request()->custom_view_id;
   $view = CustomView::where('id',$viewId)->with('rootGroup.childrenRecursive.conditions')->first();
-        \Log::info(['found',$view]);
+
     if ($view) {
-        \Log::info($view);
+
         $query = $this->applyCustomViewFilter($query, $view);
     }
 } else {
@@ -610,7 +610,7 @@ private function applyGroup($query, $group)
         }
 
     });
-}
+}   
 private function applyCondition($query, $cond, $join)
 {
     $method = $join === 'AND' ? 'whereHas' : 'orWhereHas';
