@@ -31,7 +31,7 @@ public function index(Module $module)
     if (request()->custom_view_id) {
     // Apply custom view filter
     $viewId = request()->custom_view_id;
-  $view = CustomView::with('rootGroup.childrenRecursive.conditions')->where('id',$viewId)->first();
+  $view = CustomView::where('id',$viewId)->with('rootGroup.childrenRecursive.conditions')->first();
         \Log::info($view);
     if ($view) {
         \Log::info($view);
