@@ -31,7 +31,7 @@ class CustomViewController extends Controller
         $view = CustomView::create([
             'name' => $request->name,
             'module' => $request->module,
-            'created_by' => auth()->id()
+            'user_id' => auth()->id()
         ]);
 
         $this->saveGroup($view->id, null, $request->root_group);
