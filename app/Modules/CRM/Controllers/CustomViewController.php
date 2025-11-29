@@ -47,12 +47,11 @@ private function saveGroup($customViewId, $parentId, $groupData)
         'join_type' => $groupData['join_type'] ?? 'AND',
         'order' => $groupData['order'] ?? 0
     ]);
-    \Log::info($group->id);
-    // Save conditions
+   
     if (!empty($groupData['conditions']) && $group) {
         foreach ($groupData['conditions'] as $index => $cond) {
             CustomViewCondition::create([
-                'group_id' => $group->id,
+                'custom_view_group_id' => $group->id,
                 'field' => $cond['field'],
                 'operator' => $cond['operator'],
                 'value' => $cond['value'],

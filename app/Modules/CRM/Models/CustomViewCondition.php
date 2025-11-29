@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomViewCondition extends Model
 {
-    protected $guarded = [];
+    protected $guarded = ['id'];
         protected $casts = [
         'value' => 'json',
     ];
