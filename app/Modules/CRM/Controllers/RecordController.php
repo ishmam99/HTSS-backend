@@ -334,30 +334,117 @@ public function convertModule($recordId)
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
 
-    public function assignRecord(Record $record, Request $request)
-        {
-            $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'role' => 'required|string|max:50',
-                'permission_level' => 'required|string|max:50',
-            ]);
-        $assignment = RecordUserAssignment::updateOrCreate(
-            ['record_id' => $record->id, 'user_id' => $request->user_id],
-            [
+   public function assignRecord(Record $record, Request $request)
+{
+    // If bulk assigning
+    if ($request->has('assignments')) {
+
+        $request->validate([
+            'assignments' => 'required|array|min:1',
+            'assignments.*.user_id' => 'required|exists:users,id',
+            'assignments.*.role' => 'required|string|max:50',
+            'assignments.*.permission_level' => 'required|string|max:50',
+        ]);
+
+        $results = [];
+
+        foreach ($request->assignments as $assign) {
+
+            $userId = $assign['user_id'];
+            $role = $assign['role'];
+            $permission = $assign['permission_level'];
+
+            // Check if this role already exists for this record
+            $existingRole = RecordUserAssignment::where('record_id', $record->id)
+                ->where('role', $role)
+                ->first();
+
+            if ($existingRole) {
+                // Replace user for existing role
+                $existingRole->update([
+                    'user_id' => $userId,
+                    'permission_level' => $permission,
+                    'assigned_by' => Auth::id(),
+                    'assigned_at' => now(),
+                ]);
+
+                $results[] = [
+                    'action' => 'updated',
+                    'role' => $role,
+                    'data' => $existingRole
+                ];
+                continue;
+            }
+
+            // Create new assignment
+            $newAssignment = RecordUserAssignment::create([
+                'record_id' => $record->id,
+                'user_id' => $userId,
+                'role' => $role,
+                'permission_level' => $permission,
                 'assigned_by' => Auth::id(),
-                'role' => $request->role,
-                'permission_level' => $request->permission_level,
                 'assigned_at' => now(),
-            ]
-        );
-
-
-
-            return response()->json([
-                'message' => 'Record assigned successfully.',
-                'data' => $assignment,
             ]);
+
+            $results[] = [
+                'action' => 'created',
+                'role' => $role,
+                'data' => $newAssignment
+            ];
         }
+
+        return response()->json([
+            'message' => 'Bulk assignment processed successfully.',
+            'results' => $results,
+        ]);
+    }
+
+    // ---------------------------------------------------------------------
+    // SINGLE ASSIGNMENT (existing frontend — untouched)
+    // ---------------------------------------------------------------------
+
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'role' => 'required|string|max:50',
+        'permission_level' => 'required|string|max:50',
+    ]);
+
+    // Check if this role exists already
+    $existingRole = RecordUserAssignment::where('record_id', $record->id)
+        ->where('role', $request->role)
+        ->first();
+
+    if ($existingRole) {
+        // Replace user for that role
+        $existingRole->update([
+            'user_id' => $request->user_id,
+            'permission_level' => $request->permission_level,
+            'assigned_by' => Auth::id(),
+            'assigned_at' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Role reassigned successfully.',
+            'data' => $existingRole,
+        ]);
+    }
+
+    // Create normal assignment
+    $assignment = RecordUserAssignment::create([
+        'record_id' => $record->id,
+        'user_id' => $request->user_id,
+        'role' => $request->role,
+        'permission_level' => $request->permission_level,
+        'assigned_by' => Auth::id(),
+        'assigned_at' => now(),
+    ]);
+
+    return response()->json([
+        'message' => 'Record assigned successfully.',
+        'data' => $assignment,
+    ]);
+}
+
 
     public function updateRecordAssignment($id, Request $request)
     {
