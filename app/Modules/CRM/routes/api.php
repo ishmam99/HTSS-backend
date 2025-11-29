@@ -35,7 +35,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::delete('/record/{record}', [RecordController::class, 'destroy']);
         Route::get('convert-deal-to-project/{dealId}',[RecordController::class,'convertDealToProject']);
         Route::post('bulk-update-records',[RecordValueController::class,'bulkUpdateOrCreate']);
-        Route::post('custom-views',[CustomViewController::class,'sto    re']);
+        Route::post('custom-views',[CustomViewController::class,'store']);
         Route::get('my-custom-views',[CustomViewController::class,'index']);
         Route::get('my-custom-views/{id}',[CustomViewController::class,'show']);
     });
