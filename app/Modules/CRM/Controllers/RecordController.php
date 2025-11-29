@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Modules\CRM\Models\CustomView;
 use Modules\CRM\Models\Module;
 use Modules\CRM\Models\ModuleField;
 use Modules\CRM\Models\Record;
@@ -17,20 +18,7 @@ use Modules\CRM\Models\RecordValue;
 
 class RecordController extends Controller
 {
-    // public function index(Module $module)
-    // {
 
-    //       $records = $module->records()
-    //         ->with(['values.field','assignments.user'])
-    //         ->get();
-    //     $myRecord = RecordUserAssignment::where('user_id',auth()->id())->pluck('record_id');
-    //     if(auth()->user()->role == 'sales-manager' || auth()->user()->role == 'sales-executive')
-    //     {
-    //         $records = $records->whereIn('id', $myRecord);
-    //     }
-    //     // return response()->json($result);
-    //     return response()->json($records);
-    // }
 public function index(Module $module)
 {
     $query = $module->records()
@@ -39,7 +27,15 @@ public function index(Module $module)
           ->orderBy('module_fields.order', 'asc')
           ->select('record_values.*');
     },'assignments.user']);
+    if (request()->custom_view_id) {
+    // Apply custom view filter
+    $viewId = request()->custom_view_id;
+  $view = CustomView::with('rootGroup.childrenRecursive.conditions')->find($viewId);
 
+    if ($view) {
+        $query = $this->applyCustomViewFilter($query, $view);
+    }
+} else {
     if (request()->date_field && request()->start_date && request()->end_date) {
 
         $dateFieldName = request()->date_field;
@@ -92,7 +88,7 @@ public function index(Module $module)
         });
     }
 }
-
+}
 
     if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
         $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
@@ -592,6 +588,53 @@ public function assignRoleToMultipleRecords(Request $request)
         'message' => 'Multiple record assignments processed successfully.',
         'results' => $results
     ]);
+}
+public function applyCustomViewFilter($query,CustomView $view)
+{
+    return $this->applyGroup($query, $view->rootGroup);
+}
+private function applyGroup($query, $group)
+{
+    return $query->where(function ($q) use ($group) {
+
+        foreach ($group->conditions as $condition) {
+            $this->applyCondition($q, $condition, $group->join_type);
+        }
+
+        foreach ($group->children as $child) {
+            $q->{$group->join_type === 'AND' ? 'where' : 'orWhere'}(function ($nested) use ($child) {
+                $this->applyGroup($nested, $child);
+            });
+        }
+
+    });
+}
+private function applyCondition($query, $cond, $join)
+{
+    $method = $join === 'AND' ? 'where' : 'orWhere';
+
+    switch ($cond->operator) {
+
+        case 'contains':
+            $query->$method($cond->field, 'like', '%' . $cond->value . '%');
+            break;
+
+        case 'is':
+            $query->$method($cond->field, $cond->value);
+            break;
+
+        case 'between':
+            $query->$method(function ($q) use ($cond) {
+                $q->whereBetween($cond->field, $cond->value);
+            });
+            break;
+
+        case 'does_not_contain':
+            $query->$method($cond->field, 'not like', '%' . $cond->value . '%');
+            break;
+
+        // add more operators as needed...
+    }
 }
 
 

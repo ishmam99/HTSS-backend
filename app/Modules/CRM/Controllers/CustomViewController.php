@@ -1,0 +1,65 @@
+<?php
+
+namespace Modules\CRM\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Modules\CRM\Models\CustomView;
+use Modules\CRM\Models\CustomViewCondition;
+use Modules\CRM\Models\CustomViewGroup;
+
+class CustomViewController extends Controller
+{
+
+    public function index()
+    {
+        $views = CustomView::where('user_id',auth()->id())->get();
+        return response()->json($views);
+    }
+   public function store(Request $request)
+{
+    DB::transaction(function () use ($request) {
+
+        $view = CustomView::create([
+            'name' => $request->name,
+            'module' => $request->module,
+            'created_by' => auth()->id()
+        ]);
+
+        $this->saveGroup($view->id, null, $request->root_group);
+    });
+
+    return response()->json(['message' => 'Custom view created']);
+}
+private function saveGroup($customViewId, $parentId, $groupData)
+{
+    $group = CustomViewGroup::create([
+        'custom_view_id' => $customViewId,
+        'parent_id' => $parentId,
+        'join_type' => $groupData['join_type'] ?? 'AND',
+        'order' => $groupData['order'] ?? 0
+    ]);
+
+    // Save conditions
+    if (!empty($groupData['conditions'])) {
+        foreach ($groupData['conditions'] as $index => $cond) {
+            CustomViewCondition::create([
+                'group_id' => $group->id,
+                'field' => $cond['field'],
+                'operator' => $cond['operator'],
+                'value' => $cond['value'],
+                'order' => $index
+            ]);
+        }
+    }
+
+    // Save nested groups (recursion)
+    if (!empty($groupData['groups'])) {
+        foreach ($groupData['groups'] as $childGroup) {
+            $this->saveGroup($customViewId, $group->id, $childGroup);
+        }
+    }
+}
+
+}
