@@ -32,7 +32,7 @@ public function index(Module $module)
     // Apply custom view filter
     $viewId = request()->custom_view_id;
   $view = CustomView::where('id',$viewId)->with('rootGroup.childrenRecursive.conditions')->first();
-        \Log::info($view);
+        \Log::info(['found',$view]);
     if ($view) {
         \Log::info($view);
         $query = $this->applyCustomViewFilter($query, $view);
