@@ -33,6 +33,7 @@ public function index(Module $module)
   $view = CustomView::with('rootGroup.childrenRecursive.conditions')->find($viewId);
 
     if ($view) {
+        \Log::info($view);
         $query = $this->applyCustomViewFilter($query, $view);
     }
 } else {
