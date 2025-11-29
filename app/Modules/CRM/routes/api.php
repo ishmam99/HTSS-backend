@@ -22,7 +22,8 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
             Route::post('/records', [RecordController::class, 'store'])->middleware('auth:sanctum');
             Route::get('/fields', [ModuleFieldController::class, 'getByModule']);
         });
-          Route::post('/assign-record/{record}', [RecordController::class, 'assignRecord'])->middleware('auth:sanctum');
+        Route::post('/assign-record/{record}', [RecordController::class, 'assignRecord'])->middleware('auth:sanctum');
+        Route::post('/assign-records', [RecordController::class, 'assignRoleToMultipleRecords'])->middleware('auth:sanctum');
         Route::post('/convert-to-accounts/{recordId}', [RecordController::class, 'convertModule']);
         Route::get('/record-values/{recordId}', [RecordController::class, 'getByRecord']);
         Route::post('/record-child-create', [RecordController::class, 'addChild']);

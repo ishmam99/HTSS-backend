@@ -529,6 +529,70 @@ public function convertModule($recordId)
         throw $e;
     }
 }
+public function assignRoleToMultipleRecords(Request $request)
+{
+    $request->validate([
+        'record_ids' => 'required|array|min:1',
+        'record_ids.*' => 'required|exists:records,id',
+        'user_id' => 'required|exists:users,id',
+        'role' => 'required|string|max:50',
+        'permission_level' => 'required|string|max:50',
+    ]);
+
+    $userId = $request->user_id;
+    $role = $request->role;
+    $permission = $request->permission_level;
+
+    $results = [];
+
+    foreach ($request->record_ids as $recordId) {
+
+        // Check if the role already exists for this record
+        $existingRoleAssignment = RecordUserAssignment::where('record_id', $recordId)
+            ->where('role', $role)
+            ->first();
+
+        if ($existingRoleAssignment) {
+
+            // Update (replace user)
+            $existingRoleAssignment->update([
+                'user_id' => $userId,
+                'permission_level' => $permission,
+                'assigned_by' => Auth::id(),
+                'assigned_at' => now(),
+            ]);
+
+            $results[] = [
+                'record_id' => $recordId,
+                'action' => 'updated',
+                'data' => $existingRoleAssignment
+            ];
+
+            continue;
+        }
+
+        // Otherwise create new assignment
+        $newAssignment = RecordUserAssignment::create([
+            'record_id' => $recordId,
+            'user_id' => $userId,
+            'role' => $role,
+            'permission_level' => $permission,
+            'assigned_by' => Auth::id(),
+            'assigned_at' => now(),
+        ]);
+
+        $results[] = [
+            'record_id' => $recordId,
+            'action' => 'created',
+            'data' => $newAssignment
+        ];
+    }
+
+    return response()->json([
+        'message' => 'Multiple record assignments processed successfully.',
+        'results' => $results
+    ]);
+}
 
 
 }
