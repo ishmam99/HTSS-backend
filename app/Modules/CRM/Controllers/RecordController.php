@@ -611,30 +611,33 @@ private function applyGroup($query, $group)
 }
 private function applyCondition($query, $cond, $join)
 {
-    $method = $join === 'AND' ? 'where' : 'orWhere';
+    $method = $join === 'AND' ? 'whereHas' : 'orWhereHas';
 
-    switch ($cond->operator) {
+    $query->$method('values', function ($q) use ($cond) {
+        // Match the correct field by ID
+        $q->where('field_id', $cond->field);
 
-        case 'contains':
-            $query->$method($cond->field, 'like', '%' . $cond->value . '%');
-            break;
+        // Apply operator
+        switch ($cond->operator) {
+            case 'contains':
+                $q->where('value', 'like', '%' . $cond->value . '%');
+                break;
 
-        case 'is':
-            $query->$method($cond->field, $cond->value);
-            break;
+            case 'does_not_contain':
+                $q->where('value', 'not like', '%' . $cond->value . '%');
+                break;
 
-        case 'between':
-            $query->$method(function ($q) use ($cond) {
-                $q->whereBetween($cond->field, $cond->value);
-            });
-            break;
+            case 'is':
+                $q->where('value', $cond->value);
+                break;
 
-        case 'does_not_contain':
-            $query->$method($cond->field, 'not like', '%' . $cond->value . '%');
-            break;
+            case 'between':
+                $q->whereBetween('value', $cond->value);
+                break;
 
-        // add more operators as needed...
-    }
+            // Add more operators as needed
+        }
+    });
 }
 
 
