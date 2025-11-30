@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('value')->nullable(); // json if multiple
 
             $table->integer('order')->default(0);
-
+            
             $table->timestamps();
         });
 

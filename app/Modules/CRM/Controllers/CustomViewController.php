@@ -47,7 +47,7 @@ private function saveGroup($customViewId, $parentId, $groupData)
         'join_type' => $groupData['join_type'] ?? 'AND',
         'order' => $groupData['order'] ?? 0
     ]);
-   
+
     if (!empty($groupData['conditions']) && $group) {
         foreach ($groupData['conditions'] as $index => $cond) {
             CustomViewCondition::create([
@@ -66,6 +66,12 @@ private function saveGroup($customViewId, $parentId, $groupData)
             $this->saveGroup($customViewId, $group->id, $childGroup);
         }
     }
+}
+public function destroy($id)
+{
+
+    $customView = CustomView::where('id',$id)->delete();
+    return response()->json('Data deleted successfully');
 }
 
 }
