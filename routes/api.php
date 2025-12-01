@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\TrainerRequestFormController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EnumController;
@@ -42,7 +43,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customers', CustomerController::class);
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
-        Route::get('users',[AuthController::class,'index']);
+        Route::get('users', [AuthController::class, 'index']);
         Route::post('add-industry-solutions', [SoftwareController::class, 'industrySolution']);
         Route::post('add-industry-softwares', [SoftwareController::class, 'industrySoftware']);
         Route::post('add-software-solutions', [SoftwareController::class, 'softwareSolution']);
@@ -51,7 +52,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('software-skills', SoftwareSkillController::class);
         Route::apiResource('solutions', SolutionController::class);
         Route::apiResource('softwares', SoftwareController::class);
-        Route::get('software-stats',[ SoftwareController::class,'stats']);
+        Route::get('software-stats', [SoftwareController::class, 'stats']);
         // Route::apiResource('training-sessions', TrainingSessionController::class);
         // Route::apiResource('training-enrollments', TrainingEnrollmentController::class);
         Route::prefix('users/{userId}')->group(function () {
@@ -60,36 +61,39 @@ Route::prefix('v1')->group(function () {
             Route::put('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'update']);
             Route::delete('software-skills/{softwareSkillId}', [UserSoftwareSkillController::class, 'destroy']);
         });
-    Route::apiResource('issue-ticket',IssueTicketController::class);
-    Route::apiResource('end-users', EndUserController::class);
-    Route::apiResource('training-course', TrainingCourseController::class);
-    Route::apiResource('trainer', TrainerController::class);
-    Route::apiResource('training-event',TrainingEventController::class);
+        Route::apiResource('issue-ticket', IssueTicketController::class);
+        Route::apiResource('end-users', EndUserController::class);
+        Route::apiResource('training-course', TrainingCourseController::class);
+        Route::apiResource('trainer', TrainerController::class);
+        Route::apiResource('training-event', TrainingEventController::class);
 
-    Route::apiResource('training-offer',TrainingOfferController::class);
-    Route::apiResource('training-enrollment',TrainingEnrollmentController::class);
+        Route::apiResource('training-offer', TrainingOfferController::class);
+        Route::apiResource('training-enrollment', TrainingEnrollmentController::class);
 
-    Route::apiResource('onsite-support-ticket',OnsiteSupportTicketController::class);
-    Route::get('customer-software',[CustomerSoftwareController::class, 'index']);
-    Route::post('customer-software',[CustomerSoftwareController::class, 'store']);
-    Route::post('customer-solution',[CustomerSolutionController::class, 'store']);
-    Route::get('customer-solution',[CustomerSolutionController::class, 'index']);
+        Route::apiResource('onsite-support-ticket', OnsiteSupportTicketController::class);
+        Route::get('customer-software', [CustomerSoftwareController::class, 'index']);
+        Route::post('customer-software', [CustomerSoftwareController::class, 'store']);
+        Route::post('customer-solution', [CustomerSolutionController::class, 'store']);
+        Route::get('customer-solution', [CustomerSolutionController::class, 'index']);
 
-    Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
-    Route::post('end-user-software-add',[EndUserSoftwareController::class, 'addSoftware']);
-    Route::get('end-user-software-list',[EndUserSoftwareController::class, 'getSoftwares']);
-    Route::get('end-user-solution-list',[EndUserSoftwareController::class, 'getSolutions']);
-    Route::post('end-user-solution-add',[EndUserSoftwareController::class, 'addSolution']);
-    Route::apiResource('end-user-trainings',EndUserTrainingController::class)->middleware('auth:sanctum');
+        Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
+        Route::post('end-user-software-add', [EndUserSoftwareController::class, 'addSoftware']);
+        Route::get('end-user-software-list', [EndUserSoftwareController::class, 'getSoftwares']);
+        Route::get('end-user-solution-list', [EndUserSoftwareController::class, 'getSolutions']);
+        Route::post('end-user-solution-add', [EndUserSoftwareController::class, 'addSolution']);
+        Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
 
 
     });
-    Route::apiResource('customer-support',CustomerSupportController::class);
-    Route::put('customer-support-status-update/{customerSupport}',[CustomerSupportController::class,'statusUpdate']);
+    Route::apiResource('customer-support', CustomerSupportController::class);
+    Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
     Route::get('/users/role-count', [EnumController::class, 'roleWiseCount']);
     Route::get('/users/role-get', [EnumController::class, 'roleWiseList']);
 
-    Route::apiResource('attendance',AttendanceController::class)->middleware('auth:sanctum');
-    Route::put('status-update-attendance/{attendanceId}',[AttendanceController::class,'attendanceStatusUpdate']);
-    Route::put('status-update-attendance-time/{attendanceTimeId}',[AttendanceController::class,'attendanceTimeStatusUpdate']);
+    Route::apiResource('attendance', AttendanceController::class)->middleware('auth:sanctum');
+    Route::put('status-update-attendance/{attendanceId}', [AttendanceController::class, 'attendanceStatusUpdate']);
+    Route::put('status-update-attendance-time/{attendanceTimeId}', [AttendanceController::class, 'attendanceTimeStatusUpdate']);
+
+    Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
+    Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
 });
