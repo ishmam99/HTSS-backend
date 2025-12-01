@@ -34,9 +34,7 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::get('industries',[IndustryController::class, 'index']);
-    Route::get('solutions',[SolutionController::class, 'index']);
-    Route::get('softwares',[SoftwareController::class, 'index']);
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -86,6 +84,9 @@ Route::prefix('v1')->group(function () {
 
 
     });
+    Route::get('industries',[IndustryController::class, 'index']);
+    Route::get('solutions',[SolutionController::class, 'index']);
+    Route::get('softwares',[SoftwareController::class, 'index']);
     Route::apiResource('customer-support',CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}',[CustomerSupportController::class,'statusUpdate']);
     Route::get('/users/role-count', [EnumController::class, 'roleWiseCount']);
