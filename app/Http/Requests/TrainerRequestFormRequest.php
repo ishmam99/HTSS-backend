@@ -23,6 +23,7 @@ class TrainerRequestFormRequest extends FormRequest
             'address' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'experience_year' => 'nullable|string',
+            'status'=> 'nullable'
         ];
     }
 }
