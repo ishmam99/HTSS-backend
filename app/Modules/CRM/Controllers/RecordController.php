@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Modules\CRM\Models\CustomView;
 use Modules\CRM\Models\Module;
 use Modules\CRM\Models\ModuleField;
 use Modules\CRM\Models\Record;
@@ -17,20 +18,7 @@ use Modules\CRM\Models\RecordValue;
 
 class RecordController extends Controller
 {
-    // public function index(Module $module)
-    // {
 
-    //       $records = $module->records()
-    //         ->with(['values.field','assignments.user'])
-    //         ->get();
-    //     $myRecord = RecordUserAssignment::where('user_id',auth()->id())->pluck('record_id');
-    //     if(auth()->user()->role == 'sales-manager' || auth()->user()->role == 'sales-executive')
-    //     {
-    //         $records = $records->whereIn('id', $myRecord);
-    //     }
-    //     // return response()->json($result);
-    //     return response()->json($records);
-    // }
 public function index(Module $module)
 {
     $query = $module->records()
@@ -40,6 +28,16 @@ public function index(Module $module)
           ->select('record_values.*');
     },'assignments.user']);
 
+    if (request()->custom_view_id) {
+    // Apply custom view filter
+    $viewId = request()->custom_view_id;
+  $view = CustomView::where('id',$viewId)->with('rootGroup.childrenRecursive.conditions')->first();
+
+    if ($view) {
+
+        $query = $this->applyCustomViewFilter($query, $view);
+    }
+} else {
     if (request()->date_field && request()->start_date && request()->end_date) {
 
         $dateFieldName = request()->date_field;
@@ -92,7 +90,7 @@ public function index(Module $module)
         });
     }
 }
-
+}
 
     if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
         $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
@@ -334,30 +332,117 @@ public function convertModule($recordId)
         return response()->json(['data'=>$childData,'relation_type'=>$type]);
     }
 
-    public function assignRecord(Record $record, Request $request)
-        {
-            $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'role' => 'required|string|max:50',
-                'permission_level' => 'required|string|max:50',
-            ]);
-        $assignment = RecordUserAssignment::updateOrCreate(
-            ['record_id' => $record->id, 'user_id' => $request->user_id],
-            [
+   public function assignRecord(Record $record, Request $request)
+{
+    // If bulk assigning
+    if ($request->has('assignments')) {
+
+        $request->validate([
+            'assignments' => 'required|array|min:1',
+            'assignments.*.user_id' => 'required|exists:users,id',
+            'assignments.*.role' => 'required|string|max:50',
+            'assignments.*.permission_level' => 'required|string|max:50',
+        ]);
+
+        $results = [];
+
+        foreach ($request->assignments as $assign) {
+
+            $userId = $assign['user_id'];
+            $role = $assign['role'];
+            $permission = $assign['permission_level'];
+
+            // Check if this role already exists for this record
+            $existingRole = RecordUserAssignment::where('record_id', $record->id)
+                ->where('role', $role)
+                ->first();
+
+            if ($existingRole) {
+                // Replace user for existing role
+                $existingRole->update([
+                    'user_id' => $userId,
+                    'permission_level' => $permission,
+                    'assigned_by' => Auth::id(),
+                    'assigned_at' => now(),
+                ]);
+
+                $results[] = [
+                    'action' => 'updated',
+                    'role' => $role,
+                    'data' => $existingRole
+                ];
+                continue;
+            }
+
+            // Create new assignment
+            $newAssignment = RecordUserAssignment::create([
+                'record_id' => $record->id,
+                'user_id' => $userId,
+                'role' => $role,
+                'permission_level' => $permission,
                 'assigned_by' => Auth::id(),
-                'role' => $request->role,
-                'permission_level' => $request->permission_level,
                 'assigned_at' => now(),
-            ]
-        );
-
-
-
-            return response()->json([
-                'message' => 'Record assigned successfully.',
-                'data' => $assignment,
             ]);
+
+            $results[] = [
+                'action' => 'created',
+                'role' => $role,
+                'data' => $newAssignment
+            ];
         }
+
+        return response()->json([
+            'message' => 'Bulk assignment processed successfully.',
+            'results' => $results,
+        ]);
+    }
+
+    // ---------------------------------------------------------------------
+    // SINGLE ASSIGNMENT (existing frontend — untouched)
+    // ---------------------------------------------------------------------
+
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'role' => 'required|string|max:50',
+        'permission_level' => 'required|string|max:50',
+    ]);
+
+    // Check if this role exists already
+    $existingRole = RecordUserAssignment::where('record_id', $record->id)
+        ->where('role', $request->role)
+        ->first();
+
+    if ($existingRole) {
+        // Replace user for that role
+        $existingRole->update([
+            'user_id' => $request->user_id,
+            'permission_level' => $request->permission_level,
+            'assigned_by' => Auth::id(),
+            'assigned_at' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Role reassigned successfully.',
+            'data' => $existingRole,
+        ]);
+    }
+
+    // Create normal assignment
+    $assignment = RecordUserAssignment::create([
+        'record_id' => $record->id,
+        'user_id' => $request->user_id,
+        'role' => $request->role,
+        'permission_level' => $request->permission_level,
+        'assigned_by' => Auth::id(),
+        'assigned_at' => now(),
+    ]);
+
+    return response()->json([
+        'message' => 'Record assigned successfully.',
+        'data' => $assignment,
+    ]);
+}
+
 
     public function updateRecordAssignment($id, Request $request)
     {
@@ -441,6 +526,120 @@ public function convertModule($recordId)
         DB::rollBack();
         throw $e;
     }
+}
+public function assignRoleToMultipleRecords(Request $request)
+{
+    $request->validate([
+        'record_ids' => 'required|array|min:1',
+        'record_ids.*' => 'required|exists:records,id',
+        'user_id' => 'required|exists:users,id',
+        'role' => 'required|string|max:50',
+        'permission_level' => 'required|string|max:50',
+    ]);
+
+    $userId = $request->user_id;
+    $role = $request->role;
+    $permission = $request->permission_level;
+
+    $results = [];
+
+    foreach ($request->record_ids as $recordId) {
+
+        // Check if the role already exists for this record
+        $existingRoleAssignment = RecordUserAssignment::where('record_id', $recordId)
+            ->where('role', $role)
+            ->first();
+
+        if ($existingRoleAssignment) {
+
+            // Update (replace user)
+            $existingRoleAssignment->update([
+                'user_id' => $userId,
+                'permission_level' => $permission,
+                'assigned_by' => Auth::id(),
+                'assigned_at' => now(),
+            ]);
+
+            $results[] = [
+                'record_id' => $recordId,
+                'action' => 'updated',
+                'data' => $existingRoleAssignment
+            ];
+
+            continue;
+        }
+
+        // Otherwise create new assignment
+        $newAssignment = RecordUserAssignment::create([
+            'record_id' => $recordId,
+            'user_id' => $userId,
+            'role' => $role,
+            'permission_level' => $permission,
+            'assigned_by' => Auth::id(),
+            'assigned_at' => now(),
+        ]);
+
+        $results[] = [
+            'record_id' => $recordId,
+            'action' => 'created',
+            'data' => $newAssignment
+        ];
+    }
+
+    return response()->json([
+        'message' => 'Multiple record assignments processed successfully.',
+        'results' => $results
+    ]);
+}
+public function applyCustomViewFilter($query,CustomView $view)
+{
+    return $this->applyGroup($query, $view->rootGroup);
+}
+private function applyGroup($query, $group)
+{
+    return $query->where(function ($q) use ($group) {
+
+        foreach ($group->conditions as $condition) {
+            $this->applyCondition($q, $condition, $group->join_type);
+        }
+
+        foreach ($group->children as $child) {
+            $q->{$group->join_type === 'AND' ? 'where' : 'orWhere'}(function ($nested) use ($child) {
+                $this->applyGroup($nested, $child);
+            });
+        }
+
+    });
+}   
+private function applyCondition($query, $cond, $join)
+{
+    $method = $join === 'AND' ? 'whereHas' : 'orWhereHas';
+
+    $query->$method('values', function ($q) use ($cond) {
+        // Match the correct field by ID
+        $q->where('field_id', $cond->field);
+
+        // Apply operator
+        switch ($cond->operator) {
+            case 'contains':
+                $q->where('value', 'like', '%' . $cond->value . '%');
+                break;
+
+            case 'does_not_contain':
+                $q->where('value', 'not like', '%' . $cond->value . '%');
+                break;
+
+            case 'is':
+                $q->where('value', $cond->value);
+                break;
+
+            case 'between':
+                $q->whereBetween('value', $cond->value);
+                break;
+
+            // Add more operators as needed
+        }
+    });
 }
 
 

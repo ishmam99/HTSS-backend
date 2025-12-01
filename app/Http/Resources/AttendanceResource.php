@@ -25,6 +25,7 @@ class AttendanceResource extends JsonResource
                     'role'=> $this->user->role,
             ]:null,
             'total_working_minute' => $this->total_working_minute,
+            'total_working_hours' => number_format($this->total_working_minute/60, 2),
             'status' => $this->status,
             'times' => AttendanceTimeResource::collection($this->times),
         ];

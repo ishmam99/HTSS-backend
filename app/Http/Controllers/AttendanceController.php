@@ -26,12 +26,15 @@ class AttendanceController extends Controller
                 $q->whereBetween('date', [$request->start_date, $request->end_date]);
             })->when($request->has('date'), function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
+
+            })->when($request->has('status'), function ($q) use ($request) {
+                $q->where('status', $request->status);
             })
             ->orderBy('date', 'desc');
              $lists = $request->per_page
                 ? $attendances->paginate($request->per_page)
                 : $attendances->get();
-            
+
 
         return AttendanceResource::collection($lists);
     }
@@ -88,7 +91,7 @@ class AttendanceController extends Controller
         }
     }
 
-    public function update(AttendanceRequest $request, $id)
+    public function update(Request $request, $id)
     {
         DB::beginTransaction();
 
@@ -100,7 +103,7 @@ class AttendanceController extends Controller
                 'user_id' => $request->user_id,
                 'status' => $request->status ?? 1,
             ]);
-
+            if($request->has('times')){
             $oldTimes = DB::table('attendance_times')->where('attendance_id', $attendance->id)->get();
             foreach ($oldTimes as $oldTime) {
                 if ($oldTime->attachment && Storage::disk('public')->exists($oldTime->attachment)) {
@@ -139,6 +142,7 @@ class AttendanceController extends Controller
             $attendance->update([
                 'total_working_minute' => $totalWorkingMinutes,
             ]);
+        }
 
             DB::commit();
 

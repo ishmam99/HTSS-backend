@@ -87,6 +87,11 @@ Route::prefix('v1')->group(function () {
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
+    Route::get('industries', [IndustryController::class, 'index']);
+    Route::get('solutions', [SolutionController::class, 'index']);
+    Route::get('softwares', [SoftwareController::class, 'index']);
+    Route::apiResource('customer-support', CustomerSupportController::class);
+    Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
     Route::get('/users/role-count', [EnumController::class, 'roleWiseCount']);
     Route::get('/users/role-get', [EnumController::class, 'roleWiseList']);
 

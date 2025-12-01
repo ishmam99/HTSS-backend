@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\CRM\Controllers\ActivityController;
+use Modules\CRM\Controllers\CustomViewController;
 use Modules\CRM\Controllers\ModuleController;
 use Modules\CRM\Controllers\ModuleFieldController;
 use Modules\CRM\Controllers\RecordController;
@@ -22,7 +23,8 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
             Route::post('/records', [RecordController::class, 'store'])->middleware('auth:sanctum');
             Route::get('/fields', [ModuleFieldController::class, 'getByModule']);
         });
-          Route::post('/assign-record/{record}', [RecordController::class, 'assignRecord'])->middleware('auth:sanctum');
+        Route::post('/assign-record/{record}', [RecordController::class, 'assignRecord'])->middleware('auth:sanctum');
+        Route::post('/assign-records', [RecordController::class, 'assignRoleToMultipleRecords'])->middleware('auth:sanctum');
         Route::post('/convert-to-accounts/{recordId}', [RecordController::class, 'convertModule']);
         Route::get('/record-values/{recordId}', [RecordController::class, 'getByRecord']);
         Route::post('/record-child-create', [RecordController::class, 'addChild']);
@@ -33,5 +35,9 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         Route::delete('/record/{record}', [RecordController::class, 'destroy']);
         Route::get('convert-deal-to-project/{dealId}',[RecordController::class,'convertDealToProject']);
         Route::post('bulk-update-records',[RecordValueController::class,'bulkUpdateOrCreate']);
+        Route::post('custom-views',[CustomViewController::class,'store']);
+        Route::delete('custom-view-delete/{id}',[CustomViewController::class,'destroy']);
+        Route::get('my-custom-views',[CustomViewController::class,'index']);
+        Route::get('my-custom-views/{id}',[CustomViewController::class,'show']);
     });
 });
