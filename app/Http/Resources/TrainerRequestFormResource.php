@@ -10,7 +10,15 @@ class TrainerRequestFormResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            // Add other fields you want to return
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'address' => $this->address,
+            'image' => $this->image ? asset('storage/' . $this->image) : null,
+            'experience_year' => $this->experience_year,
+            'industry_id' => $this->industry,
+            'solution_id' => $this->solution,
+            'software_id' => $this->software,
         ];
     }
 }
