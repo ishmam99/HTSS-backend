@@ -21,6 +21,7 @@ class PartnerController extends Controller
         return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => Partner::count()
         ]);
     }
     public function show($id)

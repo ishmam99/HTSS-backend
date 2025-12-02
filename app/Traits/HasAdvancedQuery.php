@@ -5,6 +5,7 @@ namespace App\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 trait HasAdvancedQuery
 {
@@ -15,7 +16,7 @@ trait HasAdvancedQuery
     {
         $instance = new static();
         $query = static::query();
-        
+
         $instance->applyRelationships($query, $request);
         $instance->applySearch($query, $request);
         $instance->applyFilters($query, $request);
@@ -85,18 +86,37 @@ trait HasAdvancedQuery
 }
 
 
-    protected function applyFilters(Builder $query, Request $request): void
-    {
-        foreach ($request->all() as $key => $value) {
-            if (in_array($key, [
-                'search', 'sort_by', 'sort_order', 'page', 'per_page',
-                'with', 'group_by', 'group_select', 'where', 'or_where'
-            ])) continue;
+  protected function applyFilters(Builder $query, Request $request): void
+{
+    $model = $query->getModel();
+    $parentTable = $model->getTable();
 
-            if (is_array($value)) $query->whereIn($key, $value);
-            else $query->where($key, $value);
-        }
+    // Existing filters
+    foreach ($request->all() as $key => $value) {
+        if (in_array($key, [
+            'search', 'sort_by', 'sort_order', 'page', 'per_page','pluck',
+            'with', 'group_by', 'group_select', 'where', 'or_where',
+            'relation', 'relation_field', 'relation_value', 'filter'
+        ])) continue;
+
+        if (is_array($value)) $query->whereIn($key, $value);
+        else $query->where($key, $value);
     }
+
+    // --------------------------
+    // DYNAMIC MANY-TO-MANY FILTER
+    // --------------------------
+    $relation      = $request->input('relation');        // e.g., 'softwares'
+    $relationField = $request->input('relation_field');  // e.g., 'id'
+    $relationValue = $request->input('relation_value');  // e.g., 1
+
+    if ($relation && $relationField && $relationValue && method_exists($model, $relation)) {
+        $query->whereHas($relation, function ($q) use ($relationField, $relationValue) {
+            $q->where($relationField, $relationValue);
+        });
+    }
+}
+
 
     protected function applyDateFilters(Builder $query, Request $request): void
     {
@@ -138,32 +158,72 @@ trait HasAdvancedQuery
     $query->orderBy($sortBy, in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 }
 
-
-    protected function applyGrouping(Builder $query, Request $request): void
+protected function applyGrouping(Builder $query, Request $request): void
 {
     if (!$request->filled('group_by')) return;
 
+    $model       = $query->getModel();
+    $parentTable = $model->getTable();
     $groupFields = explode(',', $request->input('group_by'));
+
     $selects = [];
     $groupBys = [];
 
     foreach ($groupFields as $field) {
+
+        // CASE 1: relation.column  (including pivot)
         if (str_contains($field, '.')) {
-            // relation.column
+
             [$relation, $column] = explode('.', $field);
-            $relationTable = $this->$relation()->getRelated()->getTable();
-            $query->join($relationTable, "$relationTable.id", '=', "customers.{$relation}_id");
-            $selects[] = "$relationTable.$column";
-            $groupBys[] = "$relationTable.$column";
-        } else {
-            $selects[] = $field;
-            $groupBys[] = $field;
+
+            if (!method_exists($model, $relation)) {
+                continue; // invalid relation
+            }
+
+            $relationObj = $model->$relation();
+            $relatedTable = $relationObj->getRelated()->getTable();
+
+            // belongsToMany → pivot grouping supported
+            if ($relationObj instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
+                $pivot = $relationObj->getTable(); // pivot table name
+
+                // join pivot
+                $query->leftJoin($pivot, "$pivot.{$relationObj->getForeignPivotKeyName()}", '=', "$parentTable.id");
+
+                // join related table
+                $query->leftJoin($relatedTable, "$relatedTable.id", '=', "$pivot.{$relationObj->getRelatedPivotKeyName()}");
+
+                $selects[] = "$relatedTable.$column";
+                $groupBys[] = "$relatedTable.$column";
+            }
+
+            // belongsTo / hasOne / hasMany
+            else {
+                $foreignKey = $relationObj->getForeignKeyName();
+                $localKey   = $relationObj->getOwnerKeyName();
+
+                $query->leftJoin($relatedTable, "$relatedTable.$localKey", '=', "$parentTable.$foreignKey");
+
+                $selects[] = "$relatedTable.$column";
+                $groupBys[] = "$relatedTable.$column";
+            }
+        }
+
+        // CASE 2: simple column on parent table
+        else {
+            $selects[] = "$parentTable.$field";
+            $groupBys[] = "$parentTable.$field";
         }
     }
 
-    $query->select(array_merge($selects, [DB::raw('COUNT(*) as total')]))
-          ->groupBy($groupBys);
+    // ADD COUNT (this is what was missing)
+    $query->select(array_merge($selects, [
+        DB::raw('COUNT(*) AS total')
+    ]));
+
+    $query->groupBy($groupBys);
 }
+
 
 
     protected function applyCustomConditions(Builder $query, Request $request): void

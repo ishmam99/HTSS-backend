@@ -24,6 +24,7 @@ class EndUserController extends Controller
      return response()->json([
             'success' => true,
             'data' => $lists,
+           'total' => EndUser::count()
         ]);
 }
 
@@ -94,7 +95,7 @@ class EndUserController extends Controller
         if($request->filled('name'))
         {
         $endUser->user->update([
-                        'name' => bcrypt($request->name),
+                        'name' => $request->name,
                     ]);
         }
         if ($request->hasFile('image')) {

@@ -10,12 +10,12 @@ class EndUserSoftwareController extends Controller
 {
     public function getSoftwares()
     {
-        $softewares = auth()->user()->endUser->softwares->load('solutions','industries');
+        $softewares = auth()->user()->endUser?->softwares->load('solutions','industries');
         return response()->json(['data'=>$softewares]);
     }
     public function getSolutions()
     {
-        $solutions = auth()->user()->endUser->solutions->load('softwares','industries');
+        $solutions = auth()->user()->endUser?->solutions->load('softwares','industries');
         return response()->json(['data'=>$solutions]);
     }
 

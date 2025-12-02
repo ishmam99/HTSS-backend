@@ -20,13 +20,15 @@ class CustomerController extends Controller
         return response()->json([
             'success' => true,
             'data' => $customers,
+             'total' => Customer::count()
         ]);
     }
 
 
     public function show($id)
     {
-        $customer = Customer::with('user')->findOrFail($id);
+        $customer = Customer::with('user','softwares','solutions','tickets')->findOrFail($id);
+
         return new CustomerResource($customer);
     }
 

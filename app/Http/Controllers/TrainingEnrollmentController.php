@@ -12,9 +12,14 @@ class TrainingEnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingEnrollment::when($request->status, function($query, $status) {
+        $query = TrainingEnrollment::with(['endUser.user','trainingOffer.event.trainingCourse'])->when($request->status, function($query, $status) {
             return $query->where('status', $status);
-        })->orderBy('id', 'desc');
+        })->when($request->customer_id, function($q, $customerId) {
+            return $q->whereHas('endUser', function($q2) use ($customerId) {
+                $q2->where('customer_id', $customerId);
+            });
+        })
+        ->orderBy('id', 'desc');
 
         if ($request->has('per_page')) {
             $lists = $query->paginate($request->per_page);

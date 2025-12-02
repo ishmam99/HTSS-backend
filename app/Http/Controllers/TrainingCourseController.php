@@ -20,6 +20,7 @@ class TrainingCourseController extends Controller
     return response()->json([
             'success' => true,
             'data' => $lists,
+             'total' => TrainingCourse::count()
         ]);
 }
 

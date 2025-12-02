@@ -11,7 +11,7 @@ class TrainingEnrollmentResource extends JsonResource
         return [
             'id' => $this->id,
             'status' => $this->status,
-            'endUser' => $this->whenLoaded('endUser.user'),
+            'endUser' => $this->whenLoaded('endUser'),
             'trainingOffer' => $this->whenLoaded('trainingOffer'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

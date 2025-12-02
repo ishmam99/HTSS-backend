@@ -21,6 +21,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'data' => $customers,
+            'total' => User::count()
         ]);
     }
     public function register(Request $request)
@@ -64,6 +65,12 @@ class AuthController extends Controller
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
+        }
+
+              if ($user && in_array($user->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
+              logActivity('login', 'auth', null, [
+            'data' => 'Logged in to Sales Dashboard'
+        ],'user-login',$user);
         }
 
         $token = $user->createToken('api_token')->plainTextToken;

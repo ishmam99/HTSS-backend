@@ -14,7 +14,7 @@ class Software extends Model
      protected $fillable = ['name', 'vendor', 'version', 'release_date', 'software_skill_id' , 'user_id' , 'status'];
     public function softwareSkill()
     {
-        return $this->belongsTo(SoftwareSkill::class);
+        return $this->hasMany(SoftwareSkill::class);
     }
 
     public function solutions()
