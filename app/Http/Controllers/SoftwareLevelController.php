@@ -61,6 +61,7 @@ class SoftwareLevelController extends Controller
 
     public function update(Request $request, SoftwareLevel $softwareLevel)
     {
+          $updateData = [];
         if(auth()->user()->role == 'trainer')
       {  $trainerId = auth()->id();
         $data = $request->all();
