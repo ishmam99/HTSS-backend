@@ -13,6 +13,7 @@ class SoftwareLevelResource extends JsonResource
             'industry' => $this->industry,
             'solution' => $this->solution,
             'software' => $this->software,
+            'trainer' => $this->trainer,
             'levels' => $this->levels,
             'status' => $this->status,
         ];
