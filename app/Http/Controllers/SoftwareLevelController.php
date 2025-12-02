@@ -62,7 +62,7 @@ class SoftwareLevelController extends Controller
     public function update(Request $request, SoftwareLevel $softwareLevel)
     {
         $trainerId = auth()->id();
-
+        $data = $request->all();
         $updateData = [
             'trainer_id' => $trainerId,
             'updated_at' => now(),
@@ -93,7 +93,6 @@ class SoftwareLevelController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Software level updated successfully',
-            'data' => $softwareLevel->fresh()
         ], 200);
     }
 
