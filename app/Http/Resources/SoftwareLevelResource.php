@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SoftwareLevelResource extends JsonResource
@@ -16,6 +17,7 @@ class SoftwareLevelResource extends JsonResource
             'trainer' => $this->trainer,
             'levels' => $this->levels,
             'status' => $this->status,
+            'created_at' => Carbon::parse($this->created_at)->diffForHumans()
         ];
     }
 }
