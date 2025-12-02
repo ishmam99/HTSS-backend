@@ -9,14 +9,13 @@ return new class extends Migration {
     {
         Schema::create('trainer_request_forms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
-            $table->foreignId('solution_id')->nullable()->constrained('solutions')->cascadeOnDelete();
-            $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->string('address')->nullable();
             $table->string('image')->nullable();
+            $table->string('current_company')->nullable();
+            $table->string('current_position')->nullable();
             $table->string('experience_year')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();

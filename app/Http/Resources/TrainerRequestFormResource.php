@@ -14,12 +14,14 @@ class TrainerRequestFormResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'address' => $this->address,
-             'status' => $this->status,
+            'current_company' => $this->current_company,
+            'current_position' => $this->current_position,
+            'status' => $this->status,
             'image' => $this->image ? asset('storage/' . $this->image) : null,
             'experience_year' => $this->experience_year,
-            'industry' => $this->industry,
-            'solution' => $this->solution,
-            'software' => $this->software,
+            // 'industry' => $this->industry,
+            // 'solution' => $this->solution,
+            // 'software' => $this->software,
         ];
     }
 }

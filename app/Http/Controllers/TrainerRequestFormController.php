@@ -12,16 +12,23 @@ class TrainerRequestFormController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainerRequestForm::with('software', 'industry', 'solution')
-            ->when($request->has('status'), function ($query) use ($request) {
-                return $query->where('status', $request->status);
-            })->when($request->has('software_id'), function ($query) use ($request) {
-                return $query->where('software_id', $request->software_id);
-            })->when($request->has('industry_id'), function ($query) use ($request) {
-                return $query->where('industry_id', $request->industry_id);
-            })->when($request->has('solution_id'), function ($query) use ($request) {
-                return $query->where('solution_id', $request->solution_id);
-            });
+        $query = TrainerRequestForm::query();
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('current_company')) {
+            $query->where('current_company', 'LIKE', '%' . $request->current_company . '%');
+        }
+
+        if ($request->has('current_position')) {
+            $query->where('current_position', 'LIKE', '%' . $request->current_position . '%');
+        }
+
+        if ($request->has('experience_year')) {
+            $query->where('experience_year', $request->experience_year);
+        }
         if ($request->has('per_page')) {
             $lists = $query->paginate($request->per_page);
         } else {
@@ -30,6 +37,7 @@ class TrainerRequestFormController extends Controller
 
         return TrainerRequestFormResource::collection($lists);
     }
+
 
 
     public function store(TrainerRequestFormRequest $request)
