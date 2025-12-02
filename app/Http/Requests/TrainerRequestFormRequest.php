@@ -14,16 +14,15 @@ class TrainerRequestFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            'industry_id' => 'nullable|exists:industries,id',
+            'solution_id' => 'nullable|exists:solutions,id',
+            'software_id' => 'nullable|exists:softwares,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:trainer_request_forms,email',
             'phone' => 'required|string|unique:trainer_request_forms,phone',
             'address' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'experience_year' => 'nullable|string',
-            'current_company'   => 'nullable|string',
-            'current_position'  => 'nullable|string',
-            'status' => 'nullable'
+            'experience_year' => 'nullable|string'
         ];
     }
 }

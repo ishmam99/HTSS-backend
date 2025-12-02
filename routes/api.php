@@ -22,7 +22,9 @@ use App\Http\Controllers\EndUserTrainingController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\OnsiteSupportTicketController;
+use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\TrainerCourseController;
 use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
@@ -83,6 +85,14 @@ Route::prefix('v1')->group(function () {
         Route::post('end-user-solution-add', [EndUserSoftwareController::class, 'addSolution']);
         Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
 
+        Route::apiResource('software-level', SoftwareLevelController::class)->middleware('auth:sanctum');
+        Route::put('software-level-status-update/{id}', [SoftwareLevelController::class, 'statusUpdate']);
+
+        Route::apiResource('trainer-course', TrainerCourseController::class)->middleware('auth:sanctum');
+        Route::put('trainer-course-status-update/{id}', [TrainerCourseController::class, 'statusUpdate']);
+
+        Route::apiResource('trainer-schedule', TrainerCourseController::class)->middleware('auth:sanctum');
+        Route::put('trainer-schedule-status-update/{id}', [TrainerCourseController::class, 'statusUpdate']);
 
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
@@ -101,4 +111,6 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
+
+
 });
