@@ -10,28 +10,27 @@ use Illuminate\Http\Request;
 
 class SoftwareLevelController extends Controller
 {
-    public function index(Request $request)
-    {
-        return response()->json($request->status);
-        $query = SoftwareLevel::when($request->status, function ($query) use ($request) {
+  public function index(Request $request)
+{
+    $query = SoftwareLevel::when($request->filled('status'), function ($query) use ($request) {
             return $query->where('status', $request->status);
-        })->when($request->trainer_id, function ($query) use ($request) {
+        })->when($request->filled('trainer_id'), function ($query) use ($request) {
             return $query->where('trainer_id', $request->trainer_id);
-        })->when($request->software_id, function ($query) use ($request) {
+        })->when($request->filled('software_id'), function ($query) use ($request) {
             return $query->where('software_id', $request->software_id);
-        })->when($request->solution_id, function ($query) use ($request) {
+        })->when($request->filled('solution_id'), function ($query) use ($request) {
             return $query->where('solution_id', $request->solution_id);
-        })->when($request->industry_id, function ($query) use ($request) {
+        })->when($request->filled('industry_id'), function ($query) use ($request) {
             return $query->where('industry_id', $request->industry_id);
         })->orderBy('id', 'desc');
 
-        if ($request->has('per_page')) {
-            $lists = $query->paginate($request->per_page);
-        } else {
-            $lists = $query->get();
-        }
-        return SoftwareLevelResource::collection($lists);
-    }
+    $lists = $request->has('per_page')
+        ? $query->paginate($request->per_page)
+        : $query->get();
+
+    return SoftwareLevelResource::collection($lists);
+}
+
 
 
     public function store(SoftwareLevelRequest $request)
