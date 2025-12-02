@@ -36,6 +36,7 @@ class TrainerController extends Controller
         'name' => $data['name'],
         'email' => $data['email'],
         'password' => Hash::make($data['password'] ?? '12345678'),
+        'role' => 'trainer'
     ]);
 
     $data['user_id'] = $user->id;
