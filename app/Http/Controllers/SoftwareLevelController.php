@@ -12,6 +12,7 @@ class SoftwareLevelController extends Controller
 {
     public function index(Request $request)
     {
+        return response()->json($request->status);
         $query = SoftwareLevel::when($request->status, function ($query) use ($request) {
             return $query->where('status', $request->status);
         })->when($request->trainer_id, function ($query) use ($request) {
