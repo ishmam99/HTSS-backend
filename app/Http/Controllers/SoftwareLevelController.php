@@ -59,31 +59,44 @@ class SoftwareLevelController extends Controller
         return new SoftwareLevelResource($softwareLevel);
     }
 
-    public function update(SoftwareLevelRequest $request, SoftwareLevel $softwareLevel)
+    public function update(Request $request, SoftwareLevel $softwareLevel)
     {
-        $items = $request->validated()['items'];
         $trainerId = auth()->id();
 
-        foreach ($items as $item) {
-            if (isset($item['id'])) {
-                SoftwareLevel::where('id', $item['id'])
-                    ->where('trainer_id', $trainerId)
-                    ->update([
-                        'industry_id' => $item['industry_id'] ?? null,
-                        'solution_id' => $item['solution_id'] ?? null,
-                        'software_id' => $item['software_id'] ?? null,
-                        'levels' => $item['levels'],
-                        'status' => $item['status'] ?? 1,
-                        'updated_at' => now(),
-                    ]);
-            }
+        $updateData = [
+            'trainer_id' => $trainerId,
+            'updated_at' => now(),
+        ];
+
+        if (isset($data['industry_id'])) {
+            $updateData['industry_id'] = $data['industry_id'];
         }
+
+        if (isset($data['solution_id'])) {
+            $updateData['solution_id'] = $data['solution_id'];
+        }
+
+        if (isset($data['software_id'])) {
+            $updateData['software_id'] = $data['software_id'];
+        }
+
+        if (isset($data['levels'])) {
+            $updateData['levels'] = $data['levels'];
+        }
+
+        if (isset($data['status'])) {
+            $updateData['status'] = $data['status'];
+        }
+
+        $softwareLevel->update($updateData);
 
         return response()->json([
             'status' => true,
-            'message' => 'Software levels updated successfully',
+            'message' => 'Software level updated successfully',
+            'data' => $softwareLevel->fresh()
         ], 200);
     }
+
 
     public function destroy(SoftwareLevel $softwareLevel)
     {
