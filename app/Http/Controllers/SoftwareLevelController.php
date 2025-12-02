@@ -24,6 +24,11 @@ class SoftwareLevelController extends Controller
             return $query->where('industry_id', $request->industry_id);
         })->orderBy('id', 'desc');
 
+        if(auth()->user()->role == 'trainer')
+        {
+             $query =  $query->where('trainer_id',auth()->id());
+        }
+
     $lists = $request->has('per_page')
         ? $query->paginate($request->per_page)
         : $query->get();
