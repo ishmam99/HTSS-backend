@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->string('phone')->unique();
             $table->string('address')->nullable();
             $table->string('image')->nullable();
+            $table->string('experience_year')->nullable();
             $table->string('current_company')->nullable();
             $table->string('current_position')->nullable();
-            $table->string('experience_year')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
