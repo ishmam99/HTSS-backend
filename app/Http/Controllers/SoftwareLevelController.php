@@ -61,15 +61,13 @@ class SoftwareLevelController extends Controller
 
     public function update(Request $request, SoftwareLevel $softwareLevel)
     {
-          $updateData = [];
         if(auth()->user()->role == 'trainer')
-      {  $trainerId = auth()->id();
+       { $trainerId = auth()->id();
         $data = $request->all();
         $updateData = [
             'trainer_id' => $trainerId,
             'updated_at' => now(),
         ];
-    }
 
         if (isset($data['industry_id'])) {
             $updateData['industry_id'] = $data['industry_id'];
@@ -92,7 +90,9 @@ class SoftwareLevelController extends Controller
         }
 
         $softwareLevel->update($updateData);
-
+    }
+    else
+             $softwareLevel->update(['status'=>$request->status]);
         return response()->json([
             'status' => true,
             'message' => 'Software level updated successfully',
