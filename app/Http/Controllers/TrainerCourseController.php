@@ -12,7 +12,7 @@ class TrainerCourseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainerCourse::with(['trainingCourse.software','trainingCourse.solution','trainingCourse.industry'])->when($request->status, function ($query) use ($request) {
+        $query = TrainerCourse::with(['trainingCourse.software','trainingCourse.solution','trainingCourse.industry'])->when($request->has('status'), function ($query) use ($request) {
             return $query->where('status', $request->status);
         })->when($request->trainer_id, function ($query) use ($request) {
             return $query->where('trainer_id', $request->trainer_id);
