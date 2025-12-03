@@ -81,7 +81,7 @@ class TrainerCourseController extends Controller
     {
        $trainerCourse = TrainerCourse::find($id);
        $trainerCourse->update([
-            'status' => $request->id
+            'status' => $request->status
        ]);
 
         return response()->json([
