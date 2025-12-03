@@ -64,9 +64,19 @@ class TrainerRequestFormController extends Controller
         return new TrainerRequestFormResource($trainerRequestForm);
     }
 
-    public function update(TrainerRequestFormRequest $request, TrainerRequestForm $trainerRequestForm)
+    public function update(Request $request, TrainerRequestForm $trainerRequestForm)
     {
-        $data = $request->validated();
+        $data = $request->validate([
+             'industry_id' => 'nullable|exists:industries,id',
+            'solution_id' => 'nullable|exists:solutions,id',
+            'software_id' => 'nullable|exists:softwares,id',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:trainer_request_forms,email',
+            'phone' => 'nullable|string|unique:trainer_request_forms,phone',
+            'address' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'experience_year' => 'nullable|string'
+        ]);
 
 
         if ($request->hasFile('image')) {
