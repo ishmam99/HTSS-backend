@@ -29,7 +29,7 @@ class SoftwareLevelController extends Controller
              $query =  $query->where('trainer_id',auth()->id());
         }
 
-    $lists = $request->has('per_page')
+        $lists = $request->has('per_page')
         ? $query->paginate($request->per_page)
         : $query->get();
 
