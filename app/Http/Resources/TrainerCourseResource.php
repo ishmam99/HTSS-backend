@@ -10,7 +10,7 @@ class TrainerCourseResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'training_course' => $this->trainingCourse->load('software,solution,industry'),
+            'training_course' => $this->load('trainingCourse.software,trainingCourse.solution,trainingCourse.industry'),
             'trainer_id' => $this->trainer,
             'status' => $this->status,
         ];
