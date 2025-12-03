@@ -68,4 +68,17 @@ class TrainerScheduleController extends Controller
         $trainerSchedule->delete();
         return response()->json(['status' => true, 'message' => 'TrainerSchedule deleted successfully'], 200);
     }
+
+    public function statusUpdate(Request $request,$id)
+    {
+       $trainerSchedule = TrainerSchedule::find($id);
+       $trainerSchedule->update([
+            'status' => $request->status
+       ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Trainer Schedule status updated successfully',
+        ], 200);
+    }
 }
