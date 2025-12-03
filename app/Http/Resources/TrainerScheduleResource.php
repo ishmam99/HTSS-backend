@@ -11,12 +11,12 @@ class TrainerScheduleResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'trainer_id' => $this->trainer_id,
+            'trainer_id' => $this->trainer,
             'days' => $this->days ? json_decode($this->days, true) : null,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'status' => $this->status,
-            'training_courses' => $this->training_courses,
+            'training_courses' => $this->trainingCourse,
         ];
     }
 }

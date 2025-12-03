@@ -11,18 +11,13 @@ class TrainerSchedule extends Model
 
     protected $guarded = ['id'];
 
-    public function software()
+    public function trainer()
     {
-        return $this->belongsTo(Software::class);
+        return $this->belongsTo(User::class, 'trainer_id');
     }
 
-    public function solution()
+    public function trainingCourse()
     {
-        return $this->belongsTo(Solution::class);
-    }
-
-    public function industry()
-    {
-        return $this->belongsTo(Industry::class);
+        return $this->belongsTo(TrainingCourse::class, 'training_course_id');
     }
 }
