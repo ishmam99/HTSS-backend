@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TrainerCourseResource extends JsonResource
@@ -13,6 +14,7 @@ class TrainerCourseResource extends JsonResource
             'training_course' => $this->trainingCourse,
             'trainer_id' => $this->trainer,
             'status' => $this->status,
+            'created_at' => Carbon::parse($this->created_at)->diffForHumans()
         ];
     }
 }
