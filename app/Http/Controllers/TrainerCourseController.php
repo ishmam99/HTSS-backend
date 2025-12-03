@@ -20,6 +20,11 @@ class TrainerCourseController extends Controller
             return $query->where('training_course_id', $request->training_course_id);
         })->orderBy('id', 'desc');
 
+        if(auth()->user()->role == 'trainer')
+        {
+             $query =  $query->where('trainer_id',auth()->id());
+        }
+
         if ($request->has('per_page')) {
             $lists = $query->paginate($request->per_page);
         } else {
@@ -54,7 +59,7 @@ class TrainerCourseController extends Controller
         return new TrainerCourseResource($trainerCourse);
     }
 
-    public function update(TrainerCourseRequest $request, TrainerCourse $trainerCourse)
+    public function update(Request $request, TrainerCourse $trainerCourse)
     {
         $data = $request->validated();
 
@@ -70,5 +75,18 @@ class TrainerCourseController extends Controller
     {
         $trainerCourse->delete();
         return response()->json(['status' => true, 'message' => 'TrainerCourse deleted successfully'], 200);
+    }
+
+    public function statusUpdate(Request $request,$id)
+    {
+       $trainerCourse = TrainerCourse::find($id);
+       $trainerCourse->update([
+            'status' => $request->status
+       ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'TrainerCourse status updated successfully',
+        ], 200);
     }
 }

@@ -25,6 +25,7 @@ use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainerCourseController;
+use App\Http\Controllers\TrainerScheduleController;
 use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
@@ -91,8 +92,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('trainer-course', TrainerCourseController::class)->middleware('auth:sanctum');
         Route::put('trainer-course-status-update/{id}', [TrainerCourseController::class, 'statusUpdate']);
 
-        Route::apiResource('trainer-schedule', TrainerCourseController::class)->middleware('auth:sanctum');
-        Route::put('trainer-schedule-status-update/{id}', [TrainerCourseController::class, 'statusUpdate']);
+        Route::apiResource('trainer-schedule', TrainerScheduleController::class)->middleware('auth:sanctum');
+        Route::put('trainer-schedule-status-update/{id}', [TrainerScheduleController::class, 'statusUpdate']);
 
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
