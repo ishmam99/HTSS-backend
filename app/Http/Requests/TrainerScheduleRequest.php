@@ -15,7 +15,7 @@ class TrainerScheduleRequest extends FormRequest
     {
         return [
             'training_course_id' => 'required|exists:training_courses,id',
-            'days' => 'required|array|min:1',
+            'days' => 'nullable|array|min:1',
             'days.*' => 'string',
             'status' => 'nullable|integer',
             'start_date' => 'required|date',
