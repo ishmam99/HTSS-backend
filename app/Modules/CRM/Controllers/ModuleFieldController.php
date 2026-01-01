@@ -39,7 +39,7 @@ class ModuleFieldController extends Controller
                 return $query->where('module_id', $request->module_id);
             }),
         ],
-            'type' => 'required|string|in:text,select,date,number',
+            'type' => 'required|string|in:text,select,date,number,checkbox',
             'required' => 'nullable',
             'unique' => 'nullable',
         ]);
