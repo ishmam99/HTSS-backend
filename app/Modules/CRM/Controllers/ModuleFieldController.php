@@ -71,7 +71,7 @@ class ModuleFieldController extends Controller
             'label' => 'sometimes|required|string|max:255',
             'order_group'=> 'sometimes|nullable|integer',
             'name' => 'sometimes|required|string|max:255|unique:module_fields,name,' . $field->id,
-            'type' => 'sometimes|required|string|in:text,select,date,number',
+            'type' => 'sometimes|required|string|in:text,select,date,number,checkbox',
             'required' => 'sometimes|boolean',
             'unique' => 'sometimes|boolean',
             'options' => 'sometimes|array',
