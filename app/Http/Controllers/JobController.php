@@ -85,8 +85,9 @@ class JobController extends Controller
         ], 200);
     }
 
-    public function changeStatus(Request $request, JobOffer $jobs_offer)
+    public function changeStatus(Request $request,  $id)
     {
+        $jobs_offer = JobOffer::find($id);
         $jobs_offer->update([
             'status' => $request->status,
         ]);

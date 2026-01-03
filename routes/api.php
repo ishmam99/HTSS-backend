@@ -116,7 +116,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
     Route::apiResource('jobs-offer', JobController::class);
-    Route::put('job/{job}/status', [JobController::class, 'changeStatus']);
+    Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
 
     Route::apiResource('department', DepartmentController::class);
 });
