@@ -38,7 +38,8 @@ class DatabaseSeeder extends Seeder
         //    $this->call(SoftwareSkillSeeder::class);
         $this->call([
             // TrainingSeeder::class,
-            UserSoftwareSkillSeeder::class
+            UserSoftwareSkillSeeder::class,
+            DepartmentSeeder::class,
             // TrainingSessionSeeder::class,
             // UserSeeder::class,
             // TrainingEnrollmentSeeder::class,
