@@ -30,6 +30,7 @@ use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
+use App\Http\Controllers\DepartmentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -113,5 +114,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
 
-
+    Route::apiResource('department', DepartmentController::class);
 });
