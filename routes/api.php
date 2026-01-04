@@ -32,6 +32,7 @@ use App\Http\Controllers\UserSoftwareSkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\AppliedJobController;
 
 
 Route::get('/user', function (Request $request) {
@@ -119,4 +120,5 @@ Route::prefix('v1')->group(function () {
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
 
     Route::apiResource('department', DepartmentController::class);
+    Route::apiResource('applied_jobs', AppliedJobController::class);
 });
