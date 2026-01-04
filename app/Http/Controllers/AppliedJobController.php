@@ -13,10 +13,17 @@ class AppliedJobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Retrieve all applied jobs with their relationships (eager loading)
-        $appliedJobs = AppliedJob::with(['job', 'software', 'industry'])->get();
+        $appliedJobs = AppliedJob::with(['job', 'software', 'industry']);
+
+        if ($request->has('job_status') && $request->job_status == 'not_null') {
+            $appliedJobs->whereNotNull('job_id');
+        } elseif ($request->has('job_status') && $request->job_status == 'null') {
+            $appliedJobs->whereNull('job_id');
+        }
+
+        $appliedJobs = $appliedJobs->get();
 
         // Return the collection of AppliedJob resources
         return AppliedJobResource::collection($appliedJobs);
