@@ -22,6 +22,7 @@ class JobController extends Controller
             'data' => $lists,
         ]);
     }
+    
     public function publicJob(Request $request)
     {
         $query = JobOffer::advancedQuery($request);
