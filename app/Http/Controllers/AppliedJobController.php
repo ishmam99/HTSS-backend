@@ -22,7 +22,6 @@ class AppliedJobController extends Controller
         } elseif ($request->has('job_status') && $request->job_status == 'null') {
             $appliedJobs->whereNull('job_id');
         }
-
         $appliedJobs = $appliedJobs->get();
 
         // Return the collection of AppliedJob resources
