@@ -35,6 +35,10 @@ class JobController extends Controller
             'data' => $lists,
         ]);
     }
+    public function publicJobShow(JobOffer $jobs_offer)
+    {
+        return new JobResource($jobs_offer->load('department'));
+    }
 
     public function show(JobOffer $jobs_offer)
     {

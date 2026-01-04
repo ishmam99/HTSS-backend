@@ -121,4 +121,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('department', DepartmentController::class);
     Route::apiResource('applied-jobs', AppliedJobController::class);
     Route::put('job-public', [JobController::class, 'publicJob']);
+    Route::put('job-public/{id}', [JobController::class, 'publicJobShow']);
 });
