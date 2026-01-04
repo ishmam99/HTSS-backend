@@ -22,6 +22,24 @@ class JobController extends Controller
             'data' => $lists,
         ]);
     }
+    
+    public function publicJob(Request $request)
+    {
+        $query = JobOffer::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+        $lists = JobOffer::all();
+
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+        ]);
+    }
+    public function publicJobShow(JobOffer $jobs_offer)
+    {
+        return new JobResource($jobs_offer->load('department'));
+    }
 
     public function show(JobOffer $jobs_offer)
     {
