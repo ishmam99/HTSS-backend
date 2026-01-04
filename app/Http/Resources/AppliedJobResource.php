@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class AppliedJobResource extends JsonResource
 {
@@ -19,7 +20,7 @@ class AppliedJobResource extends JsonResource
             'industry' => $this->industry,
             'highest_education' => $this->highest_education,
             'university' => $this->university,
-            'pdf_resume' => $this->pdf_resume,
+            'resume' => $this->resume ? Storage::url($this->resume) : null,
             'job_id' => $this->job_id,
             'software_id' => $this->software_id,
             'industry_id' => $this->industry_id,

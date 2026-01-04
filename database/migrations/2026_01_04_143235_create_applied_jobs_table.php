@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('industry')->nullable(); // Same here for the industry
             $table->string('highest_education')->nullable();
             $table->string('university')->nullable();
-            $table->string('pdf_resume')->nullable(); // Store the path of the PDF file
+            $table->string('resume')->nullable(); // Store the path of the PDF file
             $table->unsignedBigInteger('job_id')->nullable();
             $table->unsignedBigInteger('software_id')->nullable(); // Assuming this is related to a software table
             $table->unsignedBigInteger('industry_id')->nullable(); // Assuming this is related to an industry table
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->foreign('job_id')->references('id')->on('job_offers'); // If you have a jobs table
             $table->foreign('software_id')->references('id')->on('softwares'); // If you have a softwares table
             $table->foreign('industry_id')->references('id')->on('industries');
-        
+
         });
     }
 

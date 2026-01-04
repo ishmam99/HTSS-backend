@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
 use App\Http\Controllers\CustomerStatsController;
 use App\Http\Controllers\CustomerSupportController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\EndUserTrainingController;
@@ -31,9 +33,6 @@ use App\Http\Controllers\TrainingOfferController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\AppliedJobController;
-
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -120,5 +119,6 @@ Route::prefix('v1')->group(function () {
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
 
     Route::apiResource('department', DepartmentController::class);
-    Route::apiResource('applied_jobs', AppliedJobController::class);
+    Route::apiResource('applied-jobs', AppliedJobController::class);
+    Route::put('job-public', [JobController::class, 'publicJob']);
 });

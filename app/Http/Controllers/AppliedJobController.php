@@ -45,7 +45,7 @@ class AppliedJobController extends Controller
     public function store(Request $request)
     {
         // Validate incoming request data
-        if ($request->hasFile('pdf_resume')) {
+        if ($request->hasFile('resume')) {
             // Validation rules when pdf_resume is uploaded
             $request->validate([
                 'full_name' => 'nullable|string|max:255',
@@ -55,7 +55,7 @@ class AppliedJobController extends Controller
                 'system' => 'nullable|string|max:255',
                 'highest_education' => 'nullable|string|max:255',
                 'university' => 'nullable|string|max:255',
-                'pdf_resume' => 'required|file|mimes:pdf|max:10240',
+                'resume' => 'required|file|mimes:pdf|max:10240',
                 'job_id' => 'nullable|exists:job_offers,id',
                 'software_id' => 'nullable|exists:softwares,id',
                 'industry_id' => 'nullable|exists:industries,id',
@@ -72,7 +72,7 @@ class AppliedJobController extends Controller
                 'industry' => 'required|string|max:255',
                 'highest_education' => 'required|string|max:255',
                 'university' => 'required|string|max:255',
-                'pdf_resume' => 'nullable|file|mimes:pdf|max:10240',
+                'resume' => 'nullable|file|mimes:pdf|max:10240',
                 'job_id' => 'required|exists:jobs,id',
                 'software_id' => 'required|exists:softwares,id',
                 'industry_id' => 'required|exists:industries,id',
@@ -81,8 +81,8 @@ class AppliedJobController extends Controller
 
         // Store the PDF resume if uploaded
         $pdfPath = null;
-        if ($request->hasFile('pdf_resume')) {
-            $pdfPath = $request->file('pdf_resume')->store('pdf_resumes');
+        if ($request->hasFile('resume')) {
+            $pdfPath = $request->file('resume')->store('resume');
         }
 
         // Create the new AppliedJob entry in the database
@@ -96,7 +96,7 @@ class AppliedJobController extends Controller
             'industry' => $request->industry ?? null,
             'highest_education' => $request->highest_education ?? null,
             'university' => $request->university ?? null,
-            'pdf_resume' => $pdfPath, // Store the path to the uploaded file if any
+            'resume' => $pdfPath, // Store the path to the uploaded file if any
             'job_id' => $request->job_id ?? null,
             'software_id' => $request->software_id ?? null,
             'industry_id' => $request->industry_id ?? null,
@@ -123,7 +123,7 @@ class AppliedJobController extends Controller
             'system' => 'nullable|string|max:255',
             'highest_education' => 'nullable|string|max:255',
             'university' => 'nullable|string|max:255',
-            'pdf_resume' => 'nullable|file|mimes:pdf|max:10240',
+            'resume' => 'nullable|file|mimes:pdf|max:10240',
             'job_id' => 'nullable|exists:job_offers,id',
             'software_id' => 'nullable|exists:softwares,id',
             'industry_id' => 'nullable|exists:industries,id',
@@ -133,9 +133,9 @@ class AppliedJobController extends Controller
         $appliedJob = AppliedJob::findOrFail($id);
 
         // Check if a new PDF resume has been uploaded and update
-        if ($request->hasFile('pdf_resume')) {
-            $pdfPath = $request->file('pdf_resume')->store('pdf_resumes');
-            $appliedJob->pdf_resume = $pdfPath;
+        if ($request->hasFile('resume')) {
+            $pdfPath = $request->file('resume')->store('resume');
+            $appliedJob->resume = $pdfPath;
         }
 
         // Update the applied job data
