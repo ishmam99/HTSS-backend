@@ -16,7 +16,7 @@ class DepartmentSeeder extends Seeder
             [
                 'name'        => 'Human Resources',
                 'description' => 'Handles recruitment, employee relations, and HR policies.',
-                'status'      => 0,
+                'status'      => 1,
             ],
             [
                 'name'        => 'Finance',

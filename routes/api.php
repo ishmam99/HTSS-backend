@@ -1,36 +1,38 @@
 <?php
 
+use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\TrainerRequestFormController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EnumController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SoftwareController;
-use App\Http\Controllers\SoftwareSkillController;
-use App\Http\Controllers\SolutionController;
-use App\Http\Controllers\UserSoftwareSkillController;
-use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
 use App\Http\Controllers\CustomerStatsController;
 use App\Http\Controllers\CustomerSupportController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\EndUserTrainingController;
+use App\Http\Controllers\EnumController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\OnsiteSupportTicketController;
+use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
+use App\Http\Controllers\SoftwareSkillController;
+use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainerCourseController;
+use App\Http\Controllers\TrainerRequestFormController;
 use App\Http\Controllers\TrainerScheduleController;
 use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
-use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\UserSoftwareSkillController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -113,6 +115,10 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
+    Route::apiResource('jobs-offer', JobController::class);
+    Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
 
     Route::apiResource('department', DepartmentController::class);
+    Route::apiResource('applied-jobs', AppliedJobController::class);
+    Route::put('job-public', [JobController::class, 'publicJob']);
 });
