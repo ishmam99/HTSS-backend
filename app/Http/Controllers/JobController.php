@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\JobRequest;
 use App\Http\Resources\JobResource;
 use App\Models\JobOffer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class JobController extends Controller
@@ -22,7 +23,7 @@ class JobController extends Controller
             'data' => $lists,
         ]);
     }
-    
+
     public function publicJob(Request $request)
     {
         $query = JobOffer::advancedQuery($request);
@@ -36,6 +37,7 @@ class JobController extends Controller
             'data' => $lists,
         ]);
     }
+
     public function publicJobShow(JobOffer $jobs_offer)
     {
         return new JobResource($jobs_offer->load('department'));
@@ -49,11 +51,14 @@ class JobController extends Controller
     public function store(JobRequest $request)
     {
         $data = $request->validated();
-        $data['key_responsibilities'] = json_encode($data['key_responsibilities']);
-        $data['required_qualifications'] = json_encode($data['required_qualifications']);
-        $data['key_skills'] = json_encode($data['key_skills']);
-        $data['primary_software'] = json_encode($data['primary_software']);
-
+        $data['requirements'] = json_encode($data['requirements']) ?? [];
+        $data['key_responsibilities'] = json_encode($data['key_responsibilities']) ?? [];
+        $data['required_qualifications'] = json_encode($data['required_qualifications']) ?? [];
+        $data['key_skills'] = json_encode($data['key_skills']) ?? [];
+        $data['primary_software'] = json_encode($data['primary_software']) ?? [];
+        $data['created_by'] = auth()->id();
+        $data['deadline'] = Carbon::parse( $data['deadline']);
+        $data['published_at'] = now();
         $jobOffer = JobOffer::create($data);
 
         return response()->json([
@@ -70,6 +75,10 @@ class JobController extends Controller
 
         if (isset($data['key_responsibilities'])) {
             $data['key_responsibilities'] = json_encode($data['key_responsibilities']);
+        }
+
+        if (isset($data['requirements'])) {
+            $data['requirements'] = json_encode($data['requirements']);
         }
 
         if (isset($data['required_qualifications'])) {
@@ -103,7 +112,7 @@ class JobController extends Controller
         ], 200);
     }
 
-    public function changeStatus(Request $request,  $id)
+    public function changeStatus(Request $request, $id)
     {
         $jobs_offer = JobOffer::find($id);
         $jobs_offer->update([

@@ -16,14 +16,14 @@ return new class extends Migration
             $table->foreignId('position_id')->constrained('positions')->cascadeOnDelete();
             $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
             $table->string('title');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('job_type');
             $table->string('location_type');
-            $table->string('base_country');
+            $table->string('base_country')->nullable();
             $table->string('required_experience');
-            $table->json('requirements');
+            $table->json('requirements')->nullable();
             $table->json('required_qualifications');
-            $table->json('key_skills');
+            $table->json('key_skills')->nullable();
             $table->json('primary_software')->nullable();
             $table->dateTime('deadline');
             $table->integer('number_of_vacancies')->default(0);
