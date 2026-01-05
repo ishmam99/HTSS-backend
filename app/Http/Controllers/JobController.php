@@ -142,27 +142,28 @@ class JobController extends Controller
         ], 200);
     }
 
-    public function publish(JobOffer $jobs_offer)
+    public function publish(Request $request, JobOffer $jobs_offer)
     {
-        // Only publish if status = 2
-        if ($jobs_offer->status == 2) {
-            // Only set published_at if not already set
-            if (! $jobs_offer->published_at) {
-                $jobs_offer->published_at = now();
-                $jobs_offer->save();
-            }
+        $validated = $request->validate([
+            'status' => 'required|integer',
+        ]);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Job published successfully',
-               
-            ], 200);
+        if ($jobs_offer->status === 2) {
+            // Only set published_at if status = 2
+            $jobs_offer->published_at = now();
         }
 
+        // Update status if provided in request
+        if (isset($validated['status'])) {
+            $jobs_offer->status = $validated['status'];
+        }
+
+        $jobs_offer->save();
+
         return response()->json([
-            'status' => false,
-            'message' => 'Job status is not set to publish (2).',
+            'status' => true,
+            'message' => 'Job offer updated successfully.',
             'data' => $jobs_offer,
-        ], 400);
+        ]);
     }
 }
