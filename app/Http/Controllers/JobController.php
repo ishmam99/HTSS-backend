@@ -142,11 +142,12 @@ class JobController extends Controller
         ], 200);
     }
 
-    public function publish(Request $request, JobOffer $jobs_offer)
+    public function publish(Request $request, $id)
     {
         $validated = $request->validate([
             'status' => 'required|integer',
         ]);
+         $jobs_offer = JobOffer::find($id);
 
         if ($jobs_offer->status === 2) {
             // Only set published_at if status = 2
