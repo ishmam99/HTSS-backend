@@ -131,7 +131,8 @@ class AuthController extends Controller
         )
             ->whereNotNull('role')
             ->groupBy('role')
-            ->orderBy('role');
+            ->orderBy('role')
+            ->get();
 
         return response()->json([
             'status'  => true,
