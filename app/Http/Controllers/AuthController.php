@@ -131,8 +131,7 @@ class AuthController extends Controller
         )
             ->whereNotNull('role')
             ->groupBy('role')
-            ->orderBy('role')
-            ->paginate($request->integer('per_page', 20));
+            ->orderBy('role');
 
         return response()->json([
             'status'  => true,
