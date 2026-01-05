@@ -57,8 +57,13 @@ class JobController extends Controller
         $data['key_skills'] = json_encode($data['key_skills']) ?? [];
         $data['primary_software'] = json_encode($data['primary_software']) ?? [];
         $data['created_by'] = auth()->id();
-        $data['deadline'] = Carbon::parse( $data['deadline']);
-        $data['published_at'] = now();
+        $data['deadline'] = Carbon::parse($data['deadline']);
+
+        if (isset($data['status']) && $data['status'] == 2) {
+            $data['published_at'] = now();
+        } else {
+            $data['published_at'] = null;
+        }
         $jobOffer = JobOffer::create($data);
 
         return response()->json([
@@ -93,6 +98,18 @@ class JobController extends Controller
             $data['primary_software'] = json_encode($data['primary_software']);
         }
 
+        if (isset($data['deadline'])) {
+            $data['deadline'] = Carbon::parse($data['deadline']);
+        }
+
+        if (isset($data['status']) && $data['status'] == 2) {
+            if (! $jobs_offer->published_at) {
+                $data['published_at'] = now();
+            }
+        } else {
+            $data['published_at'] = null;
+        }
+
         $jobs_offer->update($data);
 
         return response()->json([
@@ -123,5 +140,29 @@ class JobController extends Controller
             'status' => true,
             'message' => 'Job status updated successfully',
         ], 200);
+    }
+
+    public function publish(JobOffer $jobs_offer)
+    {
+        // Only publish if status = 2
+        if ($jobs_offer->status == 2) {
+            // Only set published_at if not already set
+            if (! $jobs_offer->published_at) {
+                $jobs_offer->published_at = now();
+                $jobs_offer->save();
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Job published successfully',
+               
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Job status is not set to publish (2).',
+            'data' => $jobs_offer,
+        ], 400);
     }
 }

@@ -29,10 +29,10 @@ return new class extends Migration
             $table->integer('number_of_vacancies')->default(0);
             $table->double('salary_min')->default(0);
             $table->double('salary_max')->default(0);
-            $table->dateTime('published_at');
+            $table->dateTime('published_at')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->text('benefits')->nullable();
-            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('status')->default(0)->comment('0=closed,1=draft,2=published');
             $table->timestamps();
         });
     }
