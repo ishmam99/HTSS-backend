@@ -59,11 +59,11 @@ class JobController extends Controller
         $data['created_by'] = auth()->id();
         $data['deadline'] = Carbon::parse($data['deadline']);
 
-        if (isset($data['status']) && $data['status'] == 2) {
-            $data['published_at'] = now();
-        } else {
-            $data['published_at'] = null;
-        }
+        // if (isset($data['status']) && $data['status'] == 2) {
+        //     $data['published_at'] = now();
+        // } else {
+        //     $data['published_at'] = null;
+        // }
         $jobOffer = JobOffer::create($data);
 
         return response()->json([
@@ -102,13 +102,13 @@ class JobController extends Controller
             $data['deadline'] = Carbon::parse($data['deadline']);
         }
 
-        if (isset($data['status']) && $data['status'] == 2) {
-            if (! $jobs_offer->published_at) {
-                $data['published_at'] = now();
-            }
-        } else {
-            $data['published_at'] = null;
-        }
+        // if (isset($data['status']) && $data['status'] == 2) {
+        //     if (! $jobs_offer->published_at) {
+        //         $data['published_at'] = now();
+        //     }
+        // } else {
+        //     $data['published_at'] = null;
+        // }
 
         $jobs_offer->update($data);
 

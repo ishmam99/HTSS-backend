@@ -101,7 +101,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('trainer-schedule', TrainerScheduleController::class)->middleware('auth:sanctum');
         Route::put('trainer-schedule-status-update/{id}', [TrainerScheduleController::class, 'statusUpdate']);
         Route::apiResource('jobs-offer', JobController::class);
-        Route::post('/jobs/publish/{jobOffer}', [JobController::class, 'publish']);
+        Route::put('/jobs/publish/{jobOffer}', [JobController::class, 'publish']);
 
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
