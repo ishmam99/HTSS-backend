@@ -74,4 +74,18 @@ class DepartmentController extends Controller
             'message' => 'Department deleted successfully',
         ]);
     }
+
+    public function active(Request $request)
+    {
+        $query = Department::orderBy('id', 'desc');
+
+        if ($request->filled('per_page')) {
+            $positions = $query->paginate((int) $request->per_page);
+        } else {
+            $positions = $query->get();
+        }
+
+        return DepartmentResource::collection($positions);
+
+    }
 }
