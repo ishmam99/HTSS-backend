@@ -41,6 +41,7 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('role-by-user-list/{role}', [AuthController::class, 'usersByRole']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/enums/roles', [EnumController::class, 'roles']);

@@ -15,7 +15,7 @@ class AuthController extends Controller
     public function index(Request $request)
     {
         $query = User::advancedQuery($request);
-         $customers = $request->per_page
+        $customers = $request->per_page
             ? $query->paginate($request->per_page)
             : $query->get();
         return response()->json([
@@ -67,10 +67,10 @@ class AuthController extends Controller
             ]);
         }
 
-              if ($user && in_array($user->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
-              logActivity('login', 'auth', null, [
-            'data' => 'Logged in to Sales Dashboard'
-        ],'user-login',$user);
+        if ($user && in_array($user->role,  ['sales-manager', 'sales-executive', 'crm-manager', 'crm-executive'])) {
+            logActivity('login', 'auth', null, [
+                'data' => 'Logged in to Sales Dashboard'
+            ], 'user-login', $user);
         }
 
         $token = $user->createToken('api_token')->plainTextToken;
@@ -90,5 +90,35 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully']);
+    }
+
+    public function usersByRole(Request $request, string $role)
+    {
+        $q = User::query()->where('role', $role);
+
+        if ($request->filled('name')) {
+            $q->where('name', $request->string('name'));
+        }
+
+        if ($request->filled('email')) {
+            $q->where('email', 'like', '%' . $request->email . '%');
+        }
+        $users = $q->latest()->paginate(
+            $request->integer('per_page', 20)
+        );
+
+        if ($users->isEmpty()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'No users found for this role',
+                'data'    => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'User list fetched successfully',
+            'data'    => $users,
+        ], 200);
     }
 }
