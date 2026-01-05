@@ -41,12 +41,12 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::get('role-by-user-list/{role}', [AuthController::class, 'usersByRole']);
-    Route::get('users-role-wise-count', [AuthController::class, 'roleWiseCount']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('role-by-user-list/{role}', [AuthController::class, 'usersByRole']);
+        Route::get('users-role-wise-count', [AuthController::class, 'roleWiseCount']);
         Route::apiResource('partners', PartnerController::class);
         Route::apiResource('customers', CustomerController::class);
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
@@ -99,7 +99,6 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('trainer-schedule', TrainerScheduleController::class)->middleware('auth:sanctum');
         Route::put('trainer-schedule-status-update/{id}', [TrainerScheduleController::class, 'statusUpdate']);
-
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
