@@ -149,12 +149,11 @@ class JobController extends Controller
         ]);
          $jobs_offer = JobOffer::find($id);
 
-        if ($jobs_offer->status === 2) {
+        if ($jobs_offer->status == 2) {
             // Only set published_at if status = 2
             $jobs_offer->published_at = now();
         }
 
-        // Update status if provided in request
         if (isset($validated['status'])) {
             $jobs_offer->status = $validated['status'];
         }
