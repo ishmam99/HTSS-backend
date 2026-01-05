@@ -93,17 +93,24 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully']);
     }
 
-    public function usersByRole(Request $request, string $role)
+    public function usersByRole(Request $request)
     {
+        $request->validate([
+            'role' => 'required|string',
+        ]);
+
+        $role = $request->query('role');
+
         $q = User::query()->where('role', $role);
 
         if ($request->filled('name')) {
-            $q->where('name', $request->string('name'));
+            $q->where('name', 'like', '%' . $request->name . '%');
         }
 
         if ($request->filled('email')) {
             $q->where('email', 'like', '%' . $request->email . '%');
         }
+
         $users = $q->latest()->paginate(
             $request->integer('per_page', 20)
         );
@@ -122,6 +129,7 @@ class AuthController extends Controller
             'data'    => $users,
         ], 200);
     }
+
 
     public function roleWiseCount(Request $request)
     {
