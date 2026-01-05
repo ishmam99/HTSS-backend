@@ -9,13 +9,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
     public function index(Request $request)
     {
         $query = User::advancedQuery($request);
-         $customers = $request->per_page
+        $customers = $request->per_page
             ? $query->paginate($request->per_page)
             : $query->get();
         return response()->json([
@@ -67,10 +68,10 @@ class AuthController extends Controller
             ]);
         }
 
-              if ($user && in_array($user->role,  ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
-              logActivity('login', 'auth', null, [
-            'data' => 'Logged in to Sales Dashboard'
-        ],'user-login',$user);
+        if ($user && in_array($user->role,  ['sales-manager', 'sales-executive', 'crm-manager', 'crm-executive'])) {
+            logActivity('login', 'auth', null, [
+                'data' => 'Logged in to Sales Dashboard'
+            ], 'user-login', $user);
         }
 
         $token = $user->createToken('api_token')->plainTextToken;
@@ -90,5 +91,61 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully']);
+    }
+
+    public function usersByRole(Request $request)
+    {
+        $request->validate([
+            'role' => 'required|string',
+        ]);
+
+        $role = $request->query('role');
+
+        $q = User::query()->where('role', $role);
+
+        if ($request->filled('name')) {
+            $q->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('email')) {
+            $q->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        $users = $q->latest()->paginate(
+            $request->integer('per_page', 20)
+        );
+
+        if ($users->isEmpty()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'No users found for this role',
+                'data'    => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'User list fetched successfully',
+            'data'    => $users,
+        ], 200);
+    }
+
+
+    public function roleWiseCount(Request $request)
+    {
+        $roles = User::select(
+            'role',
+            DB::raw('COUNT(*) as total_users')
+        )
+            ->whereNotNull('role')
+            ->groupBy('role')
+            ->orderBy('role')
+            ->get();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Role-wise user count fetched successfully',
+            'data'    => $roles,
+        ], 200);
     }
 }
