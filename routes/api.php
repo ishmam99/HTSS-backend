@@ -18,6 +18,7 @@ use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\SoftwareSkillController;
@@ -122,4 +123,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('applied-jobs', AppliedJobController::class);
     Route::get('job-public', [JobController::class, 'publicJob']);
     Route::get('job-public/{id}', [JobController::class, 'publicJobShow']);
+    Route::apiResource('positions', PositionController::class);
+
 });
