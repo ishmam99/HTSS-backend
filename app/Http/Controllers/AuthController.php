@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -119,6 +120,24 @@ class AuthController extends Controller
             'status'  => true,
             'message' => 'User list fetched successfully',
             'data'    => $users,
+        ], 200);
+    }
+
+    public function roleWiseCount(Request $request)
+    {
+        $roles = User::select(
+            'role',
+            DB::raw('COUNT(*) as total_users')
+        )
+            ->whereNotNull('role')
+            ->groupBy('role')
+            ->orderBy('role')
+            ->paginate($request->integer('per_page', 10));
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Role-wise user count fetched successfully',
+            'data'    => $roles,
         ], 200);
     }
 }
