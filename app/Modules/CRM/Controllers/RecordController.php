@@ -312,25 +312,43 @@ public function convertModule($recordId)
     }
         return response()->json('Child Data added successfully');
     }
-    public function getChild($record , $type){
-        $childs = RecordRelation::where('parent_record_id',$record)->where('relation_type',$type)->pluck('child_record_id');
+  public function getChild($record, $type)
+{
+    $childIds = RecordRelation::where('parent_record_id', $record)
+        ->where('relation_type', $type)
+        ->pluck('child_record_id');
 
-        $query = Record::whereIn('id',$childs)->with('values.field','assignments.user');
-         if (request()->field && request()->value) {
+    $query = Record::whereIn('id', $childIds)
+        ->with(['values.field', 'assignments.user']);
 
-        $fieldName = request()->field;
+    // Optional field/value filter
+    if (request()->filled('field') && request()->filled('value')) {
+
+        $fieldName  = request()->field;
         $fieldValue = request()->value;
 
         $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
-            $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
-                ->where('value', $fieldValue);
+            $q->whereHas('field', function ($f) use ($fieldName) {
+                $f->where('name', $fieldName);
+            })->where('value', $fieldValue);
         });
-
     }
 
-    $childData = $query->get();
-        return response()->json(['data'=>$childData,'relation_type'=>$type]);
+    // Optional pagination
+    if (request()->filled('per_page')) {
+        $perPage = (int) request()->get('per_page', 10);
+
+        $childData = $query->paginate($perPage);
+    } else {
+        $childData = $query->get();
     }
+
+    return response()->json([
+        'data' => $childData,
+        'relation_type' => $type
+    ]);
+}
+
 
    public function assignRecord(Record $record, Request $request)
 {
@@ -610,7 +628,7 @@ private function applyGroup($query, $group)
         }
 
     });
-}   
+}
 private function applyCondition($query, $cond, $join)
 {
     $method = $join === 'AND' ? 'whereHas' : 'orWhereHas';
