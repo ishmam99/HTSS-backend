@@ -17,7 +17,7 @@ class AppliedJob extends Model
         return $this->belongsTo(Software::class,'software_id');
     }
 
-    public function industry()
+    public function industries()
     {
         return $this->belongsTo(Industry::class,'industry_id');
     }

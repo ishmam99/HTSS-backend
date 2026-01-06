@@ -35,7 +35,7 @@ class AppliedJobResource extends JsonResource
             // ✅ relations (ALWAYS use Resource)
             'job' => new JobResource($this->whenLoaded('job')),
             'software' =>$this->software,
-            // 'industry' => new IndustryResource($this->whenLoaded('industry')),
+            'industry' => new IndustryResource($this->whenLoaded('industries')),
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
