@@ -4,6 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\JobResource;
+use App\Http\Resources\SoftwareResource;
+use App\Http\Resources\IndustryResource;
 
 class AppliedJobResource extends JsonResource
 {
