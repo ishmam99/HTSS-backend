@@ -18,20 +18,16 @@ return new class extends Migration
             $table->string('contact')->nullable();
             $table->string('emergency_contact')->nullable();
             $table->string('system')->nullable();
-            $table->string('softwares')->nullable(); // Or you can use a foreign key if you have a software table
-            $table->string('industry')->nullable(); // Same here for the industry
+            $table->string('softwares')->nullable();
+            $table->string('industry')->nullable();
             $table->string('highest_education')->nullable();
             $table->string('university')->nullable();
-            $table->string('resume')->nullable(); // Store the path of the PDF file
-            // $table->unsignedBigInteger('job_id')->nullable();
-            // $table->unsignedBigInteger('software_id')->nullable(); // Assuming this is related to a software table
-            // $table->unsignedBigInteger('industry_id')->nullable(); // Assuming this is related to an industry table
+            $table->string('resume')->nullable(); 
             $table->foreignId('job_id')->nullable()->constrained('job_offers')->cascadeOnDelete();
             $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
-
         });
     }
 
