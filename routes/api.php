@@ -120,13 +120,13 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
-
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
-
     Route::apiResource('department', DepartmentController::class);
     Route::apiResource('applied-jobs', AppliedJobController::class);
     Route::get('job-public', [JobController::class, 'publicJob']);
     Route::get('job-public/{id}', [JobController::class, 'publicJobShow']);
     Route::apiResource('positions', PositionController::class);
-      Route::get('active-department', [DepartmentController::class, 'active']);
+    Route::get('active-department', [DepartmentController::class, 'active']);
+    Route::put('applied-job-status', [AppliedJobController::class, 'statusChange']);
+
 });

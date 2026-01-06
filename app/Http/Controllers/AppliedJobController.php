@@ -22,6 +22,10 @@ class AppliedJobController extends Controller
         } elseif ($request->has('job_status') && $request->job_status == 'null') {
             $appliedJobs->whereNull('job_id');
         }
+
+        if ($request->has('status')) {
+            $appliedJobs->where('status' , $request->status);
+        }
         $appliedJobs = $appliedJobs->get();
 
         // Return the collection of AppliedJob resources
@@ -141,5 +145,15 @@ class AppliedJobController extends Controller
 
         // Return a success message
         return response()->json(['message' => 'Applied job deleted successfully.']);
+    }
+
+    public function statusChange(Request $request ,$id){
+        $appliedJob = AppliedJob::findOrFail($id);
+
+        // Delete the applied job record
+        $appliedJob->update([
+            'status' =>$request->status
+        ]);
+        return response()->json(['message' => 'Applied job status successfully.']);
     }
 }
