@@ -25,7 +25,7 @@ class AppliedJobResource extends JsonResource
             'software_id' => $this->software_id,
             'industry_id' => $this->industry_id,
             'job' => new JobResource($this->whenLoaded('job')), // Include job data when loaded
-            'software' => new $this->whenLoaded('software'), // Include software data when loaded
+            'software' =>$this->software,
             'industry' => new IndustryResource($this->whenLoaded('industry')), // Include industry data when loaded
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
