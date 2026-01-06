@@ -19,6 +19,7 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\ScheduledMessageController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\SoftwareSkillController;
@@ -128,6 +129,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('positions', PositionController::class);
     Route::get('active-department', [DepartmentController::class, 'active']);
     Route::put('applied-job-status/{id}', [AppliedJobController::class, 'statusChange']);
-    
+    Route::apiResource('scheduled-messages', ScheduledMessageController::class);
+     Route::put('scheduled-messages-status/{id}', [ScheduledMessageController::class, 'statusChange']);
 
 });

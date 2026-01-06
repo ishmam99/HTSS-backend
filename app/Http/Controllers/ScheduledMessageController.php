@@ -77,4 +77,19 @@ class ScheduledMessageController extends Controller
             'message' => 'Schedule deleted successfully',
         ]);
     }
+
+    public function statusChange(Request $request ,$id){
+
+        $request->validate([
+            'status' => 'required|integer',
+        ]);
+
+        $appliedJob = ScheduledMessage::findOrFail($id);
+
+        // Delete the applied job record
+        $appliedJob->update([
+            'status' =>$request->status
+        ]);
+        return response()->json(['message' => 'Applied job status successfully.']);
+    }
 }
