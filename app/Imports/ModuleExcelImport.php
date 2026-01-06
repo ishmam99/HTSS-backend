@@ -56,8 +56,9 @@ class ModuleExcelImport implements
         ],
     ];
 
-    public function __construct(Module $module, int $userId, bool $strictParent = true)
+    public function __construct(Module $moduleId, int $userId, bool $strictParent = true)
     {
+        $module = Module::findOrFail($moduleId);
         $this->module = $module;
         $this->userId = $userId;
         $this->strictParent = $strictParent;

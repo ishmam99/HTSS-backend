@@ -35,7 +35,7 @@ class ModuleImportController extends Controller
         \Log::info('Calling Excel::queueImport...');
 
         $import = new ModuleExcelImport(
-            $module,
+            $moduleId,
             auth()->id(),
             $request->boolean('strict_parent', true)
         );
