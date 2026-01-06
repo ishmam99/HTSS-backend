@@ -137,6 +137,8 @@ class AppliedJobController extends Controller
      */
     public function destroy($id)
     {
+
+
         // Find the applied job by ID
         $appliedJob = AppliedJob::findOrFail($id);
 
@@ -148,6 +150,11 @@ class AppliedJobController extends Controller
     }
 
     public function statusChange(Request $request ,$id){
+
+        $request->validate([
+            'status' => 'required|integer',
+        ]);
+
         $appliedJob = AppliedJob::findOrFail($id);
 
         // Delete the applied job record
