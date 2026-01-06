@@ -23,14 +23,14 @@ return new class extends Migration
             $table->string('highest_education')->nullable();
             $table->string('university')->nullable();
             $table->string('resume')->nullable(); // Store the path of the PDF file
-            $table->unsignedBigInteger('job_id')->nullable();
-            $table->unsignedBigInteger('software_id')->nullable(); // Assuming this is related to a software table
-            $table->unsignedBigInteger('industry_id')->nullable(); // Assuming this is related to an industry table
+            // $table->unsignedBigInteger('job_id')->nullable();
+            // $table->unsignedBigInteger('software_id')->nullable(); // Assuming this is related to a software table
+            // $table->unsignedBigInteger('industry_id')->nullable(); // Assuming this is related to an industry table
+            $table->foreignId('job_id')->nullable()->constrained('job_offers')->cascadeOnDelete();
+            $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
+            $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
-
-            $table->foreign('job_id')->references('id')->on('job_offers'); // If you have a jobs table
-            $table->foreign('software_id')->references('id')->on('softwares'); // If you have a softwares table
-            $table->foreign('industry_id')->references('id')->on('industries');
 
         });
     }
