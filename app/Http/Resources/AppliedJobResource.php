@@ -12,7 +12,7 @@ class AppliedJobResource extends JsonResource
 {
     public function toArray($request)
     {
-        
+
         return [
             'id' => $this->id,
             'full_name' => $this->full_name,
@@ -21,7 +21,8 @@ class AppliedJobResource extends JsonResource
             'emergency_contact' => $this->emergency_contact,
             'system' => $this->system,
             'softwares' => $this->softwares,
-            'industry' => $this->industry,
+         'industry' => new IndustryResource($this->whenLoaded('industry')),
+        
             'highest_education' => $this->highest_education,
             'university' => $this->university,
             'resume' => $this->resume ? Storage::url($this->resume) : null,
