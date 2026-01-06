@@ -109,7 +109,10 @@ class AppliedJobController extends Controller
         ]);
 
         // Return the newly created AppliedJob resource
-        return new AppliedJobResource($appliedJob);
+        return response()->json([
+            'message' => 'Applied job created successfully',
+            'data' => $appliedJob,
+        ], 201);
     }
 
     /**
