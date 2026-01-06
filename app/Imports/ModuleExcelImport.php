@@ -62,12 +62,15 @@ class ModuleExcelImport implements
         $this->fields = ModuleField::where('module_id',  $modID )
             ->get()
             ->keyBy(fn ($f) => strtolower(trim($f->name)));
+            // dd($this->fields);
     }
 
     public function collection(Collection $rows)
     {
+        // dd($rows);
         foreach ($rows as $row) {
             try {
+                // dd($row);
                 $this->importRow($row);
             } catch (\Throwable $e) {
                 $this->logError($row, $e->getMessage());
@@ -137,7 +140,7 @@ class ModuleExcelImport implements
         $parent = Record::where('module_id', $config['parent_module_id'])
             ->where('external_id', $parentExternalId)
             ->first();
-      
+
         if (!$parent && $this->strictParent) {
             $this->logError($row, 'Parent record not found');
             return;
