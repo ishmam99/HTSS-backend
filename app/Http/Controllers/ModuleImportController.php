@@ -10,51 +10,69 @@ use Modules\CRM\Models\Module;
 
 class ModuleImportController extends Controller
 {
-    public function import(Request $request, $moduleId)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,csv',
-            'strict_parent' => 'boolean',
+   public function import(Request $request, $moduleId)
+{
+    $request->validate([
+        'file' => 'required|file|mimes:xlsx,csv',
+        'strict_parent' => 'boolean',
+    ]);
+
+    $module = Module::findOrFail($moduleId);
+
+    \Log::info('=== IMPORT DEBUG DETAILED ===');
+    \Log::info('Before Excel::queueImport');
+
+    // Test if we can dispatch a simple job
+    \Illuminate\Support\Facades\Queue::after(function ($event) {
+        \Log::info('Job was pushed to queue', [
+            'job' => get_class($event->job),
+            'id' => $event->job->getJobId()
+        ]);
+    });
+
+    try {
+        // Try both ways
+        \Log::info('Calling Excel::queueImport...');
+
+        $import = new ModuleExcelImport(
+            $module,
+            auth()->id(),
+            $request->boolean('strict_parent', true)
+        );
+
+        \Log::info('Import object created', [
+            'import_class' => get_class($import),
+            'module' => $module->id,
+            'user' => auth()->id()
         ]);
 
-        $module = Module::findOrFail($moduleId);
+        $result = Excel::queueImport($import, $request->file('file'));
 
-        // ADD DEBUG LOGGING
-        Log::info('=== IMPORT DEBUG INFO ===');
-        Log::info('Queue connection: ' . config('queue.default'));
-        Log::info('ENV QUEUE_CONNECTION: ' . env('QUEUE_CONNECTION'));
-        Log::info('File: ' . $request->file('file')->getClientOriginalName());
-        Log::info('Module ID: ' . $moduleId);
-        Log::info('User ID: ' . auth()->id());
+        \Log::info('Excel::queueImport returned', [
+            'result_type' => gettype($result),
+            'result' => $result
+        ]);
 
-        try {
-            Excel::queueImport(
-                new ModuleExcelImport(
-                    $module,
-                    auth()->id(),
-                    $request->boolean('strict_parent', true)
-                ),
-                $request->file('file')
-            );
+        // Manually check jobs table
+        $jobCount = \DB::table('jobs')->count();
+        \Log::info('Jobs table count after dispatch: ' . $jobCount);
 
-            Log::info('Excel::queueImport called successfully');
+        return response()->json([
+            'message' => 'Import started successfully',
+            'jobs_count' => $jobCount,
+            'queue_connection' => config('queue.default')
+        ]);
 
-            return response()->json([
-                'message' => 'Import started successfully',
-                'debug' => [
-                    'queue_connection' => config('queue.default'),
-                    'env_queue' => env('QUEUE_CONNECTION')
-                ]
-            ]);
+    } catch (\Exception $e) {
+        \Log::error('Import failed completely', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
 
-        } catch (\Exception $e) {
-            Log::error('Import error: ' . $e->getMessage());
-            Log::error('Trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'message' => 'Import failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Import failed',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 }
