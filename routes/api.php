@@ -18,6 +18,7 @@ use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\SoftwareSkillController;
@@ -41,6 +42,8 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('role-by-user-list', [AuthController::class, 'usersByRole']);
+    Route::get('users-role-wise-count', [AuthController::class, 'roleWiseCount']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/enums/roles', [EnumController::class, 'roles']);
@@ -97,6 +100,8 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('trainer-schedule', TrainerScheduleController::class)->middleware('auth:sanctum');
         Route::put('trainer-schedule-status-update/{id}', [TrainerScheduleController::class, 'statusUpdate']);
+        Route::apiResource('jobs-offer', JobController::class);
+        Route::put('/publish-job/{id}', [JobController::class, 'publish']);
 
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
@@ -115,11 +120,13 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
-    Route::apiResource('jobs-offer', JobController::class);
+
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
 
     Route::apiResource('department', DepartmentController::class);
     Route::apiResource('applied-jobs', AppliedJobController::class);
     Route::get('job-public', [JobController::class, 'publicJob']);
     Route::get('job-public/{id}', [JobController::class, 'publicJobShow']);
+    Route::apiResource('positions', PositionController::class);
+      Route::get('active-department', [DepartmentController::class, 'active']);
 });

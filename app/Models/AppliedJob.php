@@ -6,34 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppliedJob extends Model
 {
-    protected $fillable = [
-        'full_name',
-        'email',
-        'contact',
-        'emergency_contact',
-        'system',
-        'softwares',
-        'industry',
-        'highest_education',
-        'university',
-        'pdf_resume',
-        'job_id',
-        'software_id',
-        'industry_id',
-    ];
-
+    protected $guarded = ['id'];
     public function job()
     {
-        return $this->belongsTo(JobOffer::class);
+        return $this->belongsTo(JobOffer::class,'job_id');
     }
 
     public function software()
     {
-        return $this->belongsTo(Software::class);
+        return $this->belongsTo(Software::class,'software_id');
     }
 
-    public function industry()
+    public function industries()
     {
-        return $this->belongsTo(Industry::class);
+        return $this->belongsTo(Industry::class,'industry_id');
     }
 }

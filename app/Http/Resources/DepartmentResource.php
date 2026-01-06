@@ -19,8 +19,8 @@ class DepartmentResource extends JsonResource
             'name'        => $this->name,
             'description' => $this->description,
             'status'      => $this->status,
-            'created_at'  => $this->created_at,
-            'updated_at'  => $this->updated_at,
+            'parent' => new DepartmentResource($this->whenLoaded('parent')),
+
         ];
     }
 }

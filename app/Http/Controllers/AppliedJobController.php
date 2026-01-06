@@ -15,7 +15,7 @@ class AppliedJobController extends Controller
      */
     public function index(Request $request)
     {
-        $appliedJobs = AppliedJob::with(['job', 'software', 'industry']);
+        $appliedJobs = AppliedJob::with(['job', 'software', 'industries']);
 
         if ($request->has('job_status') && $request->job_status == 'not_null') {
             $appliedJobs->whereNotNull('job_id');
@@ -37,7 +37,7 @@ class AppliedJobController extends Controller
     public function show($id)
     {
         // Retrieve a specific applied job with relationships
-        $appliedJob = AppliedJob::with(['job', 'software', 'industry'])->findOrFail($id);
+        $appliedJob = AppliedJob::with(['job', 'software', 'industries'])->findOrFail($id);
 
         // Return the specific AppliedJob resource
         return new AppliedJobResource($appliedJob);
@@ -50,68 +50,29 @@ class AppliedJobController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate incoming request data
-        if ($request->hasFile('resume')) {
-            // Validation rules when pdf_resume is uploaded
-            $request->validate([
-                'full_name' => 'nullable|string|max:255',
-                'email' => 'nullable|email|max:255',
-                'contact' => 'nullable|string|max:20',
-                'emergency_contact' => 'nullable|string|max:20',
-                'system' => 'nullable|string|max:255',
-                'highest_education' => 'nullable|string|max:255',
-                'university' => 'nullable|string|max:255',
-                'resume' => 'required|file|mimes:pdf|max:10240',
-                'job_id' => 'nullable|exists:job_offers,id',
-                'software_id' => 'nullable|exists:softwares,id',
-                'industry_id' => 'nullable|exists:industries,id',
-            ]);
-        } else {
-            // Validation rules when no pdf_resume is uploaded
-            $request->validate([
-                'full_name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'contact' => 'required|string|max:20',
-                'emergency_contact' => 'required|string|max:20',
-                'system' => 'required|string|max:255',
-                'softwares' => 'required|string|max:255',
-                'industry' => 'required|string|max:255',
-                'highest_education' => 'required|string|max:255',
-                'university' => 'required|string|max:255',
-                'resume' => 'nullable|file|mimes:pdf|max:10240',
-                'job_id' => 'required|exists:jobs,id',
-                'software_id' => 'required|exists:softwares,id',
-                'industry_id' => 'required|exists:industries,id',
-            ]);
-        }
-
-        // Store the PDF resume if uploaded
-        $pdfPath = null;
-        if ($request->hasFile('resume')) {
-            $pdfPath = $request->file('resume')->store('resume');
-        }
-
-        // Create the new AppliedJob entry in the database
-        $appliedJob = AppliedJob::create([
-            'full_name' => $request->full_name ?? null,
-            'email' => $request->email ?? null,
-            'contact' => $request->contact ?? null,
-            'emergency_contact' => $request->emergency_contact ?? null,
-            'system' => $request->system ?? null,
-            'softwares' => $request->softwares ?? null,
-            'industry' => $request->industry ?? null,
-            'highest_education' => $request->highest_education ?? null,
-            'university' => $request->university ?? null,
-            'resume' => $pdfPath, // Store the path to the uploaded file if any
-            'job_id' => $request->job_id ?? null,
-            'software_id' => $request->software_id ?? null,
-            'industry_id' => $request->industry_id ?? null,
+        $validated = $request->validate([
+            'full_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'contact' => 'nullable|string|max:20',
+            'emergency_contact' => 'nullable|string|max:20',
+            'system' => 'nullable|string|max:255',
+            'softwares' => 'nullable|string|max:255',
+            'industry' => 'nullable|string|max:255',
+            'highest_education' => 'nullable|string|max:255',
+            'university' => 'nullable|string|max:255',
+            'resume' => 'nullable|file|mimes:pdf|max:10240',
+            'job_id' => 'nullable|exists:job_offers,id',
+            'software_id' => 'nullable|exists:softwares,id',
+            'industry_id' => 'nullable|exists:industries,id',
         ]);
-
-        // Return the newly created AppliedJob resource
-        return new AppliedJobResource($appliedJob);
+        if ($request->hasFile('resume')) {
+            $validated['resume'] = $request->file('resume')->store('resume', 'public');
+        }
+        AppliedJob::create($validated);
+        return response()->json([
+            'message' => 'Applied job created successfully',
+        ], 201);
     }
-
     /**
      * Update the specified applied job in the database.
      *

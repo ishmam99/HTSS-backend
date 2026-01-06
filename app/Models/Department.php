@@ -10,5 +10,10 @@ class Department extends Model
 {
     use HasFactory;
     use HasAdvancedQuery;
-    protected $guarded = [];
+    protected $guarded = ['id'];
+    
+    public function parent()
+    {
+        return $this->belongsTo(Department::class, 'parent_department_id');
+    }
 }

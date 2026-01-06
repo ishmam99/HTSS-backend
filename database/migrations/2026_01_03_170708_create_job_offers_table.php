@@ -13,19 +13,26 @@ return new class extends Migration
     {
         Schema::create('job_offers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('position_id')->constrained('positions')->cascadeOnDelete();
             $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
             $table->string('title');
-            $table->text('overview');
+            $table->text('description')->nullable();
             $table->string('job_type');
             $table->string('location_type');
-            $table->string('base_country');
+            $table->string('base_country')->nullable();
             $table->string('required_experience');
-            $table->json('key_responsibilities');
+            $table->json('requirements')->nullable();
             $table->json('required_qualifications');
-            $table->json('key_skills');
-            $table->json('primary_software');
+            $table->json('key_skills')->nullable();
+            $table->json('primary_software')->nullable();
             $table->dateTime('deadline');
-            $table->tinyInteger('status')->default(0);
+            $table->integer('number_of_vacancies')->default(0);
+            $table->double('salary_min')->default(0);
+            $table->double('salary_max')->default(0);
+            $table->dateTime('published_at')->nullable();
+            $table->unsignedBigInteger('created_by');
+            $table->text('benefits')->nullable();
+            $table->tinyInteger('status')->default(0)->comment('0=closed,1=draft,2=published');
             $table->timestamps();
         });
     }
