@@ -128,5 +128,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('positions', PositionController::class);
     Route::get('active-department', [DepartmentController::class, 'active']);
     Route::put('applied-job-status/{id}', [AppliedJobController::class, 'statusChange']);
+    
 
 });

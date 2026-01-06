@@ -36,7 +36,7 @@ class AppliedJobResource extends JsonResource
             'job' => new JobResource($this->whenLoaded('job')),
             'software' =>$this->software,
             'industry' => new IndustryResource($this->whenLoaded('industries')),
-
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

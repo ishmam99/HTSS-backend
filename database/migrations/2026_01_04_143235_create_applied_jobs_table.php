@@ -22,11 +22,11 @@ return new class extends Migration
             $table->string('industry')->nullable();
             $table->string('highest_education')->nullable();
             $table->string('university')->nullable();
-            $table->string('resume')->nullable(); 
+            $table->string('resume')->nullable();
             $table->foreignId('job_id')->nullable()->constrained('job_offers')->cascadeOnDelete();
             $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
-            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }
