@@ -65,20 +65,14 @@ class AppliedJobController extends Controller
             'software_id' => 'nullable|exists:softwares,id',
             'industry_id' => 'nullable|exists:industries,id',
         ]);
-
         if ($request->hasFile('resume')) {
             $validated['resume'] = $request->file('resume')->store('resume', 'public');
         }
-
-        $appliedJob = AppliedJob::create($validated);
-
+        AppliedJob::create($validated);
         return response()->json([
             'message' => 'Applied job created successfully',
-            'data' => $appliedJob,
         ], 201);
     }
-
-
     /**
      * Update the specified applied job in the database.
      *
