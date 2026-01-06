@@ -69,15 +69,15 @@ class AppliedJobController extends Controller
         } else {
             // Validation rules when no pdf_resume is uploaded
             $request->validate([
-                'full_name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'contact' => 'required|string|max:20',
-                'emergency_contact' => 'required|string|max:20',
-                'system' => 'required|string|max:255',
+                'full_name' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'contact' => 'nullable|string|max:20',
+                'emergency_contact' => 'nullable|string|max:20',
+                'system' => 'nullable|string|max:255',
                 'softwares' => 'nullable|string|max:255',
                 'industry' => 'nullable|string|max:255',
-                'highest_education' => 'required|string|max:255',
-                'university' => 'required|string|max:255',
+                'highest_education' => 'nullable|string|max:255',
+                'university' => 'nullable|string|max:255',
                 'resume' => 'nullable|file|mimes:pdf|max:10240',
                 'job_id' => 'nullable|exists:jobs,id',
                 'software_id' => 'required|exists:softwares,id',
