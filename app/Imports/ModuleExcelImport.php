@@ -20,7 +20,10 @@ use Modules\CRM\Models\{
     RecordRelation,
     RecordValue
 };
-
+   use \Illuminate\Bus\Queueable;
+    use \Illuminate\Queue\InteractsWithQueue;
+    use \Illuminate\Queue\SerializesModels;
+    use \Maatwebsite\Excel\Concerns\Importable; // Also add this if missing
 class ModuleExcelImport implements
     ToCollection,
     WithHeadingRow,
