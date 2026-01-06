@@ -6,20 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppliedJob extends Model
 {
-    protected $guarded = [];
-
+    protected $guarded = ['id'];
     public function job()
     {
-        return $this->belongsTo(JobOffer::class, 'job_id');
+        return $this->belongsTo(JobOffer::class,'job_id');
     }
 
     public function software()
     {
-        return $this->belongsTo(Software::class, 'software_id');
+        return $this->belongsTo(Software::class,'software_id');
     }
 
-    public function industryRelation()  // <- rename to avoid conflict with `industry` column
+    public function industries()
     {
-        return $this->belongsTo(Industry::class, 'industry_id');
+        return $this->belongsTo(Industry::class,'industry_id');
     }
 }

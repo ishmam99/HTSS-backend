@@ -15,7 +15,7 @@ class AppliedJobController extends Controller
      */
     public function index(Request $request)
     {
-        $appliedJobs = AppliedJob::with(['job', 'software', 'industry']);
+        $appliedJobs = AppliedJob::with(['job', 'software', 'industries']);
 
         if ($request->has('job_status') && $request->job_status == 'not_null') {
             $appliedJobs->whereNotNull('job_id');
@@ -37,7 +37,7 @@ class AppliedJobController extends Controller
     public function show($id)
     {
         // Retrieve a specific applied job with relationships
-        $appliedJob = AppliedJob::with(['job', 'software', 'industry'])->findOrFail($id);
+        $appliedJob = AppliedJob::with(['job', 'software', 'industries'])->findOrFail($id);
 
         // Return the specific AppliedJob resource
         return new AppliedJobResource($appliedJob);

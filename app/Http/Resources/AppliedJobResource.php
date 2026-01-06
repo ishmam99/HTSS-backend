@@ -4,9 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\JobResource;
-use App\Http\Resources\SoftwareResource;
-use App\Http\Resources\IndustryResource;
 
 class AppliedJobResource extends JsonResource
 {
@@ -18,16 +15,27 @@ class AppliedJobResource extends JsonResource
             'email' => $this->email,
             'contact' => $this->contact,
             'emergency_contact' => $this->emergency_contact,
+
+            // system info
             'system' => $this->system,
+
+            // string column (not relation)
             'softwares' => $this->softwares,
-            'industry_name' => $this->industry, // plain string from column
+
+            // string column (not relation)
+            'industry_name' => $this->industry,
+
             'highest_education' => $this->highest_education,
             'university' => $this->university,
-            'resume' => $this->resume ? Storage::url($this->resume) : null,
 
-            'job' => $this->job ? new JobResource($this->job) : null,
-            'software' => $this->software ?? null,
-            'industry' => $this->industryRelation ? new IndustryResource($this->industryRelation) : null,
+            'resume' => $this->resume
+                ? Storage::url($this->resume)
+                : null,
+
+            // ✅ relations (ALWAYS use Resource)
+            'job' => new JobResource($this->whenLoaded('job')),
+            'software' =>$this->software,
+            'industry' => new IndustryResource($this->whenLoaded('industries')),
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
