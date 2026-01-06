@@ -105,15 +105,17 @@ class ModuleFieldController extends Controller
         $field->delete();
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
-    public function getByModule($moduleId)
-    {
-        $fields = ModuleField::where('module_id', $moduleId)
-            ->orderBy('order')
-            ->get();
+   public function getByModule($moduleId)
+{
+    $fields = ModuleField::where('module_id', $moduleId)
+        ->orderByRaw('`order` IS NULL') // NULLs last
+        ->orderBy('order')              // then actual order
+        ->get();
 
-        return response()->json([
-            'message' => 'Module fields fetched successfully',
-            'data' => $fields
-        ]);
-    }
+    return response()->json([
+        'message' => 'Module fields fetched successfully',
+        'data' => $fields
+    ]);
+}
+
 }
