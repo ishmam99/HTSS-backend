@@ -88,7 +88,8 @@ class AppliedJobController extends Controller
         // Store the PDF resume if uploaded
         $pdfPath = null;
         if ($request->hasFile('resume')) {
-            $pdfPath = $request->file('resume')->store('resume');
+            $pdfPath = $request->file('resume')->store('resume', 'public');
+            //$pdfPath = $request->file('resume')->store('resume');
         }
 
         // Create the new AppliedJob entry in the database
