@@ -4,11 +4,15 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\JobResource;
+use App\Http\Resources\SoftwareResource;
+use App\Http\Resources\IndustryResource;
 
 class AppliedJobResource extends JsonResource
 {
     public function toArray($request)
     {
+        
         return [
             'id' => $this->id,
             'full_name' => $this->full_name,
