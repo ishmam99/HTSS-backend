@@ -6,23 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppliedJob extends Model
 {
-    protected $fillable = [
-        'full_name',
-        'email',
-        'contact',
-        'emergency_contact',
-        'system',
-        'resume',
-        'softwares',
-        'industry',
-        'highest_education',
-        'university',
-        //'pdf_resume',
-        'job_id',
-        'software_id',
-        'industry_id',
-    ];
-
+    protected $guarded = ['id'];
     public function job()
     {
         return $this->belongsTo(JobOffer::class);

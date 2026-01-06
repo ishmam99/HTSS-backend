@@ -16,24 +16,25 @@ class AppliedJobResource extends JsonResource
             'contact' => $this->contact,
             'emergency_contact' => $this->emergency_contact,
 
+            // system info
             'system' => $this->system,
+
+            // string column (not relation)
             'softwares' => $this->softwares,
 
-            // ✅ string column
+            // string column (not relation)
             'industry_name' => $this->industry,
 
             'highest_education' => $this->highest_education,
             'university' => $this->university,
 
-            'resume' => $this->resume ? Storage::url($this->resume) : null,
+            'resume' => $this->resume
+                ? Storage::url($this->resume)
+                : null,
 
-            'job_id' => $this->job_id,
-            'software_id' => $this->software_id,
-            'industry_id' => $this->industry_id,
-
-            // ✅ relations
+            // ✅ relations (ALWAYS use Resource)
             'job' => new JobResource($this->whenLoaded('job')),
-            'software' => $this->software,
+            'software' =>$this->software,
             'industry' => new IndustryResource($this->whenLoaded('industry')),
 
             'created_at' => $this->created_at,
