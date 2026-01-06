@@ -39,7 +39,7 @@ class ModuleExcelImport implements
     protected bool $strictParent = true;
 
     protected array $relationMap = [
-        2 => [ // Deal
+        5 => [ // Deal
             'parent_module_id' => 2,
             'excel_column'     => 'account_nameid',
             'relation_type'    => 'Accounts-Deals',
@@ -49,7 +49,7 @@ class ModuleExcelImport implements
             'excel_column'     => 'account_nameid',
             'relation_type'    => 'Accounts-Contacts',
         ],
-        4 => [ // Proposal
+        9 => [ // Proposal
             'parent_module_id' => 5,
             'excel_column'     => 'deal_id',
             'relation_type'    => 'Deals-Proposals',
@@ -88,10 +88,10 @@ class ModuleExcelImport implements
             $this->logError($row, 'Missing record_id');
             return;
         }
-
+        // dd($row);
         /** 🔎 Duplicate Detection */
         $record = $this->findDuplicate($row);
-
+        // dd($record);
         if (!$record) {
             $record = Record::updateOrCreate(
                 [
@@ -129,10 +129,11 @@ class ModuleExcelImport implements
 
     protected function syncRelation(Record $child, $row): void
     {
+        // dd($this->module);
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
-
+        // dd($row);
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
         // dd($config);
