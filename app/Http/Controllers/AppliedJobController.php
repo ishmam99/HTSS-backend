@@ -80,8 +80,8 @@ class AppliedJobController extends Controller
                 'university' => 'nullable|string|max:255',
                 'resume' => 'nullable|file|mimes:pdf|max:10240',
                 'job_id' => 'nullable|exists:jobs,id',
-                'software_id' => 'required|exists:softwares,id',
-                'industry_id' => 'required|exists:industries,id',
+                'software_id' => 'nullable|exists:softwares,id',
+                'industry_id' => 'nullable|exists:industries,id',
             ]);
         }
 
