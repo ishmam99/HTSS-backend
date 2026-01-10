@@ -112,7 +112,7 @@ class AuthController extends Controller
         }
 
         $users = $q->latest()->paginate(
-            $request->integer('per_page', 20)
+            $request->integer('per_page', 10)
         );
 
         if ($users->isEmpty()) {
