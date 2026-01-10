@@ -51,6 +51,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::apiResource('partners', PartnerController::class);
         Route::apiResource('customers', CustomerController::class);
+        Route::post('assign-customer/{customer}', [CustomerController::class, 'assignCustomer']);
+
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
         Route::get('users', [AuthController::class, 'index']);
@@ -103,7 +105,6 @@ Route::prefix('v1')->group(function () {
         Route::put('trainer-schedule-status-update/{id}', [TrainerScheduleController::class, 'statusUpdate']);
         Route::apiResource('jobs-offer', JobController::class);
         Route::put('/publish-job/{id}', [JobController::class, 'publish']);
-
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -130,6 +131,5 @@ Route::prefix('v1')->group(function () {
     Route::get('active-department', [DepartmentController::class, 'active']);
     Route::put('applied-job-status/{id}', [AppliedJobController::class, 'statusChange']);
     Route::apiResource('scheduled-messages', ScheduledMessageController::class);
-     Route::put('scheduled-messages-status/{id}', [ScheduledMessageController::class, 'statusChange']);
-
+    Route::put('scheduled-messages-status/{id}', [ScheduledMessageController::class, 'statusChange']);
 });
