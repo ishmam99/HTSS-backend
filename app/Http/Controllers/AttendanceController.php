@@ -90,6 +90,10 @@ class AttendanceController extends Controller
             ], 500);
         }
     }
+    public function show(Attendance $attendance)
+    {
+        return AttendanceResource::make($attendance);
+    }
 
     public function update(Request $request, $id)
     {

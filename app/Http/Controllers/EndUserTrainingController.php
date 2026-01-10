@@ -38,4 +38,17 @@ class EndUserTrainingController extends Controller
 
         return EndUserTrainingResource::collection($lists);
     }
+    public function show(EndUserTraining $endUserTraining)
+    {
+
+    }
+    public function destroy(EndUserTraining $endUserTraining)
+    {
+
+    }
+    public function update(EndUserTraining $endUserTraining,Request $req)
+    {
+
+    }
+
 }

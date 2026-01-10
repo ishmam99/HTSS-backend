@@ -92,7 +92,7 @@ public function index(Module $module)
 }
 }
 
-    if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive'])) {
+    if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive' ,'manager-cs','manager-sales','executive-cs','executive-sales'])) {
         $mine = RecordUserAssignment::where('user_id', auth()->id())->pluck('record_id');
         $query->whereIn('id', $mine);
     }

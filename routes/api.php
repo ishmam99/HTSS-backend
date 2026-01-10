@@ -94,7 +94,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
 
         Route::apiResource('software-level', SoftwareLevelController::class)->middleware('auth:sanctum');
-        Route::put('software-level-status-update/{id}', [SoftwareLevelController::class, 'statusUpdate']);
+        Route::put('software-level-status-update/{id}', [SoftwareLevelController::class, 'update']);
 
         Route::apiResource('trainer-course', TrainerCourseController::class)->middleware('auth:sanctum');
         Route::put('trainer-course-status-update/{id}', [TrainerCourseController::class, 'statusUpdate']);
