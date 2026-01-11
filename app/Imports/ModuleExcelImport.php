@@ -145,13 +145,16 @@ class ModuleExcelImport implements
     protected function syncRelation(Record $child, $row): void
     {
         // dd($this->module);
+
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
         // dd($row);
+
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
         // dd($config);
+          \Log::info($config);
         if (!$parentExternalId) {
             $this->logError($row, 'Missing parent reference');
             return;
@@ -160,7 +163,7 @@ class ModuleExcelImport implements
         $parent = Record::where('module_id', $config['parent_module_id'])
             ->where('external_id', $parentExternalId)
             ->first();
-
+           \Log::info($parent);
         if (!$parent && $this->strictParent) {
             $this->logError($row, 'Parent record not found');
             return;
