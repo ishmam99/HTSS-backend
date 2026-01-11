@@ -20,4 +20,16 @@ class Record extends Model
     {
         return $this->hasMany(RecordUserAssignment::class);
     }
+
+
+    public function relationsAsChild()
+{
+    return $this->hasMany(RecordRelation::class, 'child_record_id');
+}
+
+public function parentRecord()
+{
+    return $this->belongsTo(Record::class, 'parent_record_id');
+}
+
 }
