@@ -139,18 +139,19 @@ class ModuleExcelImport implements
         }
 
         /** 🔗 Relation */
+        \Log::info('going fo relation');
         $this->syncRelation($record, $row);
     }
 
     protected function syncRelation(Record $child, $row): void
     {
         // dd($this->module);
-
+         \Log::info($this->module);
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
         // dd($row);
-
+         \Log::info($row);
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
         // dd($config);
