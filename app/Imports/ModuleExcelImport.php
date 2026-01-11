@@ -88,6 +88,10 @@ class ModuleExcelImport implements
             $this->logError($row, 'Missing record_id');
             return;
         }
+        if (($this->module->id == 3 || $this->module->id  == 5 || $this->module->id  == 9 )&&empty($row['account_nameid'])) {
+            $this->logError($row, 'Missing account_nameid');
+            return;
+        }
         // dd($row);
         /** 🔎 Duplicate Detection */
         $record = $this->findDuplicate($row);
