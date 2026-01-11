@@ -116,15 +116,29 @@ class RecordController extends Controller
 
 public function index(Module $module)
 {
+    $fieldsFilter = request()->has('fields')
+    ? array_map('trim', explode(',', request()->fields))
+    : null;
     $query = $module->records()
-        ->with([
-            'values' => function ($q) {
-                $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
-                  ->orderBy('module_fields.order', 'asc')
-                  ->select('record_values.*');
-            },
-            'assignments.user'
-        ]);
+        // ->with([
+        //     'values' => function ($q) {
+        //         $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+        //           ->orderBy('module_fields.order', 'asc')
+        //           ->select('record_values.*');
+        //     },
+        //     'assignments.user'
+        // ]);
+         ->with([
+        'values' => function ($q) use ($fieldsFilter) {
+            $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+              ->when($fieldsFilter, function ($qq) use ($fieldsFilter) {
+                  $qq->whereIn('module_fields.name', $fieldsFilter);
+              })
+              ->orderBy('module_fields.order', 'asc')
+              ->select('record_values.*');
+        },
+        'assignments.user'
+    ]);
 
     // Sales / manager role restriction
     $salesRoles = ['sales-manager', 'sales-executive', 'manager-cs', 'manager-sales', 'executive-cs', 'executive-sales'];
