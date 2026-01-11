@@ -84,6 +84,7 @@ class ModuleExcelImport implements
 
   protected function importRow($row)
 {
+    \Log::info('doing log check');
     // Convert row to array (if it's a Collection)
     if ($row instanceof \Illuminate\Support\Collection) {
         $row = $row->toArray();
@@ -139,23 +140,23 @@ class ModuleExcelImport implements
         }
 
         /** 🔗 Relation */
-        \Log::info('going fo relation');
+        // \Log::info('going fo relation');
         $this->syncRelation($record, $row);
     }
 
     protected function syncRelation(Record $child, $row): void
     {
         // dd($this->module);
-         \Log::info($this->module);
+        //  \Log::info($this->module);
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
         // dd($row);
-         \Log::info($row);
+        //  \Log::info($row);
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
         // dd($config);
-          \Log::info($config);
+        //   \Log::info($config);
         if (!$parentExternalId) {
             $this->logError($row, 'Missing parent reference');
             return;
@@ -164,7 +165,7 @@ class ModuleExcelImport implements
         $parent = Record::where('module_id', $config['parent_module_id'])
             ->where('external_id', $parentExternalId)
             ->first();
-           \Log::info($parent);
+        //    \Log::info($parent);
         if (!$parent && $this->strictParent) {
             $this->logError($row, 'Parent record not found');
             return;
