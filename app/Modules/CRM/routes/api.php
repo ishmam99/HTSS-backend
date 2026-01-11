@@ -14,7 +14,7 @@ Route::prefix('api/v1')->middleware('api')->group(function () {
         // add api routes for module
         Route::get('activities', [ActivityController::class, 'index']);
         Route::get('activities/{id}', [ActivityController::class, 'show']);
-        Route::get('index', [ModuleController::class,'index']);
+        Route::get('modules', [ModuleController::class,'index']);
         Route::apiResource('field', ModuleFieldController::class);
         Route::get('stats', [ModuleController::class, 'stats']);
         Route::prefix('modules/{module}')->group(function () {
