@@ -91,7 +91,7 @@ class ModuleExcelImport implements
     }
 
     $accountRequiredModules = [3, 5, 9];
-
+      \Log::info('doing log check 2');
     if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
         throw new \Exception("Required column 'account_nameid' is missing in the Excel file.");
     }
@@ -100,6 +100,7 @@ class ModuleExcelImport implements
         $this->logError($row, 'Missing record_id');
         return;
     }
+      \Log::info('doing log check 3');
         // if (($this->module->id == 3 || $this->module->id  == 5 || $this->module->id  == 9 )&&empty($row['account_nameid'])) {
         //     $this->logError($row, 'Missing account_nameid');
         //     return;
@@ -119,7 +120,7 @@ class ModuleExcelImport implements
                 ]
             );
         }
-
+          \Log::info('doing log check 4');
         /** 🧾 Record Values */
         foreach ($row as $header => $value) {
             $key = strtolower(trim($header));
@@ -138,7 +139,7 @@ class ModuleExcelImport implements
                 ]
             );
         }
-
+          \Log::info('doing log check 5' );
         /** 🔗 Relation */
         \Log::info('going fo relation');
         $this->syncRelation($record, $row);
