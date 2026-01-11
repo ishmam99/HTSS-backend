@@ -82,17 +82,23 @@ class ModuleExcelImport implements
         }
     }
 
-    protected function importRow($row)
-    {
-          $accountRequiredModules = [3, 5, 9];
-          if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
+  protected function importRow($row)
+{
+    // Convert row to array (if it's a Collection)
+    if ($row instanceof \Illuminate\Support\Collection) {
+        $row = $row->toArray();
+    }
+
+    $accountRequiredModules = [3, 5, 9];
+
+    if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
         throw new \Exception("Required column 'account_nameid' is missing in the Excel file.");
     }
 
-        if (empty($row['record_id'])) {
-            $this->logError($row, 'Missing record_id');
-            return;
-        }
+    if (empty($row['record_id'])) {
+        $this->logError($row, 'Missing record_id');
+        return;
+    }
         // if (($this->module->id == 3 || $this->module->id  == 5 || $this->module->id  == 9 )&&empty($row['account_nameid'])) {
         //     $this->logError($row, 'Missing account_nameid');
         //     return;
