@@ -130,14 +130,14 @@ public function index(Module $module)
     $salesRoles = ['sales-manager', 'sales-executive', 'manager-cs', 'manager-sales', 'executive-cs', 'executive-sales'];
     if (in_array(auth()->user()->role, $salesRoles)) {
 
-        if ($module->name === 'accounts') {
+        if ($module->name === 'Accounts') {
             // Accounts: only show assigned accounts
             $query->whereHas('assignments', fn($q) => $q->where('user_id', auth()->id()));
         } else {
             // Other modules: include only records related to Accounts assigned to current user
-            $query->whereHas('relationsAsChild', function ($q) {
+            $query->whereHas('relationsAsChild', function ($q) use ($module) {
                 $q->whereHas('parent.assignments', fn($q2) => $q2->where('user_id', auth()->id()))
-                  ->where('parent_module', 'accounts');
+                  ->where('relation_type', 'Accounts-'.$module->name);
             });
         }
     }
