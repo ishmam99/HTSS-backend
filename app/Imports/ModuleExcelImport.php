@@ -85,7 +85,7 @@ class ModuleExcelImport implements
     protected function importRow($row)
     {
           $accountRequiredModules = [3, 5, 9];
-          if (in_array($this->module->id, $accountRequiredModules) &&!array_key_exists('account_nameid', $row)) {
+          if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
         throw new \Exception("Required column 'account_nameid' is missing in the Excel file.");
     }
 
