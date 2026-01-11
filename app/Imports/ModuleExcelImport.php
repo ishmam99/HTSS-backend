@@ -151,7 +151,7 @@ class ModuleExcelImport implements
         // dd($row);
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
-        // dd($config);
+        dd($config);
         if (!$parentExternalId) {
             $this->logError($row, 'Missing parent reference');
             return;
