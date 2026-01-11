@@ -140,7 +140,7 @@ class ModuleExcelImport implements
         }
 
         /** 🔗 Relation */
-        // \Log::info('going fo relation');
+        \Log::info('going fo relation');
         $this->syncRelation($record, $row);
     }
 
