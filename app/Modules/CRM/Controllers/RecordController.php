@@ -136,7 +136,7 @@ public function index(Module $module)
         } else {
             // Other modules: include only records related to Accounts assigned to current user
             $query->whereHas('relationsAsChild', function ($q) {
-                $q->whereHas('parentRecord.assignments', fn($q2) => $q2->where('user_id', auth()->id()))
+                $q->whereHas('parent.assignments', fn($q2) => $q2->where('user_id', auth()->id()))
                   ->where('parent_module', 'accounts');
             });
         }
