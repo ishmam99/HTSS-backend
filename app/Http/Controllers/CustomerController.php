@@ -294,7 +294,7 @@ class CustomerController extends Controller
             ->whereHas('assignments', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
-            ->select('customers.*')
+        
             ->get();
 
         return response()->json([
