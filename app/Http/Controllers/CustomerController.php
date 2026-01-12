@@ -281,16 +281,25 @@ class CustomerController extends Controller
         ]);
     }
     public function getByUser($userId)
-    {
-        $customers = Customer::whereHas('assignments', function ($q) use ($userId) {
-                $q->where('user_id', $userId);
-            })
-            ->select('id', 'name') 
-            ->get();
-        return response()->json([
-            'success' => true,
-            'data'    => $customers,
-        ]);
-    }
+{
+    $customers = Customer::whereHas('assignments', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })
+        ->with(['user:id,name']) // eager load user name
+        ->select('id', 'user_id') // customers table থেকে id এবং user_id
+        ->get()
+        ->map(function ($customer) {
+            return [
+                'id'   => $customer->id,
+                'name' => $customer->user->name ?? null,
+            ];
+        });
+
+    return response()->json([
+        'success' => true,
+        'data'    => $customers,
+    ]);
+}
+
 
 }
