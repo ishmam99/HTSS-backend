@@ -9,6 +9,7 @@ use App\Models\CustomerSuccessManager;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CustomerSuccessManagerController extends Controller
 {
@@ -29,7 +30,7 @@ class CustomerSuccessManagerController extends Controller
 
     public function show($id)
     {
-        $manager = CustomerSuccessManager::with('user')->findOrFail($id);
+        $manager = CustomerSuccessManager::with(['user','customers'])->findOrFail($id);
         return new CustomerSuccessManagerResource($manager);
     }
 
@@ -136,18 +137,25 @@ class CustomerSuccessManagerController extends Controller
 
     public function destroy($id)
     {
+        DB::beginTransaction();
+
         try {
             $manager = CustomerSuccessManager::with('user')->findOrFail($id);
-            $user = $manager->user;
 
+            if ($manager->user) {
+                $manager->user->delete();
+            }
             $manager->delete();
-            if ($user) $user->delete();
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Customer Success Manager deleted successfully',
+                'message' => 'Customer Success Manager and user deleted successfully',
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Delete failed',
