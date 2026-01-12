@@ -21,7 +21,6 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class);
     }
-
     public function industry()
     {
         return $this->belongsTo(Industry::class);
