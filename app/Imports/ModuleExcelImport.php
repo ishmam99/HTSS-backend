@@ -109,6 +109,7 @@ class ModuleExcelImport implements
         /** 🔎 Duplicate Detection */
         $record = $this->findDuplicate($row);
         // dd($record);
+           \Log::info('doing log check 4');
         if (!$record) {
             $record = Record::updateOrCreate(
                 [
@@ -119,8 +120,9 @@ class ModuleExcelImport implements
                     'created_by' => $this->userId,
                 ]
             );
+               \Log::info('doing log check 5');
         }
-          \Log::info('doing log check 4');
+          \Log::info('doing log check 6');
         /** 🧾 Record Values */
         foreach ($row as $header => $value) {
             $key = strtolower(trim($header));

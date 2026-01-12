@@ -15,7 +15,10 @@ enum RoleEnum: string
     case CUSTOMER_MANAGEMENT_SYSTEM_MANAGER = 'customer_management_system_manager';
     case CUSTOMER_MANAGEMENT_SYSTEM_DIRECTOR = 'customer_management_system_director';
     case CUSTOMER_MANAGEMENT_SYSTEM_EXECUTIVE = 'customer_management_system_executive';
-
+    // Customer Succerss Management System
+    case CUSTOMER_SUCCESS_MANAGEMENT_MANAGER = 'customer_success_management_manager';
+    case CUSTOMER_SUCCESS_MANAGEMENT_DIRECTOR = 'customer_success_management_director';
+  
     // Website Management System
     case WEBSITE_MANAGEMENT_SYSTEM_VP = 'website_management_system_vp';
     case WEBSITE_MANAGEMENT_SYSTEM_MANAGER = 'website_management_system_manager';
