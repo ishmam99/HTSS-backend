@@ -130,7 +130,7 @@ class ModuleExcelImport implements
             if ($key === 'record_id' || !isset($this->fields[$key])) {
                 continue;
             }
-                  \Log::info('doing log check 7' );
+                  \Log::info('doing log check 7 '.$record->id.' '.$this->castValue($value, $this->fields[$key]->type) );
             RecordValue::updateOrCreate(
                 [
                     'record_id' => $record->id,
@@ -141,7 +141,7 @@ class ModuleExcelImport implements
                 ]
             );
         }
-          \Log::info('doing log check 8' );
+          \Log::info('doing log check 8 '.$row );
         /** 🔗 Relation */
         \Log::info('going fo relation');
         $this->syncRelation($record, $row);
