@@ -30,7 +30,7 @@ class CustomerSuccessManagerController extends Controller
 
     public function show($id)
     {
-        $manager = CustomerSuccessManager::with('user')->findOrFail($id);
+        $manager = CustomerSuccessManager::with(['user','customers'])->findOrFail($id);
         return new CustomerSuccessManagerResource($manager);
     }
 
