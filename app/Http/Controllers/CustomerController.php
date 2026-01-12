@@ -282,21 +282,11 @@ class CustomerController extends Controller
     }
     public function getByUser($userId)
     {
-        // Validate user_id
-        if (! is_numeric($userId)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid user id.',
-            ], 400);
-        }
-
-        $customers = Customer::with(['assignments.user:id,name'])
-            ->whereHas('assignments', function ($q) use ($userId) {
+        $customers = Customer::whereHas('assignments', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
-        
+            ->select('id', 'name') 
             ->get();
-
         return response()->json([
             'success' => true,
             'data'    => $customers,
