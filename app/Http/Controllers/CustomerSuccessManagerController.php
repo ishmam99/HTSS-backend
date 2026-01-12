@@ -1,0 +1,158 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Resources\CustomerSuccessManagerResource;
+use App\Models\CustomerSuccessManager;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
+class CustomerSuccessManagerController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = CustomerSuccessManager::with('user');
+
+        $data = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $data,
+            'total'   => CustomerSuccessManager::count(),
+        ]);
+    }
+
+    public function show($id)
+    {
+        $manager = CustomerSuccessManager::with('user')->findOrFail($id);
+        return new CustomerSuccessManagerResource($manager);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'nullable|min:6',
+            'role'          => 'nullable|string',
+            'phone'         => 'nullable|string',
+            'address'       => 'nullable|string',
+            'city'          => 'nullable|string',
+            'country'       => 'nullable|string',
+            'postal_code'   => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
+            'gender'        => 'nullable|string',
+        ]);
+
+        try {
+            $user = User::create([
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
+                'password' => Hash::make($validated['password'] ?? '12345678'),
+                'role'     => $validated['role'] ?? 'customer-success-manager',
+            ]);
+
+            $manager = CustomerSuccessManager::create([
+                'user_id'       => $user->id,
+                'phone'         => $validated['phone'] ?? null,
+                'address'       => $validated['address'] ?? null,
+                'city'          => $validated['city'] ?? null,
+                'country'       => $validated['country'] ?? null,
+                'postal_code'   => $validated['postal_code'] ?? null,
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'gender'        => $validated['gender'] ?? null,
+            ]);
+
+            $manager->load('user');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer Success Manager created successfully',
+                'data'    => new CustomerSuccessManagerResource($manager),
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Creation failed',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $manager = CustomerSuccessManager::with('user')->findOrFail($id);
+        $user = $manager->user;
+
+        $validated = $request->validate([
+            'name'          => 'nullable|string|max:255',
+            'email'         => ['nullable', 'email', Rule::unique('users')->ignore($user->id)],
+            'role'          => 'nullable|string',
+            'phone'         => 'nullable|string',
+            'address'       => 'nullable|string',
+            'city'          => 'nullable|string',
+            'country'       => 'nullable|string',
+            'postal_code'   => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
+            'gender'        => 'nullable|string',
+            'status'        => 'nullable|integer',
+        ]);
+
+        try {
+            if (isset($validated['name'])) $user->name = $validated['name'];
+            if (isset($validated['email'])) $user->email = $validated['email'];
+            if (!empty($validated['role'])) $user->role = $validated['role'];
+            $user->save();
+
+            $manager->update([
+                'phone'         => $validated['phone'] ?? $manager->phone,
+                'address'       => $validated['address'] ?? $manager->address,
+                'city'          => $validated['city'] ?? $manager->city,
+                'country'       => $validated['country'] ?? $manager->country,
+                'postal_code'   => $validated['postal_code'] ?? $manager->postal_code,
+                'date_of_birth' => $validated['date_of_birth'] ?? $manager->date_of_birth,
+                'gender'        => $validated['gender'] ?? $manager->gender,
+                'status'        => $validated['status'] ?? $manager->status,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer Success Manager updated successfully',
+                'data'    => new CustomerSuccessManagerResource($manager),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update failed',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $manager = CustomerSuccessManager::with('user')->findOrFail($id);
+            $user = $manager->user;
+
+            $manager->delete();
+            if ($user) $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer Success Manager deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Delete failed',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+}

@@ -33,6 +33,7 @@ use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
 use App\Http\Controllers\UserSoftwareSkillController;
+use App\Http\Controllers\CustomerSuccessManagerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('partners', PartnerController::class);
         Route::apiResource('customers', CustomerController::class);
         Route::post('assign-customer/{customer}', [CustomerController::class, 'assignCustomer']);
+        Route::apiResource('customer-success-managers', CustomerSuccessManagerController::class);
+
 
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
