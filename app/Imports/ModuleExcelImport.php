@@ -124,6 +124,8 @@ class ModuleExcelImport implements
         }
           \Log::info('doing log check 6');
         /** 🧾 Record Values */
+
+        $this->syncRelation($record, $row);
         foreach ($row as $header => $value) {
             $key = strtolower(trim($header));
 
@@ -144,7 +146,7 @@ class ModuleExcelImport implements
           \Log::info('doing log check 8 '.$row );
         /** 🔗 Relation */
         \Log::info('going fo relation');
-        $this->syncRelation($record, $row);
+
     }
 
     protected function syncRelation(Record $child, $row): void
