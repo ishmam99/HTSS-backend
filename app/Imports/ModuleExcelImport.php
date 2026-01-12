@@ -152,7 +152,7 @@ class ModuleExcelImport implements
     protected function syncRelation(Record $child, $row): void
     {
         // dd($this->module);
-        //  \Log::info($this->module);
+         \Log::info('inside relation');
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
