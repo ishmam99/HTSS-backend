@@ -290,18 +290,15 @@ class CustomerController extends Controller
             ], 400);
         }
 
-        // Fetch customers where this user is assigned
-        $customers = Customer::with(['assignments.user'])
+        $customers = Customer::with(['assignments.user:id,name'])
             ->whereHas('assignments', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
-            ->select('customers.*') // avoid ambiguous id
+            ->select('customers.*')
             ->get();
 
         return response()->json([
             'success' => true,
-            'user_id' => (int) $userId,
-            'total'   => $customers->count(),
             'data'    => $customers,
         ]);
     }
