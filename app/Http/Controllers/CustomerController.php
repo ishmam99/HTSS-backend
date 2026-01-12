@@ -1,31 +1,29 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Models\CustomerUserAssignment;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Customer::advancedQuery($request);
+        $query     = Customer::advancedQuery($request);
         $customers = $request->per_page
             ? $query->paginate($request->per_page)
             : $query->get();
         return response()->json([
             'success' => true,
-            'data' => $customers,
-            'total' => Customer::count()
+            'data'    => $customers,
+            'total'   => Customer::count(),
         ]);
     }
-
 
     public function show($id)
     {
@@ -37,57 +35,57 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'nullable|min:6',
-            'role' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'country' => 'nullable|string',
-            'postal_code' => 'nullable|string',
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'nullable|min:6',
+            'role'          => 'nullable|string',
+            'phone'         => 'nullable|string',
+            'address'       => 'nullable|string',
+            'city'          => 'nullable|string',
+            'country'       => 'nullable|string',
+            'postal_code'   => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'gender' => 'nullable|string',
+            'gender'        => 'nullable|string',
         ]);
 
         try {
             $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
                 'password' => Hash::make('12345678'),
-                'role' => 'customer'
+                'role'     => 'customer',
             ]);
 
-            if (!empty($validated['role'])) {
+            if (! empty($validated['role'])) {
                 $user->role = $validated['role'];
                 $user->save();
             }
 
             $customer = Customer::create([
-                'user_id' => $user->id,
-                'phone' => $validated['phone'] ?? null,
-                'address' => $validated['address'] ?? null,
-                'city' => $validated['city'] ?? null,
-                'country' => $validated['country'] ?? null,
-                'postal_code' => $validated['postal_code'] ?? null,
+                'user_id'       => $user->id,
+                'phone'         => $validated['phone'] ?? null,
+                'address'       => $validated['address'] ?? null,
+                'city'          => $validated['city'] ?? null,
+                'country'       => $validated['country'] ?? null,
+                'postal_code'   => $validated['postal_code'] ?? null,
                 'date_of_birth' => $validated['date_of_birth'] ?? null,
-                'gender' => $validated['gender'] ?? null,
+                'gender'        => $validated['gender'] ?? null,
             ]);
 
             $customer->load('user');
 
             return response()->json([
-                'success' => true,
-                'message' => 'Customer created successfully',
-                'user_id' => $user->id,
+                'success'     => true,
+                'message'     => 'Customer created successfully',
+                'user_id'     => $user->id,
                 'customer_id' => $customer->id,
-                'data' => new CustomerResource($customer),
+                'data'        => new CustomerResource($customer),
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Customer creation failed',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -95,37 +93,46 @@ class CustomerController extends Controller
     public function update(Request $request, $id)
     {
         $customer = Customer::with('user')->findOrFail($id);
-        $user = $customer->user;
+        $user     = $customer->user;
 
         $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => ['nullable', 'email', Rule::unique('users')->ignore($user->id)],
-            'role' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'country' => 'nullable|string',
-            'postal_code' => 'nullable|string',
+            'name'          => 'nullable|string|max:255',
+            'email'         => ['nullable', 'email', Rule::unique('users')->ignore($user->id)],
+            'role'          => 'nullable|string',
+            'phone'         => 'nullable|string',
+            'address'       => 'nullable|string',
+            'city'          => 'nullable|string',
+            'country'       => 'nullable|string',
+            'postal_code'   => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'gender' => 'nullable|string',
-            'status' => 'nullable|integer',
+            'gender'        => 'nullable|string',
+            'status'        => 'nullable|integer',
         ]);
 
         try {
-            if (isset($validated['name'])) $user->name = $validated['name'];
-            if (isset($validated['email'])) $user->email = $validated['email'];
-            if (!empty($validated['role'])) $user->role = $validated['role'];
+            if (isset($validated['name'])) {
+                $user->name = $validated['name'];
+            }
+
+            if (isset($validated['email'])) {
+                $user->email = $validated['email'];
+            }
+
+            if (! empty($validated['role'])) {
+                $user->role = $validated['role'];
+            }
+
             $user->save();
 
             $customer->update([
-                'phone' => $validated['phone'] ?? $customer->phone,
-                'address' => $validated['address'] ?? $customer->address,
-                'city' => $validated['city'] ?? $customer->city,
-                'country' => $validated['country'] ?? $customer->country,
-                'postal_code' => $validated['postal_code'] ?? $customer->postal_code,
+                'phone'         => $validated['phone'] ?? $customer->phone,
+                'address'       => $validated['address'] ?? $customer->address,
+                'city'          => $validated['city'] ?? $customer->city,
+                'country'       => $validated['country'] ?? $customer->country,
+                'postal_code'   => $validated['postal_code'] ?? $customer->postal_code,
                 'date_of_birth' => $validated['date_of_birth'] ?? $customer->date_of_birth,
-                'gender' => $validated['gender'] ?? $customer->gender,
-                'status' => $validated['status'] ?? $customer->status,
+                'gender'        => $validated['gender'] ?? $customer->gender,
+                'status'        => $validated['status'] ?? $customer->status,
             ]);
 
             $customer->load('user');
@@ -133,13 +140,13 @@ class CustomerController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Customer updated successfully',
-                'data' => new CustomerResource($customer),
+                'data'    => new CustomerResource($customer),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Customer update failed',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -148,10 +155,12 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::with('user')->findOrFail($id);
-            $user = $customer->user;
+            $user     = $customer->user;
 
             $customer->delete();
-            if ($user) $user->delete();
+            if ($user) {
+                $user->delete();
+            }
 
             return response()->json([
                 'success' => true,
@@ -161,14 +170,14 @@ class CustomerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete customer',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     public function stats()
     {
-        $customers = Customer::all();
+        $customers        = Customer::all();
         $pending_customer = $customers->where('status', 0)->count();
         $pending_customer = $customers->where('status', 0)->count();
     }
@@ -179,9 +188,9 @@ class CustomerController extends Controller
         if ($request->has('assignments')) {
 
             $request->validate([
-                'assignments' => 'required|array|min:1',
-                'assignments.*.user_id' => 'required|exists:users,id',
-                'assignments.*.role' => 'required|string|max:50',
+                'assignments'                    => 'required|array|min:1',
+                'assignments.*.user_id'          => 'required|exists:users,id',
+                'assignments.*.role'             => 'required|string|max:50',
                 'assignments.*.permission_level' => 'nullable|string|max:50',
             ]);
 
@@ -271,4 +280,30 @@ class CustomerController extends Controller
             'data'    => $assignment,
         ]);
     }
+    public function getByUser($userId)
+    {
+        // Validate user_id
+        if (! is_numeric($userId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid user id.',
+            ], 400);
+        }
+
+        // Fetch customers where this user is assigned
+        $customers = Customer::with(['assignments.user'])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->select('customers.*') // avoid ambiguous id
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'user_id' => (int) $userId,
+            'total'   => $customers->count(),
+            'data'    => $customers,
+        ]);
+    }
+
 }

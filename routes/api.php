@@ -135,4 +135,7 @@ Route::prefix('v1')->group(function () {
     Route::put('applied-job-status/{id}', [AppliedJobController::class, 'statusChange']);
     Route::apiResource('scheduled-messages', ScheduledMessageController::class);
     Route::put('scheduled-messages-status/{id}', [ScheduledMessageController::class, 'statusChange']);
+
+    Route::get('/customers/by-user/{user}', [CustomerController::class, 'getByUser']);
+
 });
