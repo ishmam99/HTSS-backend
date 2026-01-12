@@ -12,12 +12,16 @@ class Customer extends Model
 {
     use HasFactory,HasAdvancedQuery;
     protected $guarded = [];
-     protected array $searchable = ['user.name','user.email', 'phone', 'address','city','industry_id','industry.name','status'];
+     protected array $searchable = ['assignedUsers.user.name',
+    'assignedUsers.user.email',
+    'assignedUsers.role',
+    'assignedUsers.permission_level','user.name','user.email', 'phone', 'address','city','industry_id','industry.name','status'];
     // protected array $relations = ['user', 'industry', 'softwares', 'solutions'];
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function industry()
     {
         return $this->belongsTo(Industry::class);
@@ -44,4 +48,16 @@ class Customer extends Model
     {
         return $this->hasMany(CustomerSupport::class);
     }
+
+
+public function assignments()
+{
+    return $this->hasMany(CustomerUserAssignment::class);
+}
+
+public function assignedUsers()
+{
+    return $this->hasMany(CustomerUserAssignment::class)
+                ->with('user'); 
+}
 }
