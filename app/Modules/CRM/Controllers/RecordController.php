@@ -176,25 +176,35 @@ public function index(Module $module)
             );
         }
 
-        if (request()->field && request()->value) {
+            if (request()->field && request()->value) {
             $fieldName = request()->field;
             $fieldValue = request()->value;
-            $query->whereHas('values', fn($q) =>
-                $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
-                  ->where('value', $fieldValue)
-            );
+
+            $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
+                $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
+
+                if (is_array($fieldValue)) {
+                    $q->whereIn('value', $fieldValue);
+                } else {
+                    $q->where('value', $fieldValue);
+                }
+            });
         }
 
         if (request()->has('filters') && is_array(request()->filters)) {
             foreach (request()->filters as $fieldName => $fieldValue) {
                 $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
                     $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
-                    is_array($fieldValue)
-                        ? $q->whereIn('value', $fieldValue)
-                        : $q->where('value', $fieldValue);
+
+                    if (is_array($fieldValue)) {
+                        $q->whereIn('value', $fieldValue);
+                    } else {
+                        $q->where('value', $fieldValue);
+                    }
                 });
             }
         }
+
 
         if (request()->has('date_filters') && is_array(request()->date_filters)) {
             foreach (request()->date_filters as $fieldName => $range) {

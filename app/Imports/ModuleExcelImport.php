@@ -84,14 +84,14 @@ class ModuleExcelImport implements
 
   protected function importRow($row)
 {
-    \Log::info('doing log check');
+   
     // Convert row to array (if it's a Collection)
     if ($row instanceof \Illuminate\Support\Collection) {
         $row = $row->toArray();
     }
 
     $accountRequiredModules = [3, 5, 9];
-      \Log::info('doing log check 2');
+
     if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
         throw new \Exception("Required column 'account_nameid' is missing in the Excel file.");
     }
@@ -100,7 +100,7 @@ class ModuleExcelImport implements
         $this->logError($row, 'Missing record_id');
         return;
     }
-      \Log::info('doing log check 3');
+
         // if (($this->module->id == 3 || $this->module->id  == 5 || $this->module->id  == 9 )&&empty($row['account_nameid'])) {
         //     $this->logError($row, 'Missing account_nameid');
         //     return;
@@ -109,7 +109,7 @@ class ModuleExcelImport implements
         /** 🔎 Duplicate Detection */
         $record = $this->findDuplicate($row);
         // dd($record);
-           \Log::info('doing log check 4');
+
         if (!$record) {
             $record = Record::updateOrCreate(
                 [
@@ -120,9 +120,9 @@ class ModuleExcelImport implements
                     'created_by' => $this->userId,
                 ]
             );
-               \Log::info('doing log check 5');
+
         }
-          \Log::info('doing log check 6');
+
         /** 🧾 Record Values */
 
         $this->syncRelation($record, $row);
@@ -132,7 +132,7 @@ class ModuleExcelImport implements
             if ($key === 'record_id' || !isset($this->fields[$key])) {
                 continue;
             }
-                  \Log::info('doing log check 7 '.$record->id.' '.$this->castValue($value, $this->fields[$key]->type) );
+
             RecordValue::updateOrCreate(
                 [
                     'record_id' => $record->id,
@@ -143,16 +143,14 @@ class ModuleExcelImport implements
                 ]
             );
         }
-          \Log::info('doing log check 8 '.$row );
-        /** 🔗 Relation */
-        \Log::info('going fo relation');
+
 
     }
 
     protected function syncRelation(Record $child, $row): void
     {
         // dd($this->module);
-         \Log::info('inside relation');
+
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
