@@ -252,7 +252,7 @@ class AttendanceController extends Controller
    public function logout(Request $request,$id)
 {
     $request->validate([
-        'logout_time' => 'required|date'
+        'logout_time' => 'required'
     ]);
 
     $user = auth()->user();
