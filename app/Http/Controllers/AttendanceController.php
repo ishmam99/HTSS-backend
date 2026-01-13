@@ -236,7 +236,7 @@ class AttendanceController extends Controller
 
         $info = AttendanceInfo::create([
             'attendance_id' => $attendance->id,
-            'login_time' => $loginAt->timestamp,
+            'login_time' => $loginAt,
             'status' => 1
         ]);
 
