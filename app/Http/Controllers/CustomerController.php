@@ -27,7 +27,7 @@ class CustomerController extends Controller
 
     public function show($id)
     {
-        $customer = Customer::with('user', 'softwares', 'solutions', 'tickets')->findOrFail($id);
+        $customer = Customer::with('user','endUsers', 'softwares', 'solutions', 'tickets')->findOrFail($id);
 
         return new CustomerResource($customer);
     }
@@ -46,6 +46,7 @@ class CustomerController extends Controller
             'postal_code'   => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender'        => 'nullable|string',
+             'record_id'     => 'nullable'
         ]);
 
         try {
@@ -63,6 +64,7 @@ class CustomerController extends Controller
 
             $customer = Customer::create([
                 'user_id'       => $user->id,
+                'record_id'    => $validated['record_id'] ?? null,
                 'phone'         => $validated['phone'] ?? null,
                 'address'       => $validated['address'] ?? null,
                 'city'          => $validated['city'] ?? null,

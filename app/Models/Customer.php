@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
-    
+
     use HasFactory,HasAdvancedQuery;
     protected $guarded = [];
      protected array $searchable = ['assignedUsers.user.name',
@@ -48,6 +48,10 @@ class Customer extends Model
     {
         return $this->hasMany(CustomerSupport::class);
     }
+    public function endUsers(): HasMany
+    {
+        return $this->hasMany(EndUser::class);
+    }
 
 
 public function assignments()
@@ -58,6 +62,6 @@ public function assignments()
 public function assignedUsers()
 {
     return $this->hasMany(CustomerUserAssignment::class)
-                ->with('user'); 
+                ->with('user');
 }
 }

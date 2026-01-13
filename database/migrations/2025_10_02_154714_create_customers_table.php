@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->bigInteger('record_id')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('city')->nullable();
