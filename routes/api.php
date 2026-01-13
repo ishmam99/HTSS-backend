@@ -136,9 +136,9 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('scheduled-messages', ScheduledMessageController::class);
     Route::put('scheduled-messages-status/{id}', [ScheduledMessageController::class, 'statusChange']);
 
-    Route::get('/customers/by-user/{user}', [CustomerController::class, 'getByUser']);
+    Route::get('/customer-success-managers/{csm}/customers',[CustomerSuccessManagerController::class, 'customersByCsm']);
 
-    Route::get(
-    '/customer-success-managers/{csm}/customers',[CustomerSuccessManagerController::class, 'customersByCsm']);
+
+
 
 });
