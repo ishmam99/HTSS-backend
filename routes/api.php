@@ -138,5 +138,5 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/customers/by-user/{id}',[CustomerController::class, 'getByUser']);
 
-    Route::get('/customer-success-managers/{csm}/customers',[CustomerSuccessManagerController::class, 'customersByCsm']);
+    Route::get('/customer-success-managers/{csm}',[CustomerSuccessManagerController::class, 'customersByCsm']);
 });
