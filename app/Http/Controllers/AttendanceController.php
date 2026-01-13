@@ -205,8 +205,8 @@ class AttendanceController extends Controller
         ]);
 
         $user = auth()->user();
-    $loginAt = Carbon::parse($request->datetime);
-    $date = $loginAt->toDateString();
+    $loginAt = Carbon::parse($request->login_time);
+    $date = Carbon::parse($request->date);
 
     return DB::transaction(function () use ($user, $loginAt, $date) {
 
