@@ -184,7 +184,7 @@ class CustomerSuccessManagerController extends Controller
             ->get()
             ->map(function ($customer) {
                 return [
-                    'id'   => $customer->id,
+                    'id' => $customer->id,
                     'name' => $customer->user->name ?? null
                 ];
             });

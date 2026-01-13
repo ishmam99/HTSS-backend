@@ -21,8 +21,9 @@ class CustomerSuccessManager extends Model
         return $this->belongsToMany(
             Customer::class,
             'customer_user_assignments',
-            'user_id', 
-            'customer_id'  
-        )->select('id', 'name');
+            'user_id',
+            'customer_id'
+        )->select('id', 'name')
+        ->select('customers.id', 'customers.user_id');;
     }
 }
