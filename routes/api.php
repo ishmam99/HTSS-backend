@@ -108,6 +108,10 @@ Route::prefix('v1')->group(function () {
         Route::put('trainer-schedule-status-update/{id}', [TrainerScheduleController::class, 'statusUpdate']);
         Route::apiResource('jobs-offer', JobController::class);
         Route::put('/publish-job/{id}', [JobController::class, 'publish']);
+
+
+        Route::post('/attendance/login', [AttendanceController::class, 'login']);
+        Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -140,7 +144,5 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/customer-success-managers/by-user/{userId}', [CustomerSuccessManagerController::class, 'getByUser']);
 
-    Route::post('/attendance/login', [AttendanceController::class, 'login']);
-    Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
 
 });
