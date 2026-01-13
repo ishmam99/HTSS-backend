@@ -180,7 +180,7 @@ class CustomerSuccessManagerController extends Controller
             $q->where('user_id', $csm->user_id);
         })
             ->with('user:id,name')
-            ->select('id', 'user_id')
+            ->select('customers.id', 'customers.user_id')
             ->get()
             ->map(function ($customer) {
                 return [
@@ -189,10 +189,12 @@ class CustomerSuccessManagerController extends Controller
                 ];
             });
 
+        $csmWithCustomers = $csm->toArray();
+        $csmWithCustomers['customers'] = $customers;
+
         return response()->json([
             'success' => true,
-            'csm'     => $csm,
-            'data'    => $customers
+            'csm'     => $csmWithCustomers
         ]);
     }
 }

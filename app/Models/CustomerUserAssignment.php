@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomerUserAssignment extends Model
 {
+    protected $table = 'customer_user_assignments';
     protected $guarded = ['id'];
 
 
