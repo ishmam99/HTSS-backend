@@ -165,9 +165,9 @@ class CustomerSuccessManagerController extends Controller
         }
     }
 
-    public function customersByCsm($csmId)
+    public function getByUser($userId)
     {
-        $csm = CustomerSuccessManager::find($csmId);
+        $csm = CustomerSuccessManager::where('user_id', $userId)->first();
 
         if (!$csm) {
             return response()->json([
@@ -176,8 +176,8 @@ class CustomerSuccessManagerController extends Controller
             ], 404);
         }
 
-        $customers = Customer::whereHas('assignments', function ($q) use ($csm) {
-            $q->where('user_id', $csm->user_id);
+        $customers = Customer::whereHas('assignments', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
         })
             ->with('user:id,name')
             ->select('customers.id', 'customers.user_id')
@@ -191,7 +191,6 @@ class CustomerSuccessManagerController extends Controller
 
         $csmWithCustomers = $csm->toArray();
         $csmWithCustomers['customers'] = $customers;
-
         return response()->json([
             'success' => true,
             'csm'     => $csmWithCustomers
