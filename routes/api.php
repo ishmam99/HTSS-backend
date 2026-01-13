@@ -139,4 +139,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/customers/by-user/{id}',[CustomerController::class, 'getByUser']);
 
     Route::get('/customer-success-managers/by-user/{userId}', [CustomerSuccessManagerController::class, 'getByUser']);
+
+    Route::post('/attendance/login', [AttendanceController::class, 'login']);
+    Route::post('/attendance/logout', [AttendanceController::class, 'logout']);
+
 });

@@ -17,4 +17,9 @@ class Attendance extends Model
     {
         return $this->hasMany(AttendanceTime::class);
     }
+
+    public function attendanceInfo()
+    {
+        return $this->hasMany(AttendanceInfo::class);
+    }
 }

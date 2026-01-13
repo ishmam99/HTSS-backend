@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendance_times', function (Blueprint $table) {
+        Schema::create('attendance_infos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id')->constrained('attendances')->onDelete('cascade');
-            $table->foreignId('record_id')->nullable()->constrained('records')->onDelete('cascade');
-            $table->string('type_of_work')->nullable();
-            $table->text('activity')->nullable();
-            $table->string('notes')->nullable();
-            $table->integer('total_minute')->default(0);
+            $table->double('login_time');
+            $table->double('logout_time')->nullable();
             $table->tinyInteger('status')->default(1);
-            $table->string('attachment')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_times');
+        Schema::dropIfExists('attendance_infos');
     }
 };

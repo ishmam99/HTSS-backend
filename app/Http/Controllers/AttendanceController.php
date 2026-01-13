@@ -1,11 +1,12 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AttendanceRequest;
 use App\Http\Resources\AttendanceResource;
 use App\Models\Attendance;
+use App\Models\AttendanceInfo;
 use App\Models\AttendanceTime;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,25 +17,24 @@ class AttendanceController extends Controller
 
     public function index(Request $request)
     {
-        $attendances = Attendance::with(['times.record.module','user'])
+        $attendances = Attendance::with(['times.record.module', 'user'])
             ->when($request->has('user_id'), function ($q) use ($request) {
                 $q->where('user_id', $request->user_id);
             })
             ->when($request->has('record_id'), function ($q) use ($request) {
                 $q->where('id', $request->record_id);
             })->when($request->has('start_date') && $request->has('end_date'), function ($q) use ($request) {
-                $q->whereBetween('date', [$request->start_date, $request->end_date]);
-            })->when($request->has('date'), function ($q) use ($request) {
-                $q->whereDate('date', $request->date);
+            $q->whereBetween('date', [$request->start_date, $request->end_date]);
+        })->when($request->has('date'), function ($q) use ($request) {
+            $q->whereDate('date', $request->date);
 
-            })->when($request->has('status'), function ($q) use ($request) {
-                $q->where('status', $request->status);
-            })
+        })->when($request->has('status'), function ($q) use ($request) {
+            $q->where('status', $request->status);
+        })
             ->orderBy('date', 'desc');
-             $lists = $request->per_page
-                ? $attendances->paginate($request->per_page)
-                : $attendances->get();
-
+        $lists = $request->per_page
+            ? $attendances->paginate($request->per_page)
+            : $attendances->get();
 
         return AttendanceResource::collection($lists);
     }
@@ -44,31 +44,31 @@ class AttendanceController extends Controller
         DB::beginTransaction();
         try {
             $attendance = Attendance::create([
-                'date' => $request->date,
-                'user_id' => auth()->id(),
-                'status' =>  $request->status ?? 0,
+                'date'                 => $request->date,
+                'user_id'              => auth()->id(),
+                'status'               => $request->status ?? 0,
                 'total_working_minute' => 0,
             ]);
-            $bulkInsertData = [];
+            $bulkInsertData      = [];
             $totalWorkingMinutes = 0;
 
             foreach ($request->times as $key => $time) {
                 $attachmentPath = null;
-                    if (isset($request->times[$key]['attachment']) && $request->times[$key]['attachment'] instanceof \Illuminate\Http\UploadedFile) {
-                        $attachmentPath = $request->times[$key]['attachment']->store('attendance_attachments', 'public');
-                    }
-                 $bulkInsertData[] = [
+                if (isset($request->times[$key]['attachment']) && $request->times[$key]['attachment'] instanceof \Illuminate\Http\UploadedFile) {
+                    $attachmentPath = $request->times[$key]['attachment']->store('attendance_attachments', 'public');
+                }
+                $bulkInsertData[]  = [
                     'attendance_id' => $attendance->id,
-                    'record_id' => $time['record_id'],
-                    'type_of_work' => $time['type_of_work'],
-                    'notes' => $time['notes'] ?? null,
-                    'total_minute' => $time['total_minute'],
-                    'status' => $time['status'] ?? 0,
-                    'attachment' => $attachmentPath,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                 ];
-                 $totalWorkingMinutes += $time['total_minute'];
+                    'record_id'     => $time['record_id'],
+                    'type_of_work'  => $time['type_of_work'],
+                    'notes'         => $time['notes'] ?? null,
+                    'total_minute'  => $time['total_minute'],
+                    'status'        => $time['status'] ?? 0,
+                    'attachment'    => $attachmentPath,
+                    'created_at'    => now(),
+                    'updated_at'    => now(),
+                ];
+                $totalWorkingMinutes += $time['total_minute'];
             }
             DB::table('attendance_times')->insert($bulkInsertData);
             $attendance->update([
@@ -78,14 +78,14 @@ class AttendanceController extends Controller
             DB::commit();
 
             return response()->json([
-                'status' => true,
+                'status'  => true,
                 'message' => 'Attendance Submitted!',
             ], 201);
 
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -103,101 +103,191 @@ class AttendanceController extends Controller
             $attendance = Attendance::findOrFail($id);
 
             $attendance->update([
-                'date' => $request->date,
+                'date'    => $request->date,
                 'user_id' => $request->user_id,
-                'status' => $request->status ?? 1,
+                'status'  => $request->status ?? 1,
             ]);
-            if($request->has('times')){
-            $oldTimes = DB::table('attendance_times')->where('attendance_id', $attendance->id)->get();
-            foreach ($oldTimes as $oldTime) {
-                if ($oldTime->attachment && Storage::disk('public')->exists($oldTime->attachment)) {
-                    Storage::disk('public')->delete($oldTime->attachment);
+            if ($request->has('times')) {
+                $oldTimes = DB::table('attendance_times')->where('attendance_id', $attendance->id)->get();
+                foreach ($oldTimes as $oldTime) {
+                    if ($oldTime->attachment && Storage::disk('public')->exists($oldTime->attachment)) {
+                        Storage::disk('public')->delete($oldTime->attachment);
+                    }
                 }
-            }
-            DB::table('attendance_times')->where('attendance_id', $attendance->id)->delete();
+                DB::table('attendance_times')->where('attendance_id', $attendance->id)->delete();
 
-            $bulkInsertData = [];
-            $totalWorkingMinutes = 0;
+                $bulkInsertData      = [];
+                $totalWorkingMinutes = 0;
 
-            foreach ($request->times as $key => $time) {
-                $attachmentPath = null;
+                foreach ($request->times as $key => $time) {
+                    $attachmentPath = null;
 
-                if (isset($request->times[$key]['attachment']) && $request->times[$key]['attachment'] instanceof \Illuminate\Http\UploadedFile) {
-                    $attachmentPath = $request->times[$key]['attachment']->store('attendance_attachments', 'public');
+                    if (isset($request->times[$key]['attachment']) && $request->times[$key]['attachment'] instanceof \Illuminate\Http\UploadedFile) {
+                        $attachmentPath = $request->times[$key]['attachment']->store('attendance_attachments', 'public');
+                    }
+
+                    $bulkInsertData[] = [
+                        'attendance_id' => $attendance->id,
+                        'record_id'     => $time['record_id'],
+                        'type_of_work'  => $time['type_of_work'],
+                        'notes'         => $time['notes'] ?? null,
+                        'total_minute'  => $time['total_minute'],
+                        'status'        => $time['status'] ?? 1,
+                        'attachment'    => $attachmentPath,
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
+                    ];
+
+                    $totalWorkingMinutes += $time['total_minute'];
                 }
 
-                $bulkInsertData[] = [
-                    'attendance_id' => $attendance->id,
-                    'record_id'     => $time['record_id'],
-                    'type_of_work'  => $time['type_of_work'],
-                    'notes'         => $time['notes'] ?? null,
-                    'total_minute'  => $time['total_minute'],
-                    'status'        => $time['status'] ?? 1,
-                    'attachment'    => $attachmentPath,
-                    'created_at'    => now(),
-                    'updated_at'    => now(),
-                ];
+                DB::table('attendance_times')->insert($bulkInsertData);
 
-                $totalWorkingMinutes += $time['total_minute'];
+                $attendance->update([
+                    'total_working_minute' => $totalWorkingMinutes,
+                ]);
             }
-
-            DB::table('attendance_times')->insert($bulkInsertData);
-
-            $attendance->update([
-                'total_working_minute' => $totalWorkingMinutes,
-            ]);
-        }
 
             DB::commit();
 
             return response()->json([
-                'status' => true,
+                'status'  => true,
                 'message' => 'Attendance Updated successfully!',
             ], 200);
 
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => $e->getMessage(),
             ], 500);
         }
     }
 
-
     public function destroy($id)
     {
         Attendance::findOrFail($id)->delete();
         return response()->json([
-            'status' => true,
-            'message' => 'Attendance deleted successfully'
-        ],200);
+            'status'  => true,
+            'message' => 'Attendance deleted successfully',
+        ], 200);
     }
 
     public function attendanceStatusUpdate(Request $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
         $attendance->update([
-            'status'=> $request->status
+            'status' => $request->status,
         ]);
-         return response()->json([
-            'status' => true,
-            'message' => 'Attendance status updated successfully'
-        ],200);
+        return response()->json([
+            'status'  => true,
+            'message' => 'Attendance status updated successfully',
+        ], 200);
     }
 
     public function attendanceTimeStatusUpdate(Request $request, $id)
     {
         $attendance = AttendanceTime::findOrFail($id);
         $attendance->update([
-            'status'=> $request->status
+            'status' => $request->status,
         ]);
-         return response()->json([
-            'status' => true,
-            'message' => 'Attendance time status updated successfully'
-        ],200);
+        return response()->json([
+            'status'  => true,
+            'message' => 'Attendance time status updated successfully',
+        ], 200);
     }
 
+    public function login(Request $request)
+    {
+        $request->validate([
+            'login_time' => 'required',
+            'date'       => 'required|date',
+        ]);
+
+        $user    = auth()->user();
+        $loginAt = Carbon::parse($request->login_time);
+        $date    = Carbon::parse($request->date);
+
+        $attendance = Attendance::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'date'    => $date,
+            ],
+            [
+                'total_working_minute' => 0,
+            ]
+        );
+
+        $open = AttendanceInfo::where('attendance_id', $attendance->id)
+            ->whereNull('logout_time')
+            ->first();
+
+        if ($open) {
+            return response()->json([
+                'message' => 'Already logged in',
+            ], 422);
+        }
+
+        AttendanceInfo::create([
+            'attendance_id' => $attendance->id,
+            'login_time'    => $loginAt->timestamp,
+            'status'        => 1,
+        ]);
+
+        return response()->json([
+            'message'    => 'Login successful',
+            'login_time' => $loginAt->format('Y-m-d H:i:s'),
+        ]);
+    }
+
+   public function logout(Request $request)
+{
+    $request->validate([
+        'attendance_info_id' => 'required|exists:attendance_infos,id',
+        'logout_time' => 'required|date'
+    ]);
+
+    $user = auth()->user();
+    $logoutAt = Carbon::parse($request->logout_time);
+
+    $attendanceInfo = AttendanceInfo::with('attendance')
+        ->where('id', $request->attendance_info_id)
+        ->first();
+
+    if ($attendanceInfo->attendance->user_id !== $user->id) {
+        return response()->json([
+            'message' => 'Unauthorized'
+        ], 403);
+    }
+
+    if ($attendanceInfo->logout_time) {
+        return response()->json([
+            'message' => 'Already logged out'
+        ], 422);
+    }
+
+    $loginAt = Carbon::createFromTimestamp($attendanceInfo->login_time);
+
+    if ($logoutAt->lessThan($loginAt)) {
+        $logoutAt->addDay();
+    }
+
+    $minutes = $loginAt->diffInMinutes($logoutAt);
+
+    $attendanceInfo->update([
+        'logout_time' => $logoutAt->timestamp,
+        'status' => 0
+    ]);
+
+    $attendance = $attendanceInfo->attendance;
+    $attendance->increment('total_working_minute', $minutes);
+
+    return response()->json([
+        'message' => 'Logout successful',
+        'worked_minutes' => $minutes,
+        'total_minutes_today' => $attendance->total_working_minute
+    ]);
+}
 
 
 }
