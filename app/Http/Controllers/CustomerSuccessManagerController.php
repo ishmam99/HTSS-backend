@@ -189,11 +189,24 @@ class CustomerSuccessManagerController extends Controller
                 ];
             });
 
-        $csmWithCustomers = $csm->toArray();
-        $csmWithCustomers['customers'] = $customers;
+        $csmData = [
+            'id'          => $csm->id,
+            'user_id'     => $csm->user_id,
+            'phone'       => $csm->phone,
+            'address'     => $csm->address,
+            'city'        => $csm->city,
+            'country'     => $csm->country,
+            'postal_code' => $csm->postal_code,
+            'date_of_birth' => $csm->date_of_birth,
+            'gender'      => $csm->gender,
+            'status'      => $csm->status,
+            'created_at'  => $csm->created_at,
+            'updated_at'  => $csm->updated_at,
+            'customers'   => $customers
+        ];
         return response()->json([
             'success' => true,
-            'csm'     => $csmWithCustomers
+            'csm'     => [$csmData]
         ]);
     }
 }
