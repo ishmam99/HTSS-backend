@@ -240,10 +240,9 @@ class AttendanceController extends Controller
         ]);
     }
 
-   public function logout(Request $request)
+   public function logout(Request $request,$id)
 {
     $request->validate([
-        'attendance_info_id' => 'required|exists:attendance_infos,id',
         'logout_time' => 'required|date'
     ]);
 
@@ -251,7 +250,7 @@ class AttendanceController extends Controller
     $logoutAt = Carbon::parse($request->logout_time);
 
     $attendanceInfo = AttendanceInfo::with('attendance')
-        ->where('id', $request->attendance_info_id)
+        ->where('id', $id)
         ->first();
 
     if ($attendanceInfo->attendance->user_id !== $user->id) {
