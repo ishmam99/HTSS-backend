@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Customer;
 
 class CustomerSuccessManagerController extends Controller
 {
@@ -30,7 +31,7 @@ class CustomerSuccessManagerController extends Controller
 
     public function show($id)
     {
-        $manager = CustomerSuccessManager::with(['user','customers'])->findOrFail($id);
+        $manager = CustomerSuccessManager::with(['user', 'customers'])->findOrFail($id);
         return new CustomerSuccessManagerResource($manager);
     }
 
@@ -162,5 +163,30 @@ class CustomerSuccessManagerController extends Controller
                 'error'   => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function customersByCsm($csmId)
+    {
+        $csm = CustomerSuccessManager::find($csmId);
+
+        if (!$csm) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer Success Manager not found'
+            ], 404);
+        }
+        $customers = Customer::whereHas('assignments', function ($q) use ($csm) {
+            $q->where('user_id', $csm->user_id);
+        })
+            ->with([
+                'user:id,name,email',
+            ])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'csm_id'  => $csm->id,
+            'data'    => $customers,
+        ]);
     }
 }
