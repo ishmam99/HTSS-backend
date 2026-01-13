@@ -23,7 +23,6 @@ class CustomerSuccessManager extends Model
             'customer_user_assignments',
             'user_id',
             'customer_id'
-        )->select('id', 'name')
-        ->select('customers.id', 'customers.user_id');;
+        )->select('id', 'name');
     }
 }

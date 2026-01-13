@@ -180,11 +180,11 @@ class CustomerSuccessManagerController extends Controller
             $q->where('user_id', $csm->user_id);
         })
             ->with('user:id,name')
-            ->select('customers.id', 'customers.user_id')
+            ->select('id', 'user_id')
             ->get()
             ->map(function ($customer) {
                 return [
-                    'id' => $customer->id,
+                    'id'   => $customer->id,
                     'name' => $customer->user->name ?? null
                 ];
             });
