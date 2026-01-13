@@ -175,18 +175,24 @@ class CustomerSuccessManagerController extends Controller
                 'message' => 'Customer Success Manager not found'
             ], 404);
         }
+
         $customers = Customer::whereHas('assignments', function ($q) use ($csm) {
             $q->where('user_id', $csm->user_id);
         })
-            ->with([
-                'user:id,name,email',
-            ])
-            ->get();
+            ->with('user:id,name')
+            ->select('id', 'user_id')
+            ->get()
+            ->map(function ($customer) {
+                return [
+                    'id'   => $customer->id,
+                    'name' => $customer->user->name ?? null
+                ];
+            });
 
         return response()->json([
             'success' => true,
-            'csm_id'  => $csm->id,
-            'data'    => $customers,
+            'csm'     => $csm,
+            'data'    => $customers
         ]);
     }
 }
