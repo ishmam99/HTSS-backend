@@ -262,11 +262,7 @@ class AttendanceController extends Controller
         ->where('id', $id)
         ->first();
 
-    if ($attendanceInfo->attendance->user_id !== $user->id) {
-        return response()->json([
-            'message' => 'Unauthorized'
-        ], 403);
-    }
+    
 
     if ($attendanceInfo->logout_time) {
         return response()->json([
