@@ -204,20 +204,25 @@ class AttendanceController extends Controller
             'date'       => 'required|date',
         ]);
 
-        $user    = auth()->user();
-        $loginAt = Carbon::parse($request->login_time);
-        $date    = Carbon::parse($request->date);
+        $user = auth()->user();
+    $loginAt = Carbon::parse($request->datetime);
+    $date = $loginAt->toDateString();
 
-        $attendance = Attendance::firstOrCreate(
-            [
+    return DB::transaction(function () use ($user, $loginAt, $date) {
+
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $date)
+            ->first();
+
+        if (!$attendance) {
+            $attendance = Attendance::create([
                 'user_id' => $user->id,
-                'date'    => $date,
-            ],
-            [
+                'date' => $date,
                 'total_working_minute' => 0,
-            ]
-        );
+            ]);
+        }
 
+        // prevent double login
         $open = AttendanceInfo::where('attendance_id', $attendance->id)
             ->whereNull('logout_time')
             ->first();
@@ -225,19 +230,23 @@ class AttendanceController extends Controller
         if ($open) {
             return response()->json([
                 'message' => 'Already logged in',
+                'attendance_info_id' => $open->id
             ], 422);
         }
 
-        AttendanceInfo::create([
+        $info = AttendanceInfo::create([
             'attendance_id' => $attendance->id,
-            'login_time'    => $loginAt->timestamp,
-            'status'        => 1,
+            'login_time' => $loginAt->timestamp,
+            'status' => 1
         ]);
 
         return response()->json([
-            'message'    => 'Login successful',
-            'login_time' => $loginAt->format('Y-m-d H:i:s'),
+            'message' => 'Login successful',
+            'attendance_id' => $attendance->id,
+            'attendance_info_id' => $info->id,
+            'login_time' => $loginAt->format('Y-m-d H:i:s')
         ]);
+    });
     }
 
    public function logout(Request $request,$id)
