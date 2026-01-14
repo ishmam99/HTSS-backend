@@ -19,6 +19,9 @@ return new class extends Migration
             $table->text('activity')->nullable();
             $table->string('notes')->nullable();
             $table->integer('total_minute')->default(0);
+            $table->string('task_name')->nullable();
+            $table->string('description')->nullable();
+            $table->string('output')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->string('attachment')->nullable();
             $table->timestamps();
@@ -33,3 +36,6 @@ return new class extends Migration
         Schema::dropIfExists('attendance_times');
     }
 };
+
+description
+output

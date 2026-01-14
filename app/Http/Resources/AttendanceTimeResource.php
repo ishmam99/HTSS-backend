@@ -21,6 +21,10 @@ class AttendanceTimeResource extends JsonResource
             'notes' => $this->notes,
             'total_minute' => $this->total_minute,
             'activity' => $this->activity,
+
+            'task_name'=> $this->task_name,
+            'description' => $this->description,
+            'output'=> $this->output,
             'total_hours' => number_format($this->total_minute/60, 2),
             'status' => $this->status,
             'attachment' => $this->attachment
