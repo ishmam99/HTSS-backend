@@ -308,7 +308,7 @@ class AttendanceController extends Controller
             'type_of_work' => $request->type_of_work,
             'record_id' => $request->record_id,
             'activity' => $request->activity,
-            'total_minutes' => $total_minutes, // Use the calculated total_minutes
+            'total_minute' => $total_minutes, // Use the calculated total_minutes
         ]);
          return response()->json([
             'message' => 'AttendanceTime create successful',
