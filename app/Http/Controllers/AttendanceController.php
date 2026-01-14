@@ -301,6 +301,7 @@ class AttendanceController extends Controller
             'activity' => 'nullable|string',
             'hour' => 'required|integer',
             'minute' => 'required|integer',
+            'status' => 'required'
         ]);
         $total_minutes = ($request->hour * 60) + $request->minute;
         AttendanceTime::create([
@@ -309,6 +310,7 @@ class AttendanceController extends Controller
             'record_id' => $request->record_id,
             'activity' => $request->activity,
             'total_minute' => $total_minutes, // Use the calculated total_minutes
+            'status' => $request->status
         ]);
          return response()->json([
             'message' => 'AttendanceTime create successful',
