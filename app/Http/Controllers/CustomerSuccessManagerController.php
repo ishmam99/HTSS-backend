@@ -192,6 +192,7 @@ class CustomerSuccessManagerController extends Controller
         $csmData = [
             'id'          => $csm->id,
             'user_id'     => $csm->user_id,
+            'user_name'   => $csm->user->name ?? null,
             'phone'       => $csm->phone,
             'address'     => $csm->address,
             'city'        => $csm->city,
