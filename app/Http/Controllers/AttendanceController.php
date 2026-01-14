@@ -301,7 +301,10 @@ class AttendanceController extends Controller
             'activity' => 'nullable|string',
             'hour' => 'required|integer',
             'minute' => 'required|integer',
-            'status' => 'required'
+            'status' => 'required',
+            'task_name' => 'nullable',
+            'description'=> 'nullable',
+            'output'=> 'nullable',
         ]);
         $total_minutes = ($request->hour * 60) + $request->minute;
         AttendanceTime::create([
