@@ -112,6 +112,7 @@ Route::prefix('v1')->group(function () {
 
         Route::post('/attendance/login', [AttendanceController::class, 'login']);
         Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
+        Route::post('/attendance-time', [AttendanceController::class, 'attendanceTimeStore']);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);

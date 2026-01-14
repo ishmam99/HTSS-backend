@@ -262,7 +262,7 @@ class AttendanceController extends Controller
         ->where('id', $id)
         ->first();
 
-    
+
 
     if ($attendanceInfo->logout_time) {
         return response()->json([
@@ -292,6 +292,30 @@ class AttendanceController extends Controller
         'total_minutes_today' => $attendance->total_working_minute
     ]);
 }
+
+    public function attendanceTimeStore(Request $request){
+       $request->validate([
+            'attendance_id' => 'required|exists:attendances,id',
+            'type_of_work' => 'nullable|string',
+            'record_id' => 'nullable|exists:records,id',
+            'activity' => 'nullable|string',
+            'hour' => 'required|integer',
+            'minute' => 'required|integer',
+        ]);
+        $total_minutes = ($request->hour * 60) + $request->minute;
+        AttendanceTime::create([
+            'attendance_id' => $request->attendance_id,
+            'type_of_work' => $request->type_of_work,
+            'record_id' => $request->record_id,
+            'activity' => $request->activity,
+            'total_minutes' => $total_minutes, // Use the calculated total_minutes
+        ]);
+         return response()->json([
+            'message' => 'AttendanceTime create successful',
+            'total_minutes' => $total_minutes
+    ]);
+
+    }
 
 
 }
