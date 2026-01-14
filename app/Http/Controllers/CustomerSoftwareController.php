@@ -8,29 +8,26 @@ use Illuminate\Http\Request;
 class CustomerSoftwareController extends Controller
 {
     //
-     public function index(Request $request)
+    public function index(Request $request)
     {
-       $query =  CustomerSoftware::query();
-        if(auth()->user()->role == 'customer')
-        {
-           $data = $query->with('customer','software')->where('customer_id',auth()->user()->customer->id)->get();
-        }
-        if($request->has('customer_id'))
-        {
-            $data = $query->with('customer','software')->where('customer_id',$request->customer_id)->get();
-        }
-        if($request->has('software_id'))
-        {
-            $data = $query->with('customer','software')->where('software_id',$request->customer_id)->get();
-        }
+        $query = CustomerSoftware::with(['customer.user', 'software'])
+            ->when(auth()->user()->role === 'customer', function ($q) {
+                $q->where('customer_id', auth()->user()->customer->id);
+            })
+            ->when($request->filled('customer_id'), function ($q) use ($request) {
+                $q->where('customer_id', $request->customer_id);
+            })
+            ->when($request->filled('software_id'), function ($q) use ($request) {
+                $q->where('software_id', $request->software_id);
+            });
+
+        $data = $query->get();
 
         return response()->json($data);
-
     }
     public function store(Request $request)
     {
-        if(auth()->user()->role == 'customer')
-        {
+        if (auth()->user()->role == 'customer') {
             $request['customer_id'] = auth()->user()->customer->id;
         }
         $request->validate([
