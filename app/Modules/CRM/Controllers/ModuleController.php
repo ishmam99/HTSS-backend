@@ -13,7 +13,7 @@ class ModuleController extends Controller
 {
    public function index()
    {
-     $modules = Module::all();
+     $modules = Module::with('fields.count')->get();
      return response()->json($modules);
    }
 public function stats(Request $request)
