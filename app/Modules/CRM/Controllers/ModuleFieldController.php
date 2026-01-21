@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Modules\CRM\Models\ModuleField;
@@ -65,37 +66,48 @@ class ModuleFieldController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ModuleField $field): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'label' => 'sometimes|required|string|max:255',
-            'order_group'=> 'sometimes|nullable|integer',
-            'name' => 'sometimes|required|string|max:255|unique:module_fields,name,' . $field->id,
-            'type' => 'sometimes|required|string|in:text,select,date,number,checkbox',
-            'required' => 'sometimes|boolean',
-            'unique' => 'sometimes|boolean',
-            'options' => 'sometimes|array',
-            'options.*' => 'string',
-        ]);
+  public function update(Request $request, ModuleField $field): JsonResponse
+{
+    $oldOptions = $field->options ?? [];
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        if($request->has('options')){
-            $options = $request->input('options');
-            $validator->after(function ($validator) use ($options) {
-                if (is_array($options) && count($options) === 0) {
-                    $validator->errors()->add('options', 'The options field must have at least one option when provided.');
-                }
-            });
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-        }
-        $field->update($validator->validated());
+    $validator = Validator::make($request->all(), [
+        'label' => 'sometimes|required|string|max:255',
+        'order_group'=> 'sometimes|nullable|integer',
+        'name' => 'sometimes|required|string|max:255|unique:module_fields,name,' . $field->id,
+        'type' => 'sometimes|required|string|in:text,select,date,number,checkbox',
+        'required' => 'sometimes|boolean',
+        'unique' => 'sometimes|boolean',
+        'options' => 'sometimes|array|min:1',
+        'options.*' => 'string',
+    ]);
 
-        return response()->json($field);
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
+
+    $newOptions = $request->input('options', []);
+
+    // Detect renamed options
+    $mapping = [];
+    foreach ($oldOptions as $i => $old) {
+        if (isset($newOptions[$i]) && $newOptions[$i] !== $old) {
+            $mapping[$old] = $newOptions[$i];
+        }
+    }
+
+    // Update field
+    $field->update($validator->validated());
+
+    // Update record values
+    foreach ($mapping as $old => $new) {
+        DB::table('record_values')
+            ->where('field_id', $field->id)
+            ->where('value', $old)
+            ->update(['value' => $new]);
+    }
+
+    return response()->json($field);
+}
 
     /**
      * Remove the specified resource from storage.
