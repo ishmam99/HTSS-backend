@@ -66,31 +66,37 @@ class ModuleFieldController extends Controller
     /**
      * Update the specified resource in storage.
      */
-  public function update(Request $request, ModuleField $field): JsonResponse
+ public function update(Request $request, ModuleField $field): JsonResponse
 {
-    $oldOptions = $field->options ?? [];
+    $rules = [
+        'label' => 'required|string|max:255',
+        'order_group'=> 'nullable|integer',
+        'type' => 'required|string|in:text,select,date,number,checkbox',
+        'required' => 'boolean',
+        'unique' => 'boolean',
+        'options' => 'sometimes|array|min:1',
+        'options.*' => 'string',
+    ];
 
- $validator = Validator::make($request->all(), [
-    'label' => 'required|string|max:255',
-    'order_group'=> 'nullable|integer',
-    'name' => [
-        'required',
-        'string',
-        'max:255',
-        Rule::unique('module_fields', 'name')->ignore($field->id),
-    ],
-    'type' => 'required|string|in:text,select,date,number,checkbox',
-    'required' => 'boolean',
-    'unique' => 'boolean',
-    'options' => 'sometimes|array|min:1',
-    'options.*' => 'string',
-]);
+    // Only validate unique if name is changed
+    if ($request->name !== $field->name) {
+        $rules['name'] = [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('module_fields', 'name'),
+        ];
+    } else {
+        $rules['name'] = 'required|string|max:255';
+    }
 
+    $validator = Validator::make($request->all(), $rules);
 
     if ($validator->fails()) {
         return response()->json($validator->errors(), 422);
     }
 
+    $oldOptions = $field->options ?? [];
     $newOptions = $request->input('options', []);
 
     // Detect renamed options
@@ -101,10 +107,9 @@ class ModuleFieldController extends Controller
         }
     }
 
-    // Update field
     $field->update($validator->validated());
 
-    // Update record values
+    // Update record_values
     foreach ($mapping as $old => $new) {
         DB::table('record_values')
             ->where('field_id', $field->id)
