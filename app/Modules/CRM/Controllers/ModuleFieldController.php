@@ -70,13 +70,18 @@ class ModuleFieldController extends Controller
 {
     $oldOptions = $field->options ?? [];
 
-   $validator = Validator::make($request->all(), [
-    'label' => 'sometimes|required|string|max:255',
-    'order_group'=> 'sometimes|nullable|integer',
-    'name' => 'nullable|string|max:255|unique:module_fields,name,' . $field->id,
-    'type' => 'sometimes|required|string|in:text,select,date,number,checkbox',
-    'required' => 'sometimes|boolean',
-    'unique' => 'sometimes|boolean',
+ $validator = Validator::make($request->all(), [
+    'label' => 'required|string|max:255',
+    'order_group'=> 'nullable|integer',
+    'name' => [
+        'required',
+        'string',
+        'max:255',
+        Rule::unique('module_fields', 'name')->ignore($field->id),
+    ],
+    'type' => 'required|string|in:text,select,date,number,checkbox',
+    'required' => 'boolean',
+    'unique' => 'boolean',
     'options' => 'sometimes|array|min:1',
     'options.*' => 'string',
 ]);
