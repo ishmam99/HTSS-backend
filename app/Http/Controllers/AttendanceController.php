@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AttendanceRequest;
@@ -24,13 +25,12 @@ class AttendanceController extends Controller
             ->when($request->has('record_id'), function ($q) use ($request) {
                 $q->where('id', $request->record_id);
             })->when($request->has('start_date') && $request->has('end_date'), function ($q) use ($request) {
-            $q->whereBetween('date', [$request->start_date, $request->end_date]);
-        })->when($request->has('date'), function ($q) use ($request) {
-            $q->whereDate('date', $request->date);
-
-        })->when($request->has('status'), function ($q) use ($request) {
-            $q->where('status', $request->status);
-        })
+                $q->whereBetween('date', [$request->start_date, $request->end_date]);
+            })->when($request->has('date'), function ($q) use ($request) {
+                $q->whereDate('date', $request->date);
+            })->when($request->has('status'), function ($q) use ($request) {
+                $q->where('status', $request->status);
+            })
             ->orderBy('date', 'desc');
         $lists = $request->per_page
             ? $attendances->paginate($request->per_page)
@@ -81,7 +81,6 @@ class AttendanceController extends Controller
                 'status'  => true,
                 'message' => 'Attendance Submitted!',
             ], 201);
-
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -154,7 +153,6 @@ class AttendanceController extends Controller
                 'status'  => true,
                 'message' => 'Attendance Updated successfully!',
             ], 200);
-
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -205,96 +203,97 @@ class AttendanceController extends Controller
         ]);
 
         $user = auth()->user();
-    $loginAt = Carbon::parse($request->login_time);
-    $date = Carbon::parse($request->date);
+        $loginAt = Carbon::parse($request->login_time);
+        $date = Carbon::parse($request->date);
 
-    return DB::transaction(function () use ($user, $loginAt, $date) {
+        return DB::transaction(function () use ($user, $loginAt, $date) {
 
-        $attendance = Attendance::where('user_id', $user->id)
-            ->where('date', $date)
-            ->first();
+            $attendance = Attendance::where('user_id', $user->id)
+                ->where('date', $date)
+                ->first();
 
-        if (!$attendance) {
-            $attendance = Attendance::create([
-                'user_id' => $user->id,
-                'date' => $date,
-                'total_working_minute' => 0,
+            if (!$attendance) {
+                $attendance = Attendance::create([
+                    'user_id' => $user->id,
+                    'date' => $date,
+                    'total_working_minute' => 0,
+                ]);
+            }
+
+            // prevent double login
+            $open = AttendanceInfo::where('attendance_id', $attendance->id)
+                ->whereNull('logout_time')
+                ->first();
+
+            if ($open) {
+                return response()->json([
+                    'message' => 'Already logged in',
+                    'attendance_info_id' => $open->id
+                ], 422);
+            }
+
+            $info = AttendanceInfo::create([
+                'attendance_id' => $attendance->id,
+                'login_time' => $loginAt->timestamp,
+                'status' => 1
             ]);
-        }
 
-        // prevent double login
-        $open = AttendanceInfo::where('attendance_id', $attendance->id)
-            ->whereNull('logout_time')
+            return response()->json([
+                'message' => 'Login successful',
+                'attendance_id' => $attendance->id,
+                'attendance_info_id' => $info->id,
+                'login_time' => $loginAt->format('Y-m-d H:i:s')
+            ]);
+        });
+    }
+
+    public function logout(Request $request, $id)
+    {
+        $request->validate([
+            'logout_time' => 'required'
+        ]);
+
+        $user = auth()->user();
+        $logoutAt = Carbon::parse($request->logout_time);
+
+        $attendanceInfo = AttendanceInfo::with('attendance')
+            ->where('id', $id)
             ->first();
 
-        if ($open) {
+
+
+        if ($attendanceInfo->logout_time) {
             return response()->json([
-                'message' => 'Already logged in',
-                'attendance_info_id' => $open->id
+                'message' => 'Already logged out'
             ], 422);
         }
 
-        $info = AttendanceInfo::create([
-            'attendance_id' => $attendance->id,
-            'login_time' => $loginAt->timestamp,
-            'status' => 1
+        $loginAt = Carbon::createFromTimestamp($attendanceInfo->login_time);
+
+        if ($logoutAt->lessThan($loginAt)) {
+            $logoutAt->addDay();
+        }
+
+        $minutes = $loginAt->diffInMinutes($logoutAt);
+
+        $attendanceInfo->update([
+            'logout_time' => $logoutAt->timestamp,
+            'status' => 0
         ]);
 
+        $attendance = $attendanceInfo->attendance;
+        $attendance->increment('total_working_minute', $minutes);
+
         return response()->json([
-            'message' => 'Login successful',
-            'attendance_id' => $attendance->id,
-            'attendance_info_id' => $info->id,
-            'login_time' => $loginAt->format('Y-m-d H:i:s')
+            'message' => 'Logout successful',
+            'worked_minutes' => $minutes,
+            'total_minutes_today' => $attendance->total_working_minute
         ]);
-    });
     }
 
-   public function logout(Request $request,$id)
-{
-    $request->validate([
-        'logout_time' => 'required'
-    ]);
-
-    $user = auth()->user();
-    $logoutAt = Carbon::parse($request->logout_time);
-
-    $attendanceInfo = AttendanceInfo::with('attendance')
-        ->where('id', $id)
-        ->first();
-
-
-
-    if ($attendanceInfo->logout_time) {
-        return response()->json([
-            'message' => 'Already logged out'
-        ], 422);
-    }
-
-    $loginAt = Carbon::createFromTimestamp($attendanceInfo->login_time);
-
-    if ($logoutAt->lessThan($loginAt)) {
-        $logoutAt->addDay();
-    }
-
-    $minutes = $loginAt->diffInMinutes($logoutAt);
-
-    $attendanceInfo->update([
-        'logout_time' => $logoutAt->timestamp,
-        'status' => 0
-    ]);
-
-    $attendance = $attendanceInfo->attendance;
-    $attendance->increment('total_working_minute', $minutes);
-
-    return response()->json([
-        'message' => 'Logout successful',
-        'worked_minutes' => $minutes,
-        'total_minutes_today' => $attendance->total_working_minute
-    ]);
-}
-
-    public function attendanceTimeStore(Request $request){
-       $request->validate([
+    public function attendanceTimeStore(Request $request)
+    {
+        $request->validate([
             'attendance_id' => 'required|exists:attendances,id',
             'type_of_work' => 'nullable|string',
             'record_id' => 'nullable|exists:records,id',
@@ -303,8 +302,8 @@ class AttendanceController extends Controller
             'minute' => 'required|integer',
             'status' => 'required',
             'task_name' => 'nullable',
-            'description'=> 'nullable',
-            'output'=> 'nullable',
+            'description' => 'nullable',
+            'output' => 'nullable',
         ]);
         $total_minutes = ($request->hour * 60) + $request->minute;
         AttendanceTime::create([
@@ -314,16 +313,13 @@ class AttendanceController extends Controller
             'activity' => $request->activity,
             'total_minute' => $total_minutes, // Use the calculated total_minutes
             'status' => $request->status,
-            'task_name'=>$request->task_name,
+            'task_name' => $request->task_name,
             'output' => $request->output,
             'description' => $request->description
         ]);
-         return response()->json([
+        return response()->json([
             'message' => 'AttendanceTime create successful',
             'total_minutes' => $total_minutes
-    ]);
-
+        ]);
     }
-
-
 }
