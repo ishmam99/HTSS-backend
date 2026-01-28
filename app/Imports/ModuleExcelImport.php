@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Imports;
-use Illuminate\Support\Str;
+
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -63,10 +63,11 @@ class ModuleExcelImport implements
         $this->userId = $userId;
         $this->strictParent = $strictParent;
         $modID = $module->id == 2 ? 1 : $module->id ;
-            $this->fields = ModuleField::where('module_id', $modID)
+        $this->fields = ModuleField::where('module_id',  $modID )
             ->get()
-            ->keyBy(fn ($f) => $this->normalizeHeader($f->name));
-
+            ->keyBy(fn ($f) => strtolower(trim($f->name)));
+            // dd($this->fields);
+            \Log::info(  $this->fields);
     }
 
     public function collection(Collection $rows)
@@ -126,15 +127,12 @@ class ModuleExcelImport implements
         /** 🧾 Record Values */
 
         $this->syncRelation($record, $row);
-        \Log::info('Processing record ID: ' . $record->id);
-        \Log::info('Processing row: ' . $row);
         foreach ($row as $header => $value) {
-            // $key = strtolower(trim($header));
-           $key = $this->normalizeHeader($header);
-            \Log::info(['header'=>$header,'normalized_key'=>$key]);
-            \Log::info([$key,'key']);
-            \Log::info([$this->fields[$key],'field']);
+            \Log::info('Processing header: ' . $header . ' with value: ' . $value);
+            $key = strtolower(trim($header));
+            \Log::info('Normalized key: ' . $key);
             if ($key === 'record_id' || !isset($this->fields[$key])) {
+                \Log::info('Skipping key: ' . $key);
                 continue;
             }
 
@@ -151,27 +149,6 @@ class ModuleExcelImport implements
 
 
     }
-protected function normalizeHeader(string $header): string
-{
-    $technicalKeys = [
-        'record_id',
-        'account_nameid',
-        'deal_id',
-        // add any other keys that must stay as-is
-    ];
-
-    $key = strtolower(trim($header));
-
-    if (in_array($key, $technicalKeys)) {
-        return $key; // keep exact for system keys
-    }
-
-    // For human-readable headers, convert spaces/dots to underscore
-    $key = preg_replace('/[^\w]+/', '_', $key);
-    $key = trim($key, '_');
-
-    return $key;
-}
 
     protected function syncRelation(Record $child, $row): void
     {
