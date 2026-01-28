@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Imports;
-
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\{
     ToCollection,
     WithHeadingRow,
@@ -21,11 +20,10 @@ use Modules\CRM\Models\{
     RecordRelation,
     RecordValue
 };
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Maatwebsite\Excel\Concerns\Importable;
-
+   use \Illuminate\Bus\Queueable;
+    use \Illuminate\Queue\InteractsWithQueue;
+    use \Illuminate\Queue\SerializesModels;
+    use \Maatwebsite\Excel\Concerns\Importable; // Also add this if missing
 class ModuleExcelImport implements
     ToCollection,
     WithHeadingRow,
@@ -34,25 +32,24 @@ class ModuleExcelImport implements
     WithBatchInserts,
     ShouldQueue
 {
-    use Queueable, InteractsWithQueue, SerializesModels, Importable;
-
     protected Module $module;
     protected int $userId;
     protected Collection $fields;
+
     protected bool $strictParent = true;
 
     protected array $relationMap = [
-        5 => [
+        5 => [ // Deal
             'parent_module_id' => 2,
             'excel_column'     => 'account_nameid',
             'relation_type'    => 'Accounts-Deals',
         ],
-        3 => [
+        3 => [ // Contact
             'parent_module_id' => 2,
             'excel_column'     => 'account_nameid',
             'relation_type'    => 'Accounts-Contacts',
         ],
-        9 => [
+        9 => [ // Proposal
             'parent_module_id' => 5,
             'excel_column'     => 'deal_id',
             'relation_type'    => 'Deals-Proposals',
@@ -61,21 +58,22 @@ class ModuleExcelImport implements
 
     public function __construct(string $moduleId, int $userId, bool $strictParent = true)
     {
-        $this->module = Module::findOrFail($moduleId);
+        $module = Module::findOrFail($moduleId);
+        $this->module = $module;
         $this->userId = $userId;
         $this->strictParent = $strictParent;
-
-        $modID = $this->module->id == 2 ? 1 : $this->module->id;
-
-        $this->fields = ModuleField::where('module_id', $modID)
+        $modID = $module->id == 2 ? 1 : $module->id ;
+       $this->fields = ModuleField::where('module_id', $modID)
             ->get()
-            ->keyBy(fn ($f) => Str::slug($f->label));
+            ->keyBy(fn ($f) => Str::slug($f->name));
     }
 
     public function collection(Collection $rows)
     {
+        // dd($rows);
         foreach ($rows as $row) {
             try {
+                // dd($row);
                 $this->importRow($row);
             } catch (\Throwable $e) {
                 $this->logError($row, $e->getMessage());
@@ -83,18 +81,33 @@ class ModuleExcelImport implements
         }
     }
 
-    protected function importRow($row)
-    {
-        if ($row instanceof Collection) {
-            $row = $row->toArray();
-        }
+  protected function importRow($row)
+{
 
-        if (empty($row['record_id'])) {
-            $this->logError($row, 'Missing record_id');
-            return;
-        }
+    // Convert row to array (if it's a Collection)
+    if ($row instanceof \Illuminate\Support\Collection) {
+        $row = $row->toArray();
+    }
 
+    $accountRequiredModules = [3, 5, 9];
+
+    if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
+        throw new \Exception("Required column 'account_nameid' is missing in the Excel file.");
+    }
+
+    if (empty($row['record_id'])) {
+        $this->logError($row, 'Missing record_id');
+        return;
+    }
+
+        // if (($this->module->id == 3 || $this->module->id  == 5 || $this->module->id  == 9 )&&empty($row['account_nameid'])) {
+        //     $this->logError($row, 'Missing account_nameid');
+        //     return;
+        // }
+        // dd($row);
+        /** 🔎 Duplicate Detection */
         $record = $this->findDuplicate($row);
+        // dd($record);
 
         if (!$record) {
             $record = Record::updateOrCreate(
@@ -106,13 +119,17 @@ class ModuleExcelImport implements
                     'created_by' => $this->userId,
                 ]
             );
+
         }
 
+        /** 🧾 Record Values */
+
         $this->syncRelation($record, $row);
-
         foreach ($row as $header => $value) {
-            $key = Str::slug($header);
-
+            // $key = strtolower(trim($header));
+             $key = Str::slug($header);
+            \Log::info($key);
+            \Log::info($this->fields[$key]);
             if ($key === 'record_id' || !isset($this->fields[$key])) {
                 continue;
             }
@@ -127,17 +144,23 @@ class ModuleExcelImport implements
                 ]
             );
         }
+
+
     }
 
     protected function syncRelation(Record $child, $row): void
     {
+        // dd($this->module);
+
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
-
+        // dd($row);
+        //  \Log::info($row);
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
-
+        // dd($config);
+        //   \Log::info($config);
         if (!$parentExternalId) {
             $this->logError($row, 'Missing parent reference');
             return;
@@ -146,7 +169,7 @@ class ModuleExcelImport implements
         $parent = Record::where('module_id', $config['parent_module_id'])
             ->where('external_id', $parentExternalId)
             ->first();
-
+        //    \Log::info($parent);
         if (!$parent && $this->strictParent) {
             $this->logError($row, 'Parent record not found');
             return;
@@ -156,7 +179,7 @@ class ModuleExcelImport implements
             $parent = Record::create([
                 'module_id'   => $config['parent_module_id'],
                 'external_id' => $parentExternalId,
-                'created_by'  => $this->userId,
+                'created_by' => $this->userId,
             ]);
         }
 
@@ -169,10 +192,11 @@ class ModuleExcelImport implements
 
     protected function findDuplicate($row): ?Record
     {
-        foreach ($this->fields as $slug => $field) {
+        foreach ($this->fields as $field) {
             if (!$field->is_duplicate_key) continue;
 
-            $value = $row[$slug] ?? null;
+            $key = strtolower($field->name);
+            $value = $row[$key] ?? null;
             if (!$value) continue;
 
             $rv = RecordValue::where('field_id', $field->id)
