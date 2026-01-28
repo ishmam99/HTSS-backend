@@ -65,9 +65,9 @@ class ModuleExcelImport implements
         $modID = $module->id == 2 ? 1 : $module->id ;
         $this->fields = ModuleField::where('module_id',  $modID )
             ->get()
-            ->keyBy(fn ($f) => strtolower(trim($f->name)));
+             ->keyBy(fn ($f) => $this->normalizeKey($f->label));
             // dd($this->fields);
-            \Log::info(  $this->fields);
+            // \Log::info(  $this->fields);
     }
 
     public function collection(Collection $rows)
@@ -128,13 +128,23 @@ class ModuleExcelImport implements
 
         $this->syncRelation($record, $row);
         foreach ($row as $header => $value) {
-            \Log::info('Processing header: ' . $header . ' with value: ' . $value);
-            $key = strtolower(trim($header));
-            \Log::info('Normalized key: ' . $key);
-            if ($key === 'record_id' || !isset($this->fields[$key])) {
-                \Log::info('Skipping key: ' . $key);
-                continue;
-            }
+
+
+         if ($header === 'record_id' || $header === 'account_nameid' || $header === 'deal_id') {
+                    $key = $header; // do NOT normalize
+                } else {
+                    $key = $this->normalizeKey($header); // normalize human-friendly headers
+                }
+
+                if ($key === 'record_id' || !isset($this->fields[$key])) {
+                    continue;
+                }
+            // $key = strtolower(trim($header));
+
+            // if ($key === 'record_id' || !isset($this->fields[$key])) {
+
+            //     continue;
+            // }
 
             RecordValue::updateOrCreate(
                 [
@@ -149,6 +159,19 @@ class ModuleExcelImport implements
 
 
     }
+    protected function normalizeKey(string $key): string
+{
+    // Lowercase
+    $key = strtolower(trim($key));
+
+    // Replace dots, spaces, and other non-word characters with underscore
+    $key = preg_replace('/[^\w]+/', '_', $key);
+
+    // Remove starting/trailing underscores
+    $key = trim($key, '_');
+
+    return $key;
+}
 
     protected function syncRelation(Record $child, $row): void
     {
