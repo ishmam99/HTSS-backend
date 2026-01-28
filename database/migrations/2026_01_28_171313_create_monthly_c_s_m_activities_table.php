@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('monthly_c_s_m_activities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
+            $table->string('type');
+            $table->date('date');
+            $table->text('activity');
             $table->timestamps();
         });
     }
