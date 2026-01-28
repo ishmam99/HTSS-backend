@@ -19,20 +19,9 @@ class ModuleImportController extends Controller
 
     $module = Module::findOrFail($moduleId);
 
-    \Log::info('=== IMPORT DEBUG DETAILED ===');
-    \Log::info('Before Excel::queueImport');
-
-    // Test if we can dispatch a simple job
-    \Illuminate\Support\Facades\Queue::after(function ($event) {
-        \Log::info('Job was pushed to queue', [
-            'job' => get_class($event->job),
-            'id' => $event->job->getJobId()
-        ]);
-    });
 
     try {
         // Try both ways
-        \Log::info('Calling Excel::queueImport...');
 
         $import = new ModuleExcelImport(
             $moduleId,
@@ -40,22 +29,15 @@ class ModuleImportController extends Controller
             $request->boolean('strict_parent', true)
         );
 
-        \Log::info('Import object created', [
-            'import_class' => get_class($import),
-            'module' => $module->id,
-            'user' => auth()->id()
-        ]);
+
 
         $result = Excel::queueImport($import, $request->file('file'));
 
-        \Log::info('Excel::queueImport returned', [
-            'result_type' => gettype($result),
-            'result' => $result
-        ]);
+
 
         // Manually check jobs table
         $jobCount = \DB::table('jobs')->count();
-        \Log::info('Jobs table count after dispatch: ' . $jobCount);
+     
 
         return response()->json([
             'message' => 'Import started successfully',

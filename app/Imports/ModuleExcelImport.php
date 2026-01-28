@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\{
     ToCollection,
     WithHeadingRow,
@@ -63,9 +64,9 @@ class ModuleExcelImport implements
         $this->userId = $userId;
         $this->strictParent = $strictParent;
         $modID = $module->id == 2 ? 1 : $module->id ;
-        $this->fields = ModuleField::where('module_id',  $modID )
-            ->get()
-            ->keyBy(fn ($f) => strtolower(trim($f->name)));
+$this->fields = ModuleField::where('module_id', $modID)
+    ->get()
+    ->keyBy(fn ($f) => Str::slug($f->name));
             // dd($this->fields);
     }
 
@@ -84,7 +85,7 @@ class ModuleExcelImport implements
 
   protected function importRow($row)
 {
-   
+
     // Convert row to array (if it's a Collection)
     if ($row instanceof \Illuminate\Support\Collection) {
         $row = $row->toArray();
@@ -127,8 +128,8 @@ class ModuleExcelImport implements
 
         $this->syncRelation($record, $row);
         foreach ($row as $header => $value) {
-            $key = strtolower(trim($header));
-
+            // $key = strtolower(trim($header));
+            $key = Str::slug($header);
             if ($key === 'record_id' || !isset($this->fields[$key])) {
                 continue;
             }
