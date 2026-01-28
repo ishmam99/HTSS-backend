@@ -127,9 +127,11 @@ class ModuleExcelImport implements
         /** 🧾 Record Values */
 
         $this->syncRelation($record, $row);
+        \Log::info('check'.$row);
+        \Log::info('Fields: '.json_encode($this->fields));
         foreach ($row as $header => $value) {
 
-
+    \Log::info("header value: ".$header."=".$value);
          if ($header === 'record_id' || $header === 'account_nameid' || $header === 'deal_id') {
                     $key = $header; // do NOT normalize
                 } else {
