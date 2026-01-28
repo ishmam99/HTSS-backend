@@ -129,7 +129,7 @@ class ModuleExcelImport implements
         foreach ($row as $header => $value) {
             // $key = strtolower(trim($header));
            $key = $this->normalizeHeader($header);
-
+            \Log::info(['header'=>$header,'normalized_key'=>$key]);
             \Log::info([$key,'key']);
             \Log::info([$this->fields[$key],'field']);
             if ($key === 'record_id' || !isset($this->fields[$key])) {
