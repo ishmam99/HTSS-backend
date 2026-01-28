@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
 use App\Http\Controllers\CustomerStatsController;
+use App\Http\Controllers\CustomerSuccessManagerController;
 use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EndUserController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\EnumController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\MonthlyCSMActivityController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PositionController;
@@ -33,7 +35,6 @@ use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
 use App\Http\Controllers\UserSoftwareSkillController;
-use App\Http\Controllers\CustomerSuccessManagerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,7 +55,6 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customers', CustomerController::class);
         Route::post('assign-customer/{customer}', [CustomerController::class, 'assignCustomer']);
         Route::apiResource('customer-success-managers', CustomerSuccessManagerController::class);
-
 
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
@@ -109,10 +109,10 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('jobs-offer', JobController::class);
         Route::put('/publish-job/{id}', [JobController::class, 'publish']);
 
-
         Route::post('/attendance/login', [AttendanceController::class, 'login']);
         Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
         Route::post('/attendance-time', [AttendanceController::class, 'attendanceTimeStore']);
+        Route::apiResource('monthly-csm-activity', MonthlyCSMActivityController::class);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -141,9 +141,8 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('scheduled-messages', ScheduledMessageController::class);
     Route::put('scheduled-messages-status/{id}', [ScheduledMessageController::class, 'statusChange']);
 
-    Route::get('/customers/by-user/{id}',[CustomerController::class, 'getByUser']);
+    Route::get('/customers/by-user/{id}', [CustomerController::class, 'getByUser']);
 
     Route::get('/customer-success-managers/by-user/{userId}', [CustomerSuccessManagerController::class, 'getByUser']);
-
 
 });

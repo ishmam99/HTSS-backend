@@ -36,6 +36,3 @@ return new class extends Migration
         Schema::dropIfExists('attendance_times');
     }
 };
-
-description
-output
