@@ -89,7 +89,7 @@ class ModuleExcelImport implements
             $row = $row->toArray();
         }
 
-        if (empty($row['record-id'])) {
+        if (empty($row['record_id'])) {
             $this->logError($row, 'Missing record_id');
             return;
         }
@@ -100,7 +100,7 @@ class ModuleExcelImport implements
             $record = Record::updateOrCreate(
                 [
                     'module_id'   => $this->module->id,
-                    'external_id' => $row['record-id'],
+                    'external_id' => $row['record_id'],
                 ],
                 [
                     'created_by' => $this->userId,
@@ -113,7 +113,7 @@ class ModuleExcelImport implements
         foreach ($row as $header => $value) {
             $key = Str::slug($header);
 
-            if ($key === 'record-id' || !isset($this->fields[$key])) {
+            if ($key === 'record_id' || !isset($this->fields[$key])) {
                 continue;
             }
 
