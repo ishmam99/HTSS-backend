@@ -126,6 +126,8 @@ class ModuleExcelImport implements
         /** 🧾 Record Values */
 
         $this->syncRelation($record, $row);
+        \Log::info('Processing record ID: ' . $record->id);
+        \Log::info('Processing row: ' . $row);
         foreach ($row as $header => $value) {
             // $key = strtolower(trim($header));
            $key = $this->normalizeHeader($header);
