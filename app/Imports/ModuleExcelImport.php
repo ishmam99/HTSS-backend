@@ -131,7 +131,7 @@ class ModuleExcelImport implements
         \Log::info(json_encode($this->fields));
         foreach ($row as $header => $value) {
 
-  \Log::info("header value: {$header} = " . json_encode($value));
+        \Log::info("header value: {$header} = " . json_encode($value));
 
          if ($header === 'record_id' || $header === 'account_nameid' || $header === 'deal_id') {
                     $key = $header; // do NOT normalize
@@ -239,15 +239,18 @@ class ModuleExcelImport implements
         return null;
     }
 
-    protected function castValue($value, string $type)
-    {
-        return match ($type) {
-            'number'  => is_numeric($value) ? $value : null,
-            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
-            'date'    => $value ? Carbon::parse($value)->toDateString() : null,
-            default   => trim((string) $value),
-        };
-    }
+protected function castValue($value, string $type)
+{
+    return match ($type) {
+        'number'  => is_numeric($value) ? $value : '',
+        'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0,
+        'date'    => $value ? Carbon::parse($value)->toDateString() : '',
+        default   => is_array($value) || is_object($value)
+                        ? json_encode($value)
+                        : trim((string) $value),
+    };
+}
+
 
     protected function logError($row, string $message): void
     {
