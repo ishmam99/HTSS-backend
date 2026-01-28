@@ -68,6 +68,7 @@ $this->fields = ModuleField::where('module_id', $modID)
     ->get()
     ->keyBy(fn ($f) => Str::slug($f->label));
             // dd($this->fields);
+            \Log::info($this->fields);
     }
 
     public function collection(Collection $rows)
