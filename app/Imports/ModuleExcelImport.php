@@ -128,8 +128,8 @@ class ModuleExcelImport implements
         foreach ($row as $header => $value) {
             // $key = strtolower(trim($header));
              $key = Str::slug($header);
-            \Log::info($key);
-            \Log::info($this->fields[$key]);
+            \Log::info([$key,'key']);
+            \Log::info([$this->fields[$key],'field']);
             if ($key === 'record_id' || !isset($this->fields[$key])) {
                 continue;
             }
