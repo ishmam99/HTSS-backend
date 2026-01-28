@@ -21,10 +21,11 @@ use Modules\CRM\Models\{
     RecordRelation,
     RecordValue
 };
-   use \Illuminate\Bus\Queueable;
-    use \Illuminate\Queue\InteractsWithQueue;
-    use \Illuminate\Queue\SerializesModels;
-    use \Maatwebsite\Excel\Concerns\Importable; // Also add this if missing
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Maatwebsite\Excel\Concerns\Importable;
+
 class ModuleExcelImport implements
     ToCollection,
     WithHeadingRow,
@@ -33,50 +34,48 @@ class ModuleExcelImport implements
     WithBatchInserts,
     ShouldQueue
 {
+    use Queueable, InteractsWithQueue, SerializesModels, Importable;
+
     protected Module $module;
     protected int $userId;
     protected Collection $fields;
-
     protected bool $strictParent = true;
 
     protected array $relationMap = [
-        5 => [ // Deal
+        5 => [
             'parent_module_id' => 2,
-            'excel_column'     => 'account_nameid',
+            'excel_column'     => 'account-nameid',
             'relation_type'    => 'Accounts-Deals',
         ],
-        3 => [ // Contact
+        3 => [
             'parent_module_id' => 2,
-            'excel_column'     => 'account_nameid',
+            'excel_column'     => 'account-nameid',
             'relation_type'    => 'Accounts-Contacts',
         ],
-        9 => [ // Proposal
+        9 => [
             'parent_module_id' => 5,
-            'excel_column'     => 'deal_id',
+            'excel_column'     => 'deal-id',
             'relation_type'    => 'Deals-Proposals',
         ],
     ];
 
     public function __construct(string $moduleId, int $userId, bool $strictParent = true)
     {
-        $module = Module::findOrFail($moduleId);
-        $this->module = $module;
+        $this->module = Module::findOrFail($moduleId);
         $this->userId = $userId;
         $this->strictParent = $strictParent;
-        $modID = $module->id == 2 ? 1 : $module->id ;
-$this->fields = ModuleField::where('module_id', $modID)
-    ->get()
-    ->keyBy(fn ($f) => Str::slug($f->label));
-            // dd($this->fields);
-            \Log::info($this->fields);
+
+        $modID = $this->module->id == 2 ? 1 : $this->module->id;
+
+        $this->fields = ModuleField::where('module_id', $modID)
+            ->get()
+            ->keyBy(fn ($f) => Str::slug($f->label));
     }
 
     public function collection(Collection $rows)
     {
-        // dd($rows);
         foreach ($rows as $row) {
             try {
-                // dd($row);
                 $this->importRow($row);
             } catch (\Throwable $e) {
                 $this->logError($row, $e->getMessage());
@@ -84,54 +83,37 @@ $this->fields = ModuleField::where('module_id', $modID)
         }
     }
 
-  protected function importRow($row)
-{
+    protected function importRow($row)
+    {
+        if ($row instanceof Collection) {
+            $row = $row->toArray();
+        }
 
-    // Convert row to array (if it's a Collection)
-    if ($row instanceof \Illuminate\Support\Collection) {
-        $row = $row->toArray();
-    }
+        if (empty($row['record-id'])) {
+            $this->logError($row, 'Missing record_id');
+            return;
+        }
 
-    $accountRequiredModules = [3, 5, 9];
-
-    if (in_array($this->module->id, $accountRequiredModules) && !array_key_exists('account_nameid', $row)) {
-        throw new \Exception("Required column 'account_nameid' is missing in the Excel file.");
-    }
-
-    if (empty($row['record_id'])) {
-        $this->logError($row, 'Missing record_id');
-        return;
-    }
-
-        // if (($this->module->id == 3 || $this->module->id  == 5 || $this->module->id  == 9 )&&empty($row['account_nameid'])) {
-        //     $this->logError($row, 'Missing account_nameid');
-        //     return;
-        // }
-        // dd($row);
-        /** 🔎 Duplicate Detection */
         $record = $this->findDuplicate($row);
-        // dd($record);
 
         if (!$record) {
             $record = Record::updateOrCreate(
                 [
                     'module_id'   => $this->module->id,
-                    'external_id' => $row['record_id'],
+                    'external_id' => $row['record-id'],
                 ],
                 [
                     'created_by' => $this->userId,
                 ]
             );
-
         }
 
-        /** 🧾 Record Values */
-
         $this->syncRelation($record, $row);
+
         foreach ($row as $header => $value) {
-            // $key = strtolower(trim($header));
             $key = Str::slug($header);
-            if ($key === 'record_id' || !isset($this->fields[$key])) {
+
+            if ($key === 'record-id' || !isset($this->fields[$key])) {
                 continue;
             }
 
@@ -145,23 +127,17 @@ $this->fields = ModuleField::where('module_id', $modID)
                 ]
             );
         }
-
-
     }
 
     protected function syncRelation(Record $child, $row): void
     {
-        // dd($this->module);
-
         if (!isset($this->relationMap[$this->module->id])) {
             return;
         }
-        // dd($row);
-        //  \Log::info($row);
+
         $config = $this->relationMap[$this->module->id];
         $parentExternalId = $row[$config['excel_column']] ?? null;
-        // dd($config);
-        //   \Log::info($config);
+
         if (!$parentExternalId) {
             $this->logError($row, 'Missing parent reference');
             return;
@@ -170,7 +146,7 @@ $this->fields = ModuleField::where('module_id', $modID)
         $parent = Record::where('module_id', $config['parent_module_id'])
             ->where('external_id', $parentExternalId)
             ->first();
-        //    \Log::info($parent);
+
         if (!$parent && $this->strictParent) {
             $this->logError($row, 'Parent record not found');
             return;
@@ -180,7 +156,7 @@ $this->fields = ModuleField::where('module_id', $modID)
             $parent = Record::create([
                 'module_id'   => $config['parent_module_id'],
                 'external_id' => $parentExternalId,
-                'created_by' => $this->userId,
+                'created_by'  => $this->userId,
             ]);
         }
 
@@ -193,11 +169,10 @@ $this->fields = ModuleField::where('module_id', $modID)
 
     protected function findDuplicate($row): ?Record
     {
-        foreach ($this->fields as $field) {
+        foreach ($this->fields as $slug => $field) {
             if (!$field->is_duplicate_key) continue;
 
-            $key = strtolower($field->name);
-            $value = $row[$key] ?? null;
+            $value = $row[$slug] ?? null;
             if (!$value) continue;
 
             $rv = RecordValue::where('field_id', $field->id)
