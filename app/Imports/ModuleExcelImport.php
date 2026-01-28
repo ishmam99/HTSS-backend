@@ -66,7 +66,7 @@ class ModuleExcelImport implements
         $modID = $module->id == 2 ? 1 : $module->id ;
 $this->fields = ModuleField::where('module_id', $modID)
     ->get()
-    ->keyBy(fn ($f) => Str::slug($f->name));
+    ->keyBy(fn ($f) => Str::slug($f->label));
             // dd($this->fields);
     }
 
