@@ -63,9 +63,10 @@ class ModuleExcelImport implements
         $this->userId = $userId;
         $this->strictParent = $strictParent;
         $modID = $module->id == 2 ? 1 : $module->id ;
-       $this->fields = ModuleField::where('module_id', $modID)
+            $this->fields = ModuleField::where('module_id', $modID)
             ->get()
-            ->keyBy(fn ($f) => Str::slug($f->name));
+            ->keyBy(fn ($f) => $this->normalizeHeader($f->name));
+
     }
 
     public function collection(Collection $rows)
@@ -127,7 +128,8 @@ class ModuleExcelImport implements
         $this->syncRelation($record, $row);
         foreach ($row as $header => $value) {
             // $key = strtolower(trim($header));
-             $key = Str::slug($header);
+           $key = $this->normalizeHeader($header);
+
             \Log::info([$key,'key']);
             \Log::info([$this->fields[$key],'field']);
             if ($key === 'record_id' || !isset($this->fields[$key])) {
@@ -147,6 +149,27 @@ class ModuleExcelImport implements
 
 
     }
+protected function normalizeHeader(string $header): string
+{
+    $technicalKeys = [
+        'record_id',
+        'account_nameid',
+        'deal_id',
+        // add any other keys that must stay as-is
+    ];
+
+    $key = strtolower(trim($header));
+
+    if (in_array($key, $technicalKeys)) {
+        return $key; // keep exact for system keys
+    }
+
+    // For human-readable headers, convert spaces/dots to underscore
+    $key = preg_replace('/[^\w]+/', '_', $key);
+    $key = trim($key, '_');
+
+    return $key;
+}
 
     protected function syncRelation(Record $child, $row): void
     {
