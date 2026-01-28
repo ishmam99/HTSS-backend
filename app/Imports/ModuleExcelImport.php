@@ -44,17 +44,17 @@ class ModuleExcelImport implements
     protected array $relationMap = [
         5 => [
             'parent_module_id' => 2,
-            'excel_column'     => 'account-nameid',
+            'excel_column'     => 'account_nameid',
             'relation_type'    => 'Accounts-Deals',
         ],
         3 => [
             'parent_module_id' => 2,
-            'excel_column'     => 'account-nameid',
+            'excel_column'     => 'account_nameid',
             'relation_type'    => 'Accounts-Contacts',
         ],
         9 => [
             'parent_module_id' => 5,
-            'excel_column'     => 'deal-id',
+            'excel_column'     => 'deal_id',
             'relation_type'    => 'Deals-Proposals',
         ],
     ];
