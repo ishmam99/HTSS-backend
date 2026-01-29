@@ -58,7 +58,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customers', CustomerController::class);
         Route::post('assign-customer/{customer}', [CustomerController::class, 'assignCustomer']);
         Route::apiResource('customer-success-managers', CustomerSuccessManagerController::class);
-        Route::get('my-success-team',[SuccessTeamController::class, 'mySuccessTeams']);
+        Route::get('my-success-team', [SuccessTeamController::class, 'mySuccessTeams']);
 
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
@@ -132,7 +132,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('attendance', AttendanceController::class)->middleware('auth:sanctum');
     Route::put('status-update-attendance/{attendanceId}', [AttendanceController::class, 'attendanceStatusUpdate']);
     Route::put('status-update-attendance-time/{attendanceTimeId}', [AttendanceController::class, 'attendanceTimeStatusUpdate']);
-
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
@@ -157,6 +156,5 @@ Route::prefix('v1')->group(function () {
     Route::post('assign-customers/{companyId}', [CompanyController::class, 'assignCustomers']);
     Route::get('success-team/{success_team_id}/customers', [SuccessTeamController::class, 'getCustomersBySuccessTeam']);
     Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
-
 
 });
