@@ -152,4 +152,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('success-teams', SuccessTeamController::class);
     // Assign members & companies separately
     Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
+    Route::post('assign-customers/{companyId}',[CompanyController::class, 'assignCustomers']);
 });

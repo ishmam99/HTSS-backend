@@ -46,7 +46,8 @@ class CustomerController extends Controller
             'postal_code'   => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender'        => 'nullable|string',
-             'record_id'     => 'nullable'
+             'record_id'     => 'nullable',
+             'company_id'   => 'nullable|exists:companies,id',
         ]);
 
         try {
@@ -72,6 +73,7 @@ class CustomerController extends Controller
                 'postal_code'   => $validated['postal_code'] ?? null,
                 'date_of_birth' => $validated['date_of_birth'] ?? null,
                 'gender'        => $validated['gender'] ?? null,
+                'company_id'    => $validated['company_id'] ?? null,
             ]);
 
             $customer->load('user');
@@ -109,6 +111,7 @@ class CustomerController extends Controller
             'date_of_birth' => 'nullable|date',
             'gender'        => 'nullable|string',
             'status'        => 'nullable|integer',
+
         ]);
 
         try {
@@ -135,6 +138,7 @@ class CustomerController extends Controller
                 'date_of_birth' => $validated['date_of_birth'] ?? $customer->date_of_birth,
                 'gender'        => $validated['gender'] ?? $customer->gender,
                 'status'        => $validated['status'] ?? $customer->status,
+                
             ]);
 
             $customer->load('user');

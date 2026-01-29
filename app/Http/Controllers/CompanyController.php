@@ -38,5 +38,19 @@ class CompanyController extends Controller
         $company->delete();
         return response()->noContent();
     }
+    public function assignCustomers(Request $request, $companyId)
+    {
+        $request->validate([
+            'customer_ids' => 'required|array',
+            'customer_ids.*' => 'exists:customers,id',
+        ]);
 
+        $company = Company::findOrFail($companyId);
+        $company->customers()->sync($request->input('customer_ids'));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customers assigned successfully.',
+        ]);
+    }
 }
