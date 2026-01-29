@@ -149,7 +149,7 @@ class SuccessTeamController extends Controller
     public function getSuccessTeamCompaniesCustomers($success_team_id)
     {
         $successTeam = SuccessTeam::with([
-            'companies.customers',
+            'companies.customers.user',
         ])->findOrFail($success_team_id);
 
         return response()->json([
@@ -163,6 +163,27 @@ class SuccessTeamController extends Controller
                     'phone'     => $company->phone,
                     'website'   => $company->website,
                     'customers' => CustomerResource::collection($company->customers),
+                ];
+            }),
+        ]);
+    }
+
+    public function getSuccessTeamCompanies($success_team_id)
+    {
+        $successTeam = SuccessTeam::with([
+            'companies',
+        ])->findOrFail($success_team_id);
+
+        return response()->json([
+            'success_team_id' => $successTeam->id,
+            'companies'       => $successTeam->companies->map(function ($company) {
+                return [
+                    'id'      => $company->id,
+                    'name'    => $company->name,
+                    'address' => $company->address,
+                    'email'   => $company->email,
+                    'phone'   => $company->phone,
+                    'website' => $company->website,
                 ];
             }),
         ]);
