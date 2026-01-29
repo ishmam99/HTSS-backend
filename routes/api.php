@@ -156,5 +156,6 @@ Route::prefix('v1')->group(function () {
     Route::post('assign-customers/{companyId}', [CompanyController::class, 'assignCustomers']);
     Route::get('success-team/{success_team_id}/customers', [SuccessTeamController::class, 'getCustomersBySuccessTeam']);
     Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
-
+    Route::get('/success-teams/{success_team_id}/companies/customers', [SuccessTeamController::class, 'getSuccessTeamCompaniesCustomers']);
+    Route::get('/success-teams/{success_team_id}/companies', [SuccessTeamController::class, 'getSuccessTeamCompanies']);
 });

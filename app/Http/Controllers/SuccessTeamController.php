@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CustomerResource;
@@ -21,15 +20,15 @@ class SuccessTeamController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id',
-            'status' => 'nullable|in:0,1',
-            'company_id' => 'nullable|exists:companies,id',
-            'members' => 'nullable|array',
-            'members.*.id' => 'required|exists:users,id',
+            'name'           => 'required|string|max:255',
+            'user_id'        => 'required|exists:users,id',
+            'status'         => 'nullable|in:0,1',
+            'company_id'     => 'nullable|exists:companies,id',
+            'members'        => 'nullable|array',
+            'members.*.id'   => 'required|exists:users,id',
             'members.*.role' => 'required|string|max:255',
-            'companies' => 'nullable|array',
-            'companies.*' => 'exists:companies,id',
+            'companies'      => 'nullable|array',
+            'companies.*'    => 'exists:companies,id',
         ]);
 
         $team = SuccessTeam::create($request->only('name', 'user_id', 'status', 'company_id'));
@@ -64,9 +63,9 @@ class SuccessTeamController extends Controller
         $team = SuccessTeam::findOrFail($id);
 
         $request->validate([
-            'name' => 'nullable|string|max:255',
-            'user_id' => 'nullable|exists:users,id',
-            'status' => 'nullable|in:0,1',
+            'name'       => 'nullable|string|max:255',
+            'user_id'    => 'nullable|exists:users,id',
+            'status'     => 'nullable|in:0,1',
             'company_id' => 'nullable|exists:companies,id',
         ]);
 
@@ -90,11 +89,11 @@ class SuccessTeamController extends Controller
         $team = SuccessTeam::findOrFail($id);
 
         $request->validate([
-            'members' => 'nullable|array',
-            'members.*.id' => 'required|exists:users,id',
+            'members'        => 'nullable|array',
+            'members.*.id'   => 'required|exists:users,id',
             'members.*.role' => 'required|string|max:255',
-            'companies' => 'nullable|array',
-            'companies.*' => 'exists:companies,id',
+            'companies'      => 'nullable|array',
+            'companies.*'    => 'exists:companies,id',
         ]);
 
         // Assign members
@@ -114,7 +113,6 @@ class SuccessTeamController extends Controller
         return response()->json($team->load(['members', 'companies', 'owner']));
     }
 
-
     public function getCustomersBySuccessTeam($success_team_id)
     {
         $companies = SuccessTeamCompany::where('success_team_id', $success_team_id)
@@ -128,10 +126,10 @@ class SuccessTeamController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
 
@@ -144,7 +142,30 @@ class SuccessTeamController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Success teams retrieved successfully',
-            'data' => $successTeams
+            'data'    => $successTeams,
         ]);
     }
+
+    public function getSuccessTeamCompaniesCustomers($success_team_id)
+    {
+        $successTeam = SuccessTeam::with([
+            'companies.customers',
+        ])->findOrFail($success_team_id);
+
+        return response()->json([
+            'success_team_id' => $successTeam->id,
+            'companies'       => $successTeam->companies->map(function ($company) {
+                return [
+                    'id'        => $company->id,
+                    'name'      => $company->name,
+                    'address'   => $company->address,
+                    'email'     => $company->email,
+                    'phone'     => $company->phone,
+                    'website'   => $company->website,
+                    'customers' => CustomerResource::collection($company->customers),
+                ];
+            }),
+        ]);
+    }
+
 }
