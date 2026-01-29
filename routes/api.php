@@ -3,6 +3,8 @@
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyUserCustomerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerSoftwareController;
 use App\Http\Controllers\CustomerSolutionController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\SoftwareSkillController;
 use App\Http\Controllers\SolutionController;
+use App\Http\Controllers\SuccessTeamController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainerCourseController;
 use App\Http\Controllers\TrainerRequestFormController;
@@ -144,5 +147,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/customers/by-user/{id}', [CustomerController::class, 'getByUser']);
 
     Route::get('/customer-success-managers/by-user/{userId}', [CustomerSuccessManagerController::class, 'getByUser']);
-
+    Route::apiResource('companies', CompanyController::class);
+    Route::apiResource('company-user-customer', CompanyUserCustomerController::class);
+    Route::apiResource('success-teams', SuccessTeamController::class);
+    // Assign members & companies separately
+    Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
 });

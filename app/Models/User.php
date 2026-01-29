@@ -64,4 +64,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(EndUser::class);
     }
+    public function successTeams()
+{
+    return $this->belongsToMany(
+        SuccessTeam::class,
+        'success_team_users',
+        'user_id',
+        'success_team_id'
+    )->withPivot('role')->withTimestamps();
+}
 }
