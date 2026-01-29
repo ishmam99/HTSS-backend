@@ -284,9 +284,7 @@ public function show(Module $module, $id)
         ->firstOrFail();
 
     if (in_array(auth()->user()->role, [
-        'sales-manager',
-        'sales-executive',
-        'developer'
+        'sales-manager', 'sales-executive', 'manager-cs', 'manager-sales', 'executive-cs', 'executive-sales'
     ])) {
         try {
             logActivity('viewed', $module->name, $id);
