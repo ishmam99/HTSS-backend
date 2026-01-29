@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -39,18 +40,18 @@ class CompanyController extends Controller
         return response()->noContent();
     }
     public function assignCustomers(Request $request, $companyId)
-    {
-        $request->validate([
-            'customer_ids' => 'required|array',
-            'customer_ids.*' => 'exists:customers,id',
-        ]);
+{
+    $request->validate([
+        'customer_ids' => 'required|array',
+        'customer_ids.*' => 'exists:customers,id',
+    ]);
 
-        $company = Company::findOrFail($companyId);
-        $company->customers()->sync($request->input('customer_ids'));
+    Customer::whereIn('id', $request->customer_ids)
+            ->update(['company_id' => $companyId]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Customers assigned successfully.',
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'message' => 'Customers assigned successfully.',
+    ]);
+}
 }
