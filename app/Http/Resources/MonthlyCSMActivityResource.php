@@ -15,10 +15,10 @@ class MonthlyCSMActivityResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'user_id'     => $this->whenLoaded('user', function () {
+            'user'     => $this->whenLoaded('user', function () {
                 return UserResource::make($this->user);
             }),
-            'customer_id' => $this->whenLoaded('customer.user', function () {
+            'customer' => $this->whenLoaded('customer.user', function () {
                 return CustomerResource::make($this->customer);
             }),
             'type'        => $this->type,
