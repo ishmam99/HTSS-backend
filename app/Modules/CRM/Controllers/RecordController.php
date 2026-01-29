@@ -239,27 +239,60 @@ public function index(Module $module)
 }
 
 
-   public function show(Module $module, $id)
+//    public function show(Module $module, $id)
+// {
+//     $record = Record::where('id', $id)
+//         ->with([
+//             'values' => function ($q) {
+//                 $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+//                   ->orderBy('module_fields.order', 'asc')
+//                   ->select('record_values.*'); // prevent column collision
+//             },
+//             'values.field',
+//             'assignments.user'
+//         ])
+//         ->firstOrFail();
+//       if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
+//         try {
+//     logActivity('viewed', $module->name, $id);
+// } catch (\Exception $e) {
+//     // optionally log error or skip silently
+// }
+
+//     }
+//     return response()->json(['data' => $record]);
+// }
+public function show(Module $module, $id)
 {
+    $fieldsFilter = request()->has('fields')
+        ? array_map('trim', explode(',', request()->fields))
+        : null;
+
     $record = Record::where('id', $id)
         ->with([
-            'values' => function ($q) {
+            'values' => function ($q) use ($fieldsFilter) {
                 $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+                  ->when($fieldsFilter, function ($qq) use ($fieldsFilter) {
+                      $qq->whereIn('module_fields.name', $fieldsFilter);
+                  })
                   ->orderBy('module_fields.order', 'asc')
-                  ->select('record_values.*'); // prevent column collision
+                  ->select('record_values.*');
             },
             'values.field',
             'assignments.user'
         ])
         ->firstOrFail();
-      if (in_array(auth()->user()->role, ['sales-manager', 'sales-executive','crm-manager','crm-executive'])) {
-        try {
-    logActivity('viewed', $module->name, $id);
-} catch (\Exception $e) {
-    // optionally log error or skip silently
-}
 
+    if (in_array(auth()->user()->role, [
+        'sales-manager', 'sales-executive', 'manager-cs', 'manager-sales', 'executive-cs', 'executive-sales'
+    ])) {
+        try {
+            logActivity('viewed', $module->name, $id);
+        } catch (\Exception $e) {
+            // silent fail
+        }
     }
+
     return response()->json(['data' => $record]);
 }
 
