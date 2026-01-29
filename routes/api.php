@@ -58,6 +58,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customers', CustomerController::class);
         Route::post('assign-customer/{customer}', [CustomerController::class, 'assignCustomer']);
         Route::apiResource('customer-success-managers', CustomerSuccessManagerController::class);
+        Route::get('my-success-team',[SuccessTeamController::class, 'mySuccessTeams']);
 
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
@@ -155,5 +156,6 @@ Route::prefix('v1')->group(function () {
     Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
     Route::post('assign-customers/{companyId}',[CompanyController::class, 'assignCustomers']);
     Route::get('success-team/{success_team_id}/customers',[SuccessTeamController::class, 'getCustomersBySuccessTeam']);
+
 
 });

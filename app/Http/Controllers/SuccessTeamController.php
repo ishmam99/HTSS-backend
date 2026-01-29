@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\SuccessTeam;
 use App\Models\SuccessTeamCompany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SuccessTeamController extends Controller
 {
@@ -116,11 +117,30 @@ class SuccessTeamController extends Controller
 
     public function getCustomersBySuccessTeam($success_team_id)
     {
-        $companies = SuccessTeamCompany::where('success_team_id',$success_team_id)
+        $companies = SuccessTeamCompany::where('success_team_id', $success_team_id)
             ->pluck('company_id');
         $customers = Customer::with('user')
-            ->whereIn('company_id',$companies)->get();
+            ->whereIn('company_id', $companies)->get();
         return CustomerResource::collection($customers);
     }
 
+    public function mySuccessTeams(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $successTeams = $user->successTeams;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Success teams retrieved successfully',
+            'data' => $successTeams
+        ]);
+    }
 }
