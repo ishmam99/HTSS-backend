@@ -18,7 +18,7 @@ class MonthlyCSMActivityResource extends JsonResource
             'user'     => $this->whenLoaded('user', function () {
                 return UserResource::make($this->user);
             }),
-            'customer' => $this->whenLoaded('customer.user', function () {
+            'customer' => $this->whenLoaded('customer', function () {
                 return CustomerResource::make($this->customer);
             }),
             'type'        => $this->type,
