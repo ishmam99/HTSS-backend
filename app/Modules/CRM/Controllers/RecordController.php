@@ -262,7 +262,6 @@ public function index(Module $module)
 //     }
 //     return response()->json(['data' => $record]);
 // }
-
 public function show(Module $module, $id)
 {
     $fieldsFilter = request()->has('fields')
