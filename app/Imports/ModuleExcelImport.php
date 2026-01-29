@@ -148,16 +148,19 @@ class ModuleExcelImport implements
 
             //     continue;
             // }
+               $value = $this->castValue($value, $this->fields[$key]->type);
 
-            RecordValue::updateOrCreate(
-                [
-                    'record_id' => $record->id,
-                    'field_id'  => $this->fields[$key]->id,
-                ],
-                [
-                    'value' => $this->castValue($value, $this->fields[$key]->type),
-                ]
-            );
+                if ($value !== null && $value !== '') {
+                    RecordValue::updateOrCreate(
+                        [
+                            'record_id' => $record->id,
+                            'field_id'  => $this->fields[$key]->id,
+                        ],
+                        [
+                            'value' => $value,
+                        ]
+                    );
+                }
         }
 
 
