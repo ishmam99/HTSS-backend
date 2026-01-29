@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -14,6 +13,17 @@ class MonthlyCSMActivityResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id'          => $this->id,
+            'user_id'     => $this->whenLoaded('user', function () {
+                return UserResource::make($this->user);
+            }),
+            'customer_id' => $this->whenLoaded('customer.user', function () {
+                return CustomerResource::make($this->customer);
+            }),
+            'type'        => $this->type,
+            'date'        => $this->date,
+            'activity'    => $this->activity,
+        ];
     }
 }

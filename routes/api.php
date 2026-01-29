@@ -154,8 +154,9 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('success-teams', SuccessTeamController::class);
     // Assign members & companies separately
     Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
-    Route::post('assign-customers/{companyId}',[CompanyController::class, 'assignCustomers']);
-    Route::get('success-team/{success_team_id}/customers',[SuccessTeamController::class, 'getCustomersBySuccessTeam']);
+    Route::post('assign-customers/{companyId}', [CompanyController::class, 'assignCustomers']);
+    Route::get('success-team/{success_team_id}/customers', [SuccessTeamController::class, 'getCustomersBySuccessTeam']);
+    Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
 
 
 });

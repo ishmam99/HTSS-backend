@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MonthlyCSMActivityRequest;
+use App\Http\Resources\MonthlyCSMActivityResource;
 use App\Models\MonthlyCSMActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -56,5 +57,35 @@ class MonthlyCSMActivityController extends Controller
             'status'  => true,
             'message' => 'Monthly CSM Activity deleted successfully',
         ]);
+    }
+
+    public function getCompanyCSMReports(Request $request, $company_id)
+    {
+        $reports = MonthlyCSMActivity::with(['user', 'customer.user'])
+            ->whereHas('customer', function ($q) use ($company_id) {
+                $q->where('company_id', $company_id);
+            })
+            ->when(
+                $request->filled(['start_date', 'end_date']),
+                fn($q) =>
+                $q->whereBetween('date', [
+                    $request->start_date,
+                    $request->end_date,
+                ])
+            )
+            ->when(
+                $request->filled('start_date') && ! $request->filled('end_date'),
+                fn($q) =>
+                $q->whereDate('date', '>=', $request->start_date)
+            )
+            ->when(
+                $request->filled('end_date') && ! $request->filled('start_date'),
+                fn($q) =>
+                $q->whereDate('date', '<=', $request->end_date)
+            )
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return MonthlyCSMActivityResource::collection($reports);
     }
 }
