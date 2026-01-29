@@ -135,7 +135,11 @@ class SuccessTeamController extends Controller
             ], 401);
         }
 
-        $successTeams = $user->successTeams;
+        $successTeams = SuccessTeam::with(['members', 'companies', 'owner'])
+            ->whereHas('members', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })
+            ->paginate(10);
 
         return response()->json([
             'success' => true,
