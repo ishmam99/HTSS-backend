@@ -116,6 +116,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
         Route::post('/attendance-time', [AttendanceController::class, 'attendanceTimeStore']);
         Route::apiResource('monthly-csm-activity', MonthlyCSMActivityController::class);
+
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -153,4 +154,6 @@ Route::prefix('v1')->group(function () {
     // Assign members & companies separately
     Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
     Route::post('assign-customers/{companyId}',[CompanyController::class, 'assignCustomers']);
+    Route::get('success-team/{success_team_id}/customers',[SuccessTeamController::class, 'getCustomersBySuccessTeam']);
+
 });

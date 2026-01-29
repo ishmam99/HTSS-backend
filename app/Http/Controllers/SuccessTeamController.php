@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CustomerResource;
+use App\Models\Customer;
 use App\Models\SuccessTeam;
+use App\Models\SuccessTeamCompany;
 use Illuminate\Http\Request;
 
 class SuccessTeamController extends Controller
@@ -108,6 +111,16 @@ class SuccessTeamController extends Controller
         }
 
         return response()->json($team->load(['members', 'companies', 'owner']));
+    }
+
+
+    public function getCustomersBySuccessTeam($success_team_id)
+    {
+        $companies = SuccessTeamCompany::where('success_team_id',$success_team_id)
+            ->pluck('company_id');
+        $customers = Customer::with('user')
+            ->whereIn('company_id',$companies)->get();
+        return CustomerResource::collection($customers);
     }
 
 }
