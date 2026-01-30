@@ -13,7 +13,11 @@ class SuccessTeamController extends Controller
     // List all teams with members & companies, paginated
     public function index()
     {
-        return SuccessTeam::with(['members', 'companies', 'owner'])->withCount('companies.customers')->paginate(10);
+        return SuccessTeam::with(['members', 'companies', 'owner'])  ->withCount([
+            'companies as customers_count' => function ($q) {
+                $q->join('customers', 'customers.company_id', '=', 'companies.id');
+            }
+        ])->get();
     }
 
     // Create new team
