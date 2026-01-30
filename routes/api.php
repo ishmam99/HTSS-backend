@@ -158,4 +158,5 @@ Route::prefix('v1')->group(function () {
     Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
     Route::get('/success-teams/{success_team_id}/companies/customers', [SuccessTeamController::class, 'getSuccessTeamCompaniesCustomers']);
     Route::get('/success-teams/{success_team_id}/companies', [SuccessTeamController::class, 'getSuccessTeamCompanies']);
+    Route::apiResource('monthly-activity', [MonthlyCSMActivityController::class,'activityByUser']);
 });
