@@ -58,7 +58,7 @@ class SuccessTeamController extends Controller
     // Show single team
     public function show($id)
     {
-        $team = SuccessTeam::with(['members', 'companies.customers', 'owner'])->findOrFail($id);
+        $team = SuccessTeam::with(['members', 'companies.customers.user', 'owner'])->findOrFail($id);
         return response()->json($team);
     }
 
