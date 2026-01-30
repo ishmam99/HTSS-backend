@@ -23,6 +23,39 @@ class MonthlyCSMActivityController extends Controller
         ]);
     }
 
+    public function activityByUser(Request $request)
+    {
+        $reports = MonthlyCSMActivity::with(['user', 'customer.user'])
+            ->when(
+                $request->filled('customer_id'),
+                fn($q) =>
+                $q->where('customer_id', $request->customer_id)
+            )
+            ->when(
+                $request->filled(['start_date', 'end_date']),
+                fn($q) =>
+                $q->whereBetween('date', [
+                    $request->start_date,
+                    $request->end_date,
+                ])
+            )
+            ->when(
+                $request->filled('start_date') && ! $request->filled('end_date'),
+                fn($q) =>
+                $q->whereDate('date', '>=', $request->start_date)
+            )
+
+            ->when(
+                $request->filled('end_date') && ! $request->filled('start_date'),
+                fn($q) =>
+                $q->whereDate('date', '<=', $request->end_date)
+            )
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return MonthlyCSMActivityResource::collection($reports);
+    }
+
     public function store(MonthlyCSMActivityRequest $request)
     {
         $data            = $request->validated();
@@ -78,6 +111,7 @@ class MonthlyCSMActivityController extends Controller
                 fn($q) =>
                 $q->whereDate('date', '>=', $request->start_date)
             )
+
             ->when(
                 $request->filled('end_date') && ! $request->filled('start_date'),
                 fn($q) =>
