@@ -14,16 +14,13 @@ class SuccessTeam extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    public function customers()
+   public function scopeWithCustomersCount($query)
 {
-    return $this->hasManyThrough(
-        Customer::class,
-        Company::class,
-        'success_team_id', // FK on companies
-        'company_id',      // FK on customers
-        'id',
-        'id'
-    );
+    return $query->withCount([
+        'companies as customers_count' => function ($q) {
+            $q->join('customers', 'customers.company_id', '=', 'companies.id');
+        }
+    ]);
 }
 
     // Companies assigned to team

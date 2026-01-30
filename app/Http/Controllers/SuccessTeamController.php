@@ -12,9 +12,7 @@ class SuccessTeamController extends Controller
 {
    public function index()
 {
-    return SuccessTeam::with(['members', 'companies', 'owner'])
-        ->withCount('customers')
-        ->paginate(10);
+    return SuccessTeam::with(['members', 'companies', 'owner'])->withCustomersCount()->paginate(10);
 }
 
     // Create new team
