@@ -14,6 +14,17 @@ class SuccessTeam extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function customers()
+{
+    return $this->hasManyThrough(
+        Customer::class,
+        Company::class,
+        'success_team_id', // FK on companies
+        'company_id',      // FK on customers
+        'id',
+        'id'
+    );
+}
 
     // Companies assigned to team
     public function companies()
