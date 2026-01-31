@@ -31,6 +31,7 @@ class CustomerResource extends JsonResource
             'solutions' => $this->whenLoaded('solutions'),
             'softwares' => $this->whenLoaded('softwares'),
             'end_users' => $this->whenLoaded('endUsers'),
+            'record_id' => $this->record_id,
             'tickets' =>CustomerSupportResource::collection($this->whenLoaded('tickets')),
 
         ];
