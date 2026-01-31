@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
+           use HasAdvancedQuery;
       protected $fillable = [
         'name',
         'address',

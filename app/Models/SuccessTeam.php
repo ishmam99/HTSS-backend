@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SuccessTeam extends Model
 {
@@ -43,5 +44,14 @@ class SuccessTeam extends Model
             'success_team_id',
             'user_id'
         )->withPivot('role')->withTimestamps();
+    }
+    /**
+     * Get all of the activities for the SuccessTeam
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(TeamActivity::class);
     }
 }

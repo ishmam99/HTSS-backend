@@ -5,6 +5,7 @@ use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Models\SuccessTeam;
 use App\Models\SuccessTeamCompany;
+use App\Models\TeamActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -107,11 +108,23 @@ class SuccessTeamController extends Controller
             foreach ($request->members as $member) {
                 $members[$member['id']] = ['role' => $member['role']];
             }
+            TeamActivity::create([
+                'success_team_id' => $team->id,
+                'user_id' => Auth::id(),
+                'activity_type' => 'Added Members',
+                'description' => 'New member added to the team.',
+            ]);
             $team->members()->sync($members);
         }
 
         // Assign companies
         if ($request->has('companies')) {
+            TeamActivity::create([
+                'success_team_id' => $team->id,
+                'user_id' => Auth::id(),
+                'activity_type' => 'Assigned Companies',
+                'description' => 'New company assigned to the team.',
+            ]);
             $team->companies()->sync($request->companies);
         }
 

@@ -13,8 +13,16 @@ class CompanyController extends Controller
 {
  public function index(Request $request)
     {
-        $perPage = (int) $request->query('per_page', 15);
-        return CompanyResource::collection(Company::paginate($perPage));
+        $query = Company::advancedQuery($request);
+         $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $lists,
+            'total' => Company::count(),
+        ]);
     }
 
     public function store(StoreCompanyRequest $request)
