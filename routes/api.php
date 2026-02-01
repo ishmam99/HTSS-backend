@@ -29,6 +29,7 @@ use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\SoftwareSkillController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\SuccessTeamController;
+use App\Http\Controllers\SuccessTeamTaskController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainerCourseController;
 use App\Http\Controllers\TrainerRequestFormController;
@@ -159,4 +160,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/success-teams/{success_team_id}/companies/customers', [SuccessTeamController::class, 'getSuccessTeamCompaniesCustomers']);
     Route::get('/success-teams/{success_team_id}/companies', [SuccessTeamController::class, 'getSuccessTeamCompanies']);
     Route::get('monthly-activity', [MonthlyCSMActivityController::class,'activityByUser']);
+    Route::apiResource('success-team-tasks', SuccessTeamTaskController::class);
+    Route::post('success-team-tasks/{task}/outputs',[SuccessTeamTaskController::class, 'storeOutput']);
+    Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
+    Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
 });
