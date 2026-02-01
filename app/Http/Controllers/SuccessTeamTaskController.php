@@ -138,5 +138,20 @@ class SuccessTeamTaskController extends Controller
 
         return response()->json(['message' => 'Output deleted']);
     }
+    public function myOutputs(Request $request)
+    {
+        $myTaskIds = SuccessTeamTask::where('assigned_to',auth()->id())->pluck('id');
+        $query = SuccessTeamTaskOutput::whereIn('success_team_task_id',$myTaskIds)->advancedQuery($request);
+             $lists = $request->per_page
+        ? $query->paginate($request->per_page)
+        : $query->get();
+
+    return response()->json([
+            'success' => true,
+            'data' => $lists,
+             'total' => $query->count()
+        ]);
+    }
+
 
 }

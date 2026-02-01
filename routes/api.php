@@ -164,4 +164,5 @@ Route::prefix('v1')->group(function () {
     Route::post('success-team-tasks/{task}/outputs',[SuccessTeamTaskController::class, 'storeOutput']);
     Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
     Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
+    Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
 });
