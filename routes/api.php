@@ -118,7 +118,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
         Route::post('/attendance-time', [AttendanceController::class, 'attendanceTimeStore']);
         Route::apiResource('monthly-csm-activity', MonthlyCSMActivityController::class);
-
+       Route::get('monthly-activity', [MonthlyCSMActivityController::class,'activityByUser']);
+    Route::apiResource('success-team-tasks', SuccessTeamTaskController::class);
+    Route::post('success-team-tasks/{task}/outputs',[SuccessTeamTaskController::class, 'storeOutput']);
+    Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
+    Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
+    Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -159,10 +164,5 @@ Route::prefix('v1')->group(function () {
     Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
     Route::get('/success-teams/{success_team_id}/companies/customers', [SuccessTeamController::class, 'getSuccessTeamCompaniesCustomers']);
     Route::get('/success-teams/{success_team_id}/companies', [SuccessTeamController::class, 'getSuccessTeamCompanies']);
-    Route::get('monthly-activity', [MonthlyCSMActivityController::class,'activityByUser']);
-    Route::apiResource('success-team-tasks', SuccessTeamTaskController::class);
-    Route::post('success-team-tasks/{task}/outputs',[SuccessTeamTaskController::class, 'storeOutput']);
-    Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
-    Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
-    Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
+
 });
