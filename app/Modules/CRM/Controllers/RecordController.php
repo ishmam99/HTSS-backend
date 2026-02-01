@@ -179,7 +179,6 @@ public function index(Module $module)
             if (request()->field && request()->value) {
             $fieldName = request()->field;
             $fieldValue = request()->value;
-
             $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
                 $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
 
@@ -377,7 +376,7 @@ public function convertModule($recordId)
         }
         return response()->json([
             'status' => true,
-                'assignments' => $record->assignments,
+            'assignments' => $record->assignments,
             'record_id' => $recordId,
             'values' => $data
         ],200);
@@ -470,39 +469,116 @@ public function convertModule($recordId)
     }
   public function getChild($record, $type)
 {
+      $fieldsFilter = request()->has('fields')
+        ? array_map('trim', explode(',', request()->fields))
+        : null;
     $childIds = RecordRelation::where('parent_record_id', $record)
         ->where('relation_type', $type)
         ->pluck('child_record_id');
 
-    $query = Record::whereIn('id', $childIds)
-        ->with(['values.field', 'assignments.user']);
+    $query = Record::whereIn('id', $childIds);
 
-    // Optional field/value filter
-    if (request()->filled('field') && request()->filled('value')) {
+   $query->with([
+        'values' => function ($q) use ($fieldsFilter) {
+            $q->join('module_fields', 'record_values.field_id', '=', 'module_fields.id')
+              ->when($fieldsFilter, function ($qq) use ($fieldsFilter) {
+                  $qq->whereIn('module_fields.name', $fieldsFilter);
+              })
+              ->orderBy('module_fields.order', 'asc')
+              ->select('record_values.*');
+        },
+        'assignments.user'
+    ]);
 
-        $fieldName  = request()->field;
-        $fieldValue = request()->value;
-
-        $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
-            $q->whereHas('field', function ($f) use ($fieldName) {
-                $f->where('name', $fieldName);
-            })->where('value', $fieldValue);
+    // Sales / manager role restriction
+    $salesRoles = ['sales-manager', 'sales-executive', 'manager-cs', 'manager-sales', 'executive-cs', 'executive-sales'];
+    if (in_array(auth()->user()->role, $salesRoles)) {
+       $query->whereHas('relationsAsChild', function ($q) {
+        $q->whereHas('parent.assignments', function ($q2) {
+            $q2->where('user_id', auth()->id());
+            });
         });
     }
 
-    // Optional pagination
-    if (request()->filled('per_page')) {
-        $perPage = (int) request()->get('per_page', 10);
+    // Custom view filter
+    if (request()->custom_view_id) {
+        $viewId = request()->custom_view_id;
+        $view = CustomView::where('id', $viewId)
+            ->with('rootGroup.childrenRecursive.conditions')
+            ->first();
 
-        $childData = $query->paginate($perPage);
+        if ($view) {
+            $query = $this->applyCustomViewFilter($query, $view);
+        }
     } else {
-        $childData = $query->get();
+        // Apply value-based filters
+        if (request()->date_field && request()->start_date && request()->end_date) {
+            $dateFieldName = request()->date_field;
+            $query->whereHas('values', fn($q) =>
+                $q->whereHas('field', fn($f) => $f->where('name', $dateFieldName))
+                  ->whereBetween('value', [request()->start_date, request()->end_date])
+            );
+        }
+
+            if (request()->field && request()->value) {
+            $fieldName = request()->field;
+            $fieldValue = request()->value;
+            $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
+                $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
+
+                if (is_array($fieldValue)) {
+                    $q->whereIn('value', $fieldValue);
+                } else {
+                    $q->where('value', $fieldValue);
+                }
+            });
+        }
+
+        if (request()->has('filters') && is_array(request()->filters)) {
+            foreach (request()->filters as $fieldName => $fieldValue) {
+                $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
+                    $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
+
+                    if (is_array($fieldValue)) {
+                        $q->whereIn('value', $fieldValue);
+                    } else {
+                        $q->where('value', $fieldValue);
+                    }
+                });
+            }
+        }
+
+
+        if (request()->has('date_filters') && is_array(request()->date_filters)) {
+            foreach (request()->date_filters as $fieldName => $range) {
+                if (!isset($range['start']) || !isset($range['end'])) continue;
+                $start = $range['start'];
+                $end   = $range['end'];
+
+                $query->whereHas('values', function ($q) use ($fieldName, $start, $end) {
+                    $q->whereHas('field', fn($f) => $f->where('name', $fieldName))
+                      ->whereBetween('value', [$start, $end]);
+                });
+            }
+        }
     }
 
-    return response()->json([
-        'data' => $childData,
-        'relation_type' => $type
-    ]);
+    // Lite mode: return only count
+    if (request()->has('lite')) {
+        return response()->json([
+            'total' => $query->count()
+        ]);
+    }
+
+    // Pagination
+    if (request()->per_page) {
+        $data = $query->paginate(request()->per_page);
+        return response()->json($data);
+    }
+
+    // Return all results
+    $data = $query->get();
+    return response()->json(['data' => $data]);
 }
 
 
