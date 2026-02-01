@@ -43,4 +43,17 @@ class SuccessTeamTask extends Model
     {
         return $this->hasMany(SuccessTeamTaskOutput::class);
     }
+    /**
+     * Get the solution that owns the SuccessTeamTask
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function solution(): BelongsTo
+    {
+        return $this->belongsTo(Solution::class);
+    }
+    public function software(): BelongsTo
+    {
+        return $this->belongsTo(Software::class);
+    }
 }
