@@ -141,7 +141,8 @@ class SuccessTeamTaskController extends Controller
     public function myOutputs(Request $request)
     {
         $myTaskIds = SuccessTeamTask::where('assigned_to',auth()->id())->pluck('id');
-        $query = SuccessTeamTaskOutput::whereIn('success_team_task_id',$myTaskIds)->advancedQuery($request);
+        $queryes = SuccessTeamTaskOutput::advancedQuery($request);
+            $query = $queryes->whereIn('success_team_task_id',$myTaskIds);
              $lists = $request->per_page
         ? $query->paginate($request->per_page)
         : $query->get();
