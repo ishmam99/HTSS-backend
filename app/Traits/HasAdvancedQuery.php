@@ -19,8 +19,9 @@ trait HasAdvancedQuery
 
         $instance->applyRelationships($query, $request);
         $instance->applySearch($query, $request);
-        $instance->applyFilters($query, $request);
         $instance->applyDateFilters($query, $request);
+        $instance->applyFilters($query, $request);
+
         $instance->applyRangeFilters($query, $request);
         $instance->applySorting($query, $request);
         $instance->applyGrouping($query, $request);
