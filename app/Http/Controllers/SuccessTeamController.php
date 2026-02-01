@@ -156,6 +156,12 @@ class SuccessTeamController extends Controller
                 $query->where('users.id', $user->id);
             })
             ->paginate(10);
+            if(auth()->user()->role == 'customer_success_management_manager')
+                {
+                     $successTeams = SuccessTeam::with(['members', 'companies', 'owner'])
+            ->where('user_id',auth()->id())
+            ->paginate(10);
+                }
 
         return response()->json([
             'success' => true,
