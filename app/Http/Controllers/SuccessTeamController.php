@@ -158,7 +158,7 @@ class SuccessTeamController extends Controller
             ->paginate(10);
             if(auth()->user()->role == 'customer_success_management_manager')
                 {
-                     $successTeams = SuccessTeam::with(['members', 'companies', 'owner'])
+                     $successTeams = SuccessTeam::with(['members', 'companies','company', 'owner'])
             ->where('user_id',auth()->id())
             ->paginate(10);
                 }
