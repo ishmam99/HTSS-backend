@@ -151,14 +151,14 @@ class SuccessTeamController extends Controller
             ], 401);
         }
 
-        $successTeams = SuccessTeam::with(['members', 'companies','company', 'owner'])
+        $successTeams = SuccessTeam::with(['members', 'companies','company.customers', 'owner'])
             ->whereHas('members', function ($query) use ($user) {
                 $query->where('users.id', $user->id);
             })
             ->paginate(10);
             if(auth()->user()->role == 'customer_success_management_manager')
                 {
-                     $successTeams = SuccessTeam::with(['members', 'companies','company', 'owner'])
+                     $successTeams = SuccessTeam::with(['members', 'companies','company.customers', 'owner'])
             ->where('user_id',auth()->id())
             ->paginate(10);
                 }
