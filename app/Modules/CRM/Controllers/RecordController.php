@@ -15,7 +15,8 @@ use Modules\CRM\Models\Record;
 use Modules\CRM\Models\RecordRelation;
 use Modules\CRM\Models\RecordUserAssignment;
 use Modules\CRM\Models\RecordValue;
-use app\Models\Customer;
+use App\Models\Customer;
+
 class RecordController extends Controller
 {
 
