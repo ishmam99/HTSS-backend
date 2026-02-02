@@ -15,7 +15,7 @@ use Modules\CRM\Models\Record;
 use Modules\CRM\Models\RecordRelation;
 use Modules\CRM\Models\RecordUserAssignment;
 use Modules\CRM\Models\RecordValue;
-
+use app\Models\Customer;
 class RecordController extends Controller
 {
 
@@ -472,10 +472,18 @@ public function convertModule($recordId)
       $fieldsFilter = request()->has('fields')
         ? array_map('trim', explode(',', request()->fields))
         : null;
+        if(request()->has('company_id'))
+            {
+                $recordIds = Customer::where('company_id',request()->company_id)->pluck('record_id');
+                  $childIds = RecordRelation::whereIn('parent_record_id', $record)
+        ->where('relation_type', $type)
+        ->pluck('child_record_id');
+            }
+            else{
     $childIds = RecordRelation::where('parent_record_id', $record)
         ->where('relation_type', $type)
         ->pluck('child_record_id');
-
+            }
     $query = Record::whereIn('id', $childIds);
 
    $query->with([
