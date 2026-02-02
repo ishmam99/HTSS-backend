@@ -475,7 +475,7 @@ public function convertModule($recordId)
         if(request()->has('company_id'))
             {
                 $recordIds = Customer::where('company_id',request()->company_id)->pluck('record_id');
-                  $childIds = RecordRelation::whereIn('parent_record_id', $record)
+                  $childIds = RecordRelation::whereIn('parent_record_id', $recordIds)
         ->where('relation_type', $type)
         ->pluck('child_record_id');
             }
