@@ -121,7 +121,7 @@ trait HasAdvancedQuery
 
     protected function applyDateFilters(Builder $query, Request $request): void
     {
-        foreach (['created_at', 'updated_at', 'published_at'] as $col) {
+        foreach (['created_at', 'updated_at', 'published_at' , 'date'] as $col) {
             if ($request->has("{$col}_from")) {
                 $query->whereDate($col, '>=', $request->input("{$col}_from"));
             }
