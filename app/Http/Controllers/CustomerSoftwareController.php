@@ -17,6 +17,12 @@ class CustomerSoftwareController extends Controller
             ->when($request->filled('customer_id'), function ($q) use ($request) {
                 $q->where('customer_id', $request->customer_id);
             })
+            ->when($request->filled('customer_ids'), function ($q) use ($request) {
+                $q->whereIn('customer_ids', $request->customer_id);
+            })
+            ->when($request->filled('software_ids'), function ($q) use ($request) {
+                $q->whereIn('software_ids', $request->software_id);
+            })
             ->when($request->filled('software_id'), function ($q) use ($request) {
                 $q->where('software_id', $request->software_id);
             });

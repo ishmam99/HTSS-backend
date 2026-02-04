@@ -19,8 +19,14 @@ class CustomerSolutionController extends Controller
         ->when($request->filled('customer_id'), function ($q) use ($request) {
             $q->where('customer_id', $request->customer_id);
         })
+        ->when($request->filled('customer_ids'), function ($q) use ($request) {
+            $q->whereIn('customer_ids', $request->customer_id);
+        })
         ->when($request->filled('solution_id'), function ($q) use ($request) {
             $q->where('solution_id', $request->solution_id);
+        })
+        ->when($request->filled('solution_ids'), function ($q) use ($request) {
+            $q->whereIn('solution_ids', $request->solution_id);
         })
         ->when($request->filled('softwares'), function ($q) {
             $q->with('solution.softwares');
