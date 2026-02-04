@@ -97,7 +97,7 @@ trait HasAdvancedQuery
         if (in_array($key, [
             'search', 'sort_by', 'sort_order', 'page', 'per_page','pluck',
             'with', 'group_by', 'group_select', 'where', 'or_where',
-            'relation', 'relation_field', 'relation_value', 'filter','created_at_from','created_at_to', 'updated_at_to','updated_at_from', 'published_at'
+            'relation', 'relation_field', 'relation_value', 'filter','created_at_from','created_at_to', 'updated_at_to','updated_at_from', 'published_at' , 'date_from','date_to'
         ])) continue;
 
         if (is_array($value)) $query->whereIn($key, $value);
