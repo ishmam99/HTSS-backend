@@ -51,7 +51,7 @@ class SuccessTeamTaskController extends Controller
      */
     public function show($id)
     {
-        return SuccessTeamTask::with('outputs')->findOrFail($id);
+        return SuccessTeamTask::with('solution','outputs','user','successTeam','assignedPerson','software')->findOrFail($id);
     }
 
     /**
