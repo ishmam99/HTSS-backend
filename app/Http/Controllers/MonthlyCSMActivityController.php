@@ -15,7 +15,7 @@ class MonthlyCSMActivityController extends Controller
         $lists = $request->per_page
             ? $query->paginate($request->per_page)
             : $query->get();
-        $lists = MonthlyCSMActivity::all();
+      
 
         return response()->json([
             'success' => true,
