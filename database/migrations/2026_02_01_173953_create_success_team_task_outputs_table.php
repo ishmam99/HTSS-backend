@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('output')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->date('date');
-            $table->date('completed_at');
+            $table->date('completed_at')->nullable();
             $table->timestamps();
         });
     }

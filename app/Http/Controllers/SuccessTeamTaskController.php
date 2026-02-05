@@ -128,12 +128,9 @@ class SuccessTeamTaskController extends Controller
         $data = $request->validate([
             'output' => 'nullable|string',
             'status' => 'nullable|integer',
-
+            'completed_at' => 'nullable|date'
         ]);
-        if($request->status == 3)
-            {
-                $data['completed_at'] = now();
-            }
+       
         $output = SuccessTeamTaskOutput::findOrFail($id);
         $output->update($data);
 
