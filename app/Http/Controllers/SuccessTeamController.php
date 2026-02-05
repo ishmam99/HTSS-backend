@@ -90,46 +90,92 @@ class SuccessTeamController extends Controller
     }
 
     // Assign members and companies to an existing team
-    public function assign(Request $request, $id)
-    {
-        $team = SuccessTeam::findOrFail($id);
+  public function assign(Request $request, $id)
+{
+    $team = SuccessTeam::findOrFail($id);
 
-        $request->validate([
-            'members'        => 'nullable|array',
-            'members.*.id'   => 'required|exists:users,id',
-            'members.*.role' => 'required|string|max:255',
-            'companies'      => 'nullable|array',
-            'companies.*'    => 'exists:companies,id',
+    $request->validate([
+        // ADD
+        'members'            => 'nullable|array',
+        'members.*.id'       => 'required|exists:users,id',
+        'members.*.role'     => 'required|string|max:255',
+
+        'companies'          => 'nullable|array',
+        'companies.*'        => 'exists:companies,id',
+
+        // REMOVE
+        'remove_members'     => 'nullable|array',
+        'remove_members.*'   => 'exists:users,id',
+
+        'remove_companies'   => 'nullable|array',
+        'remove_companies.*' => 'exists:companies,id',
+    ]);
+
+    /** ------------------------
+     *  ADD / UPDATE MEMBERS
+     *  --------------------- */
+    if ($request->filled('members')) {
+        $members = [];
+        foreach ($request->members as $member) {
+            $members[$member['id']] = ['role' => $member['role']];
+        }
+
+        $team->members()->syncWithoutDetaching($members);
+
+        TeamActivity::create([
+            'success_team_id' => $team->id,
+            'user_id' => Auth::id(),
+            'activity_type' => 'Added / Updated Members',
+            'description' => 'Members added or updated in the team.',
         ]);
-
-        // Assign members
-        if ($request->has('members')) {
-            $members = [];
-            foreach ($request->members as $member) {
-                $members[$member['id']] = ['role' => $member['role']];
-            }
-            TeamActivity::create([
-                'success_team_id' => $team->id,
-                'user_id' => Auth::id(),
-                'activity_type' => 'Added Members',
-                'description' => 'New member added to the team.',
-            ]);
-            $team->members()->sync($members);
-        }
-
-        // Assign companies
-        if ($request->has('companies')) {
-            TeamActivity::create([
-                'success_team_id' => $team->id,
-                'user_id' => Auth::id(),
-                'activity_type' => 'Assigned Companies',
-                'description' => 'New company assigned to the team.',
-            ]);
-            $team->companies()->sync($request->companies);
-        }
-
-        return response()->json($team->load(['members', 'companies', 'owner']));
     }
+
+    /** ------------------------
+     *  REMOVE MEMBERS
+     *  --------------------- */
+    if ($request->filled('remove_members')) {
+        $team->members()->detach($request->remove_members);
+
+        TeamActivity::create([
+            'success_team_id' => $team->id,
+            'user_id' => Auth::id(),
+            'activity_type' => 'Removed Members',
+            'description' => 'Members removed from the team.',
+        ]);
+    }
+
+    /** ------------------------
+     *  ADD COMPANIES
+     *  --------------------- */
+    if ($request->filled('companies')) {
+        $team->companies()->syncWithoutDetaching($request->companies);
+
+        TeamActivity::create([
+            'success_team_id' => $team->id,
+            'user_id' => Auth::id(),
+            'activity_type' => 'Assigned Companies',
+            'description' => 'Companies assigned to the team.',
+        ]);
+    }
+
+    /** ------------------------
+     *  REMOVE COMPANIES
+     *  --------------------- */
+    if ($request->filled('remove_companies')) {
+        $team->companies()->detach($request->remove_companies);
+
+        TeamActivity::create([
+            'success_team_id' => $team->id,
+            'user_id' => Auth::id(),
+            'activity_type' => 'Removed Companies',
+            'description' => 'Companies removed from the team.',
+        ]);
+    }
+
+    return response()->json(
+        $team->load(['members', 'companies', 'owner'])
+    );
+}
 
     public function getCustomersBySuccessTeam($success_team_id)
     {
