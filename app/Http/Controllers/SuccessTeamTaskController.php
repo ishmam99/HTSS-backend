@@ -113,6 +113,7 @@ class SuccessTeamTaskController extends Controller
 
         $output = $task->outputs()->create([
             'output' => $request->output,
+            'date' => $request->date,
             'status' => 0,
         ]);
 
@@ -129,7 +130,7 @@ class SuccessTeamTaskController extends Controller
             'status' => 'nullable|integer',
 
         ]);
-        if($request->status ==3)
+        if($request->status == 3)
             {
                 $data['completed_at'] = now();
             }
