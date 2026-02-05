@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class SuccessTeam extends Model
+    class SuccessTeam extends Model
 {
      protected $fillable = ['name', 'user_id', 'status', 'company_id'];
 
