@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('assigned_to')->constrained('users')->cascadeOnDelete();
             $table->text('description');
             $table->string('status')->default('pending');
+            $table->string('type')->nullable();
+            $table->date('date')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();
         });
