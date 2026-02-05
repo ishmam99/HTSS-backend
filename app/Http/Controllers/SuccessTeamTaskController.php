@@ -36,6 +36,8 @@ class SuccessTeamTaskController extends Controller
             'software_id'     => 'nullable|exists:softwares,id',
             'assigned_to'     => 'required|exists:users,id',
             'description'     => 'required|string',
+            'type'            => 'required|string',
+            'date'             => 'required|date'
         ]);
 
         $task = SuccessTeamTask::create([
@@ -65,7 +67,9 @@ class SuccessTeamTaskController extends Controller
             'assigned_to'  => 'sometimes|exists:users,id',
             'description'  => 'sometimes|string',
             'status'       => 'sometimes|string',
+            'type'       => 'sometimes|string',
             'completed_at' => 'nullable|date',
+            'date' => 'nullable|date',
         ]);
 
         // Auto set completed_at if status becomes completed
