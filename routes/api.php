@@ -124,6 +124,7 @@ Route::prefix('v1')->group(function () {
     Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
     Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
     Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
+      Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -158,7 +159,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('company-user-customer', CompanyUserCustomerController::class);
     Route::apiResource('success-teams', SuccessTeamController::class);
     // Assign members & companies separately
-    Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
+
     Route::post('assign-customers/{companyId}', [CompanyController::class, 'assignCustomers']);
     Route::get('success-team/{success_team_id}/customers', [SuccessTeamController::class, 'getCustomersBySuccessTeam']);
     Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
