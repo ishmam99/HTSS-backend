@@ -34,7 +34,7 @@ class SuccessTeamTaskController extends Controller
             'success_team_id' => 'required|exists:success_teams,id',
             'solution_id'     => 'required|exists:solutions,id',
             'software_id'     => 'nullable|exists:softwares,id',
-            'assigned_to'     => 'required|exists:users,id',
+            'assigned_to'     => 'nullable|exists:users,id',
             'description'     => 'required|string',
             'type'            => 'required|string',
             'date'             => 'required|date'
@@ -130,7 +130,7 @@ class SuccessTeamTaskController extends Controller
             'status' => 'nullable|integer',
             'completed_at' => 'nullable|date'
         ]);
-       
+
         $output = SuccessTeamTaskOutput::findOrFail($id);
         $output->update($data);
 

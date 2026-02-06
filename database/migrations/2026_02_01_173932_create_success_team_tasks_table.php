@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('solution_id')->constrained('solutions')->cascadeOnDelete();
             $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('assigned_to')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->cascadeOnDelete();
             $table->text('description');
             $table->string('status')->default('pending');
             $table->string('type')->nullable();
