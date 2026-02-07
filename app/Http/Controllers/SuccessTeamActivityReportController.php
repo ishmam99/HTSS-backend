@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class SuccessTeamActivityReportController extends Controller
 {
-      public function index(Request $request)
+    public function index(Request $request)
     {
         $reports = SuccessTeamActivityReport::with(['user', 'successTeam'])
             ->when($request->success_team_id, fn ($q) =>
@@ -17,7 +17,7 @@ class SuccessTeamActivityReportController extends Controller
             ->when($request->period, fn ($q) =>
                 $q->where('period', $request->period)
             )
-            ->when($request->status, fn ($q) =>
+            ->when($request->filled('status'), fn ($q) =>
                 $q->where('status', $request->status)
             )
             ->latest()
