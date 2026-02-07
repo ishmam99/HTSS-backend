@@ -31,7 +31,6 @@ class CustomerSupportController extends Controller
             });
         })
         ->orderBy('id', 'desc');
-
     $lists = $request->per_page ? $query->paginate($request->per_page) : $query->get();
 
     return CustomerSupportResource::collection($lists);
