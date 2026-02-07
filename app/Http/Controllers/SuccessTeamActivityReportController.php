@@ -69,10 +69,10 @@ class SuccessTeamActivityReportController extends Controller
      * PUT /api/activity-reports/{id}
      */
     public function update(
-        SuccessTeamActivityReportRequest $request,
+        Request $request,
         SuccessTeamActivityReport $activityReport
     ) {
-        $activityReport->update($request->validated());
+        $activityReport->update(['status'=>$request->status]);
 
         return response()->json($activityReport);
     }
