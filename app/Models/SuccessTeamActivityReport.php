@@ -30,7 +30,7 @@ class SuccessTeamActivityReport extends Model
     }
      public function getPeriodRange()
     {
-       
+
         $start = Carbon::createFromFormat('F-Y', $this->period)->startOfMonth();
         $end   = Carbon::createFromFormat('F-Y', $this->period)->endOfMonth();
 
@@ -43,7 +43,7 @@ class SuccessTeamActivityReport extends Model
 
         return SuccessTeamTaskOutput::whereHas('successTeamTask', function ($q) {
             $q->where('success_team_id', $this->success_team_id);
-        })
+        })->with('successTeamTask.assignedPerson')
         ->whereBetween('date', [$start, $end]);
     }
 }
