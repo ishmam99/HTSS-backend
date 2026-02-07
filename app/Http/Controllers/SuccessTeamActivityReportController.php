@@ -70,8 +70,9 @@ class SuccessTeamActivityReportController extends Controller
      */
     public function update(
         Request $request,
-        SuccessTeamActivityReport $activityReport
+        $id
     ) {
+         $activityReport = SuccessTeamActivityReport::findOrFail($id);
         $activityReport->update(['status'=>$request->status]);
 
         return response()->json($activityReport);
