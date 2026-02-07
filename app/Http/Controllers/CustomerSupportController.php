@@ -25,6 +25,11 @@ class CustomerSupportController extends Controller
         ->when($request->filled('status'), function ($query) use ($request) {
             $query->where('status', $request->status);
         })
+        ->when($request->filled('company_id'), function ($query) use ($request) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('company_id', $request->company_id);
+            });
+        })
         ->orderBy('id', 'desc');
 
     $lists = $request->per_page ? $query->paginate($request->per_page) : $query->get();
