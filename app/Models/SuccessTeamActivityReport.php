@@ -44,6 +44,6 @@ class SuccessTeamActivityReport extends Model
         return SuccessTeamTaskOutput::whereHas('successTeamTask', function ($q) {
             $q->where('success_team_id', $this->success_team_id);
         })->with('successTeamTask.assignedPerson')
-        ->whereBetween('date', [$start, $end]);
+        ->whereBetween('completed_at', [$start, $end]);
     }
 }
