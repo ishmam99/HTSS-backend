@@ -88,35 +88,44 @@ trait HasAdvancedQuery
 
 
   protected function applyFilters(Builder $query, Request $request): void
-{
-    $model = $query->getModel();
-    $parentTable = $model->getTable();
+    {
+        $model = $query->getModel();
+        $parentTable = $model->getTable();
 
-    // Existing filters
-    foreach ($request->all() as $key => $value) {
-        if (in_array($key, [
-            'search', 'sort_by', 'sort_order', 'page', 'per_page','pluck',
-            'with', 'group_by', 'group_select', 'where', 'or_where',
-            'relation', 'relation_field', 'relation_value', 'filter','created_at_from','created_at_to', 'updated_at_to','updated_at_from', 'published_at' , 'date_from','date_to'
-        ])) continue;
+        // Existing filters
+        foreach ($request->all() as $key => $value) {
+            if (in_array($key, [
+                'search', 'sort_by', 'sort_order', 'page', 'per_page','pluck',
+                'with', 'group_by', 'group_select', 'where', 'or_where',
+                'relation', 'relation_field', 'relation_value', 'filter','created_at_from','created_at_to', 'updated_at_to','updated_at_from', 'published_at' , 'date_from','date_to'
+            ])) continue;
 
-        if (is_array($value)) $query->whereIn($key, $value);
-        else $query->where($key, $value);
-    }
+            if (is_array($value)) $query->whereIn($key, $value);
+            else $query->where($key, $value);
+        }
 
-    // --------------------------
-    // DYNAMIC MANY-TO-MANY FILTER
-    // --------------------------
-    $relation      = $request->input('relation');        // e.g., 'softwares'
-    $relationField = $request->input('relation_field');  // e.g., 'id'
-    $relationValue = $request->input('relation_value');  // e.g., 1
+        // --------------------------
+        // DYNAMIC MANY-TO-MANY FILTER
+        // --------------------------
+        $relation      = $request->input('relation');        // e.g., 'softwares'
+        $relationField = $request->input('relation_field');  // e.g., 'id'
+        $relationValue = $request->input('relation_value');  // e.g., 1
 
-    if ($relation && $relationField && $relationValue && method_exists($model, $relation)) {
+        // if ($relation && $relationField && $relationValue && method_exists($model, $relation)) {
+        //     $query->whereHas($relation, function ($q) use ($relationField, $relationValue) {
+        //         $q->where($relationField, $relationValue);
+        //     });
+        // }
+
+ 
+
+    if ($relation && $relationField && $relationValue) {
+        // relation can be: customer OR customer.company
         $query->whereHas($relation, function ($q) use ($relationField, $relationValue) {
             $q->where($relationField, $relationValue);
         });
     }
-}
+    }
 
 
     protected function applyDateFilters(Builder $query, Request $request): void
