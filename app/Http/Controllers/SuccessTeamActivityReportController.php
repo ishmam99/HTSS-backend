@@ -57,6 +57,7 @@ class SuccessTeamActivityReportController extends Controller
      */
     public function show(SuccessTeamActivityReport $activityReport)
     {
+        dd($activityReport);
         return response()->json([
             'report' => $activityReport->load(['user', 'successTeam']),
             's' => $activityReport
