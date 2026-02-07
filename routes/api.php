@@ -28,6 +28,7 @@ use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
 use App\Http\Controllers\SoftwareSkillController;
 use App\Http\Controllers\SolutionController;
+use App\Http\Controllers\SuccessTeamActivityReportController;
 use App\Http\Controllers\SuccessTeamController;
 use App\Http\Controllers\SuccessTeamTaskController;
 use App\Http\Controllers\TrainerController;
@@ -125,6 +126,7 @@ Route::prefix('v1')->group(function () {
     Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
     Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
       Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
+      Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
