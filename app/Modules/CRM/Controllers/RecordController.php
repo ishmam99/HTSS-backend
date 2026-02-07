@@ -902,5 +902,26 @@ private function applyCondition($query, $cond, $join)
     });
 }
 
+public function globalSearch(Request $request)
+{
+    $search = trim($request->search);
+
+    $modules = Module::with(['records' => function ($query) use ($search) {
+
+        // reuse same index logic via a trait (recommended)
+        $this->applyRecordBaseQuery($query);
+
+        $query->whereHas('values', function ($q) use ($search) {
+            $q->where('value', 'LIKE', "%{$search}%");
+        })->limit(10);
+
+    }])->get();
+
+    return response()->json(
+        $modules->mapWithKeys(fn ($m) => [
+            $m->name => $m->records
+        ])
+    );
+}
 
 }

@@ -40,7 +40,7 @@ class SuccessTeamActivityReport extends Model
     {
         [$start, $end] = $this->getPeriodRange();
 
-        return SuccessTeamTaskOutput::whereHas('task', function ($q) {
+        return SuccessTeamTaskOutput::whereHas('successTeamTask', function ($q) {
             $q->where('success_team_id', $this->success_team_id);
         })
         ->whereBetween('date', [$start, $end]);

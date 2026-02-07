@@ -58,4 +58,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     {
         return $this->hasMany(TeamActivity::class);
     }
+    /**
+     * Get all of the tasks for the SuccessTeam
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(SuccessTeamTask::class);
+    }
 }
