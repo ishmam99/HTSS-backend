@@ -61,4 +61,18 @@ class TrainingCourseController extends Controller
         $trainingCourse->delete();
         return response()->json(['status' => true,'message' => 'TrainingCourse deleted successfully'],200);
     }
+
+    public function getByCompany($companyId)
+{
+    $courses = TrainingCourse::with(['customer','solution','software','industry'])
+        ->whereHas('customer', function ($q) use ($companyId) {
+            $q->where('company_id', $companyId);
+        })
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $courses
+    ]);
+}
 }
