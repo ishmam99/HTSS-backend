@@ -59,7 +59,7 @@ class SuccessTeamActivityReportController extends Controller
     {
         return response()->json([
             'report' => $activityReport->load(['user', 'successTeam']),
-            'outputs' => $activityReport->taskOutputs()->get(),
+            // 'outputs' => $activityReport->taskOutputs()->get(),
         ]);
     }
 
