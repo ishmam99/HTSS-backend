@@ -55,13 +55,14 @@ class SuccessTeamActivityReportController extends Controller
     /**
      * GET /api/activity-reports/{id}
      */
-    public function show(SuccessTeamActivityReport $activityReport)
+    public function show($id)
     {
-        dd($activityReport);
+        $activityReport = SuccessTeamActivityReport::find($id);
+        // dd($activityReport);
         return response()->json([
             'report' => $activityReport->load(['user', 'successTeam']),
-            's' => $activityReport
-            // 'outputs' => $activityReport->taskOutputs()->get(),
+            // 's' => $activityReport
+            'outputs' => $activityReport->taskOutputs()->get(),
         ]);
     }
 
