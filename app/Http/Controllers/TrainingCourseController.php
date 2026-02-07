@@ -69,7 +69,7 @@ class TrainingCourseController extends Controller
             $q->where('company_id', $companyId);
         })
         ->get();
-dd($courses);
+
     return response()->json([
         'success' => true,
         'data' => $courses
