@@ -30,7 +30,7 @@ class SuccessTeamActivityReport extends Model
     }
      public function getPeriodRange()
     {
-        dd($this->period);
+        dd($this);
         $start = Carbon::createFromFormat('F-Y', $this->period)->startOfMonth();
         $end   = Carbon::createFromFormat('F-Y', $this->period)->endOfMonth();
 
