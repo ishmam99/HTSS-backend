@@ -161,7 +161,7 @@ class SuccessTeamTaskController extends Controller
              'total' => $query->count()
         ]);
     }
-    public function teamOutputs($id)
+    public function teamOutputs(Request $request,$id)
     {
         $myTaskIds = SuccessTeamTask::where('success_team_id',$id)->pluck('id');
         $queryes = SuccessTeamTaskOutput::advancedQuery($request);
