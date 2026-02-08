@@ -86,7 +86,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('issue-ticket', IssueTicketController::class);
         Route::apiResource('end-users', EndUserController::class);
         Route::apiResource('training-course', TrainingCourseController::class);
-        Route::get('/training-courses/by-company/{company}', 
+        Route::get('/training-courses/by-company/{company}',
     [TrainingCourseController::class, 'getByCompany']
 );
         Route::apiResource('trainer', TrainerController::class);
@@ -129,6 +129,7 @@ Route::prefix('v1')->group(function () {
     Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
     Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
     Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
+    Route::get('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'teamOutputs']);
       Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
       Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
     });
