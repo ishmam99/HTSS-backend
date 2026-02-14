@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
     class SuccessTeam extends Model
 {
+     use HasAdvancedQuery;
      protected $fillable = ['name', 'user_id', 'status', 'company_id'];
 
     // Owner of the team
