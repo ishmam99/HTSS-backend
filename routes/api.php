@@ -12,6 +12,7 @@ use App\Http\Controllers\CustomerStatsController;
 use App\Http\Controllers\CustomerSuccessManagerController;
 use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EndUserController;
 use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\EndUserTrainingController;
@@ -54,6 +55,8 @@ Route::prefix('v1')->group(function () {
     Route::get('users-role-wise-count', [AuthController::class, 'roleWiseCount']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('employees', EmployeeController::class);
+
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::apiResource('partners', PartnerController::class);
