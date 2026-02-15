@@ -30,9 +30,9 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-                 $request['joined_at'] = Carbon::parse($request->joined_at);
+         $request['joined_at'] = Carbon::parse($request->joined_at);
         $validated = $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|unique:employees,email',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'employee_uid' => 'required|string|unique:employees,employee_uid',
