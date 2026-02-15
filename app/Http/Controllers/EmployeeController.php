@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,7 +36,7 @@ class EmployeeController extends Controller
             'last_name' => 'required|string',
             'employee_uid' => 'required|string|unique:employees,employee_uid',
             'department_id' => 'required|exists:departments,id',
-            'position_id' => 'required|exists:positions,id',
+            // 'position_id' => 'required|exists:positions,id',
             'joined_at' => 'required|date',
         ]);
 
@@ -61,6 +62,7 @@ class EmployeeController extends Controller
                     return response()->json(['Employee Already exists']);
                 }
             // Create employee
+            $request['joined_at'] = Carbon::parse($request->joined_at);
             $employee = Employee::create([
                 ...$request->all(),
                 'user_id' => $user->id,
