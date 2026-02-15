@@ -56,7 +56,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('employees', EmployeeController::class);
-
+        Route::post('/set-user-role',[AuthController::class, 'setRole']);
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::apiResource('partners', PartnerController::class);

@@ -148,4 +148,18 @@ class AuthController extends Controller
             'data'    => $roles,
         ], 200);
     }
+    public function setRole(Request $request)
+    {
+        $user = User::where('id',$request->user_id)->first();
+        if($user)
+            {
+                $user->update([
+                    'role' => $request->role
+                ]);
+            }
+            else{
+                return response()->json(['User Not found']);
+            }
+            return response()->json(['User role updated successfully']);
+    }
 }
