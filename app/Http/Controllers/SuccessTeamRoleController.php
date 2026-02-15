@@ -35,7 +35,7 @@ class SuccessTeamRoleController extends Controller
 
         return response()->json([
             'message' => 'Role created successfully',
-            'data' => $role->load('user')
+           
         ], 201);
     }
 
