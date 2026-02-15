@@ -31,6 +31,7 @@ use App\Http\Controllers\SoftwareSkillController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\SuccessTeamActivityReportController;
 use App\Http\Controllers\SuccessTeamController;
+use App\Http\Controllers\SuccessTeamRoleController;
 use App\Http\Controllers\SuccessTeamTaskController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainerCourseController;
@@ -56,6 +57,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('employees', EmployeeController::class);
+        Route::apiResource('success-team-roles', SuccessTeamRoleController::class);
         Route::post('/set-user-role',[AuthController::class, 'setRole']);
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
