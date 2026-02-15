@@ -54,7 +54,12 @@ class EmployeeController extends Controller
                     'password' => Hash::make('12345678'), // random password
                 ]);
             }
+            $empCheck = Employee::where('email',$request->email)->first();
 
+            if($empCheck)
+                {
+                    return response()->json(['Employee Already exists']);
+                }
             // Create employee
             $employee = Employee::create([
                 ...$request->all(),
