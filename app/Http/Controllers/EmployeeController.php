@@ -30,6 +30,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+                 $request['joined_at'] = Carbon::parse($request->joined_at);
         $validated = $request->validate([
             'email' => 'required|email',
             'first_name' => 'required|string',
@@ -62,7 +63,7 @@ class EmployeeController extends Controller
                     return response()->json(['Employee Already exists']);
                 }
             // Create employee
-            $request['joined_at'] = Carbon::parse($request->joined_at);
+
             $employee = Employee::create([
                 ...$request->all(),
                 'user_id' => $user->id,
