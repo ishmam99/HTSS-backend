@@ -20,7 +20,8 @@ class CustomerSolutionResource extends JsonResource
             'solution_name' => $this->solution?->name,
             'customer_name' => $this->customer?->load('user')->name,
             'softwares' => $this->solution->softwares,
-            'solution_id' => $this->solution->id
+            'solution_id' => $this->solution->id,
+            'customer' => $this->customer
         ];
     }
 }
