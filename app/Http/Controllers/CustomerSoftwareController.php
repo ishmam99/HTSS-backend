@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\CustomerSoftware;
 use Illuminate\Http\Request;
 
@@ -10,12 +11,21 @@ class CustomerSoftwareController extends Controller
     //
     public function index(Request $request)
     {
+         $customerIds = [];
+    if($request->filled('company_id'))
+        {
+            $customerIds = Customer::where('company_id',$request->company_id)->pluck('id');
+        }
         $query = CustomerSoftware::with(['customer.user', 'software'])
             ->when(auth()->check() && auth()->user()->role === 'customer', function ($q) {
                 $q->where('customer_id', auth()->user()->customer->id);
             })
             ->when($request->filled('customer_id'), function ($q) use ($request) {
                 $q->where('customer_id', $request->customer_id);
+            })
+            ->when($request->filled('company_id'), function ($q) use ($customerIds) {
+
+                $q->whereIn('customer_id', $customerIds);
             })
            ->when($request->filled('customer_ids'), function ($q) use ($request) {
                 $ids = explode(',', $request->customer_ids);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CustomerSolutionResource;
 use App\Http\Resources\CustomerSolutions;
+use App\Models\Customer;
 use App\Models\CustomerSolution;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,11 @@ class CustomerSolutionController extends Controller
     //
   public function index(Request $request)
 {
+    $customerIds = [];
+    if($request->filled('company_id'))
+        {
+            $customerIds = Customer::where('company_id',$request->company_id)->pluck('id');
+        }
     $query = CustomerSolution::with(['customer.user', 'solution', 'solution.softwares'])
         ->when(auth()->user()->role === 'customer', function ($q) {
             $q->where('customer_id', auth()->user()->customer->id);
@@ -22,6 +28,10 @@ class CustomerSolutionController extends Controller
       ->when($request->filled('customer_ids'), function ($q) use ($request) {
                 $ids = explode(',', $request->customer_ids);
                 $q->whereIn('customer_id', $ids);
+            })
+      ->when($request->filled('company_id'), function ($q) use ($customerIds) {
+
+                $q->whereIn('customer_id', $customerIds);
             })
         ->when($request->filled('solution_id'), function ($q) use ($request) {
             $q->where('solution_id', $request->solution_id);
