@@ -16,7 +16,6 @@ class ModuleImportController extends Controller
         'file' => 'required|file|mimes:xlsx,csv',
         'strict_parent' => 'boolean',
     ]);
-
     $module = Module::findOrFail($moduleId);
 
 
