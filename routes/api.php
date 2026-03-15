@@ -111,6 +111,7 @@ Route::prefix('v1')->group(function () {
         Route::get('end-user-software-list', [EndUserSoftwareController::class, 'getSoftwares']);
         Route::get('end-user-solution-list', [EndUserSoftwareController::class, 'getSolutions']);
         Route::post('end-user-solution-add', [EndUserSoftwareController::class, 'addSolution']);
+        Route::post('end-users/import', [EndUserController::class,'import']);
         Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
 
         Route::apiResource('software-level', SoftwareLevelController::class)->middleware('auth:sanctum');

@@ -129,6 +129,7 @@ class ModuleExcelImport implements
         $this->syncRelation($record, $row);
         // \Log::info(json_encode($row));
         // \Log::info(json_encode($this->fields));
+        // dd($record);
         foreach ($row as $header => $value) {
 
         // \Log::info("header value: {$header} = " . json_encode($value));
@@ -148,10 +149,12 @@ class ModuleExcelImport implements
 
             //     continue;
             // }
+            // dd($value,$header);
                $value = $this->castValue($value, $this->fields[$key]->type);
 
                 if ($value !== null && $value !== '') {
-                    RecordValue::updateOrCreate(
+                    // dd($value);
+                  $rec =  RecordValue::updateOrCreate(
                         [
                             'record_id' => $record->id,
                             'field_id'  => $this->fields[$key]->id,
@@ -160,6 +163,7 @@ class ModuleExcelImport implements
                             'value' => $value,
                         ]
                     );
+                    // dd($rec,$value);
                 }
         }
 

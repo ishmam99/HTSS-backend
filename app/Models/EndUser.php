@@ -12,7 +12,7 @@ class EndUser extends Model
     use HasFactory,HasAdvancedQuery;
 
     protected $guarded = ['id'];
-    protected array $searchable = ['user.name','user.email', 'industry_id','industry.name','status'];
+    protected array $searchable = ['user.name','user.email','email', 'first_name','last_name' ,'industry_id','industry.name','status'];
     public function user()
     {
         return $this->belongsTo(User::class);
