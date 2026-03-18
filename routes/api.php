@@ -14,6 +14,7 @@ use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EndUserController;
+use App\Http\Controllers\EndUserRoadMapController;
 use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\EndUserTrainingController;
 use App\Http\Controllers\EnumController;
@@ -114,6 +115,7 @@ Route::prefix('v1')->group(function () {
         Route::post('end-user-solution-add', [EndUserSoftwareController::class, 'addSolution']);
         Route::post('end-users/import', [EndUserController::class,'import']);
         Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
+        Route::apiResource('end-user-roadmap', EndUserRoadMapController::class)->middleware('auth:sanctum');
 
         Route::apiResource('software-level', SoftwareLevelController::class)->middleware('auth:sanctum');
         Route::put('software-level-status-update/{id}', [SoftwareLevelController::class, 'update']);
