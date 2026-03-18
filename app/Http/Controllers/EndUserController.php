@@ -106,7 +106,18 @@ class EndUserController extends Controller
     {
         return new EndUserResource($endUser);
     }
-
+    public function getUserByUserId($id)
+    {
+        $endUser = EndUser::where('user_id',$id)->with('user,customer,industry,softwares,solutions,softwareLevels,trainingEnrollment')->first();
+        if($endUser)
+            {
+                return response()->json($endUser);
+                }
+                else
+                    {
+                        return response()->json(['message'=>'User data not found'],404);
+                    }
+    }
     public function update(EndUserRequest $request, EndUser $endUser)
 {
     $data = $request->validated();

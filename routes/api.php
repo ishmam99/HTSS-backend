@@ -90,6 +90,7 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('issue-ticket', IssueTicketController::class);
         Route::apiResource('end-users', EndUserController::class);
+        Route::get('end-user-by-user-id/{id}', [EndUserController::class,'getUserByUserId']);
         Route::apiResource('training-course', TrainingCourseController::class);
         Route::get('/training-courses/by-company/{company}',
     [TrainingCourseController::class, 'getByCompany']
