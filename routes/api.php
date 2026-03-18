@@ -115,7 +115,7 @@ Route::prefix('v1')->group(function () {
         Route::post('end-user-solution-add', [EndUserSoftwareController::class, 'addSolution']);
         Route::post('end-users/import', [EndUserController::class,'import']);
         Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
-        Route::apiResource('end-user-roadmap', EndUserRoadMapController::class)->middleware('auth:sanctum');
+        Route::apiResource('end-user-road-maps', EndUserRoadMapController::class)->middleware('auth:sanctum');
 
         Route::apiResource('software-level', SoftwareLevelController::class)->middleware('auth:sanctum');
         Route::put('software-level-status-update/{id}', [SoftwareLevelController::class, 'update']);
