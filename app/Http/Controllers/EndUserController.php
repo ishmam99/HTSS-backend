@@ -189,11 +189,11 @@ class EndUserController extends Controller
             'file' => 'required|file|mimes:xlsx,csv'
         ]);
 
-        Excel::import(new EndUserExcelImport, $request->file('file'));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'End Users imported successfully'
-        ]);
+        // Excel::import(new EndUserExcelImport, $request->file('file'));
+        Excel::queueImport(new EndUserExcelImport, $request->file('file'));
+       return response()->json([
+                'success' => true,
+                'message' => 'Import started. It will process in background.'
+            ]);
     }
 }
