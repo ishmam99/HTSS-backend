@@ -108,7 +108,7 @@ class EndUserController extends Controller
     }
     public function getUserByUserId($id)
     {
-        $endUser = EndUser::where('user_id',$id)->with('user','customer','industry','softwares','solutions','softwareLevels','trainingEnrollment'')->first();
+        $endUser = EndUser::where('user_id',$id)->with('user','customer','industry','softwares','solutions','softwareLevels','trainingEnrollment')->first();
         if($endUser)
             {
                 return response()->json($endUser);
