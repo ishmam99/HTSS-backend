@@ -27,6 +27,7 @@ use App\Http\Controllers\MonthlyCSMActivityController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\ProfessionalReferenceController;
 use App\Http\Controllers\ScheduledMessageController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
@@ -45,8 +46,8 @@ use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
 use App\Http\Controllers\UserEducationController;
+use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserSoftwareSkillController;
-use App\Http\Controllers\ProfessionalReferenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -205,7 +206,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/success-teams/{success_team_id}/companies/customers', [SuccessTeamController::class, 'getSuccessTeamCompaniesCustomers']);
     Route::get('/success-teams/{success_team_id}/companies', [SuccessTeamController::class, 'getSuccessTeamCompanies']);
     Route::apiResource('user-education', UserEducationController::class)->middleware('auth:sanctum');
-
+    Route::apiResource('user-experiences', UserExperienceController::class)->middleware('auth:sanctum');
     Route::apiResource('professional-references', ProfessionalReferenceController::class)->middleware('auth:sanctum');
 
 });
