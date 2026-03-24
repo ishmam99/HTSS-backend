@@ -15,7 +15,9 @@ class UserEducationController extends Controller
 
     public function store(UserEducationRequest $request)
     {
-        $userEducation = UserEducation::create($request->validated());
+        $validated            = $request->validated();
+        $validated['user_id'] = auth()->id();
+        $userEducation        = UserEducation::create($validated);
         return new UserEducationResource($userEducation);
     }
 
