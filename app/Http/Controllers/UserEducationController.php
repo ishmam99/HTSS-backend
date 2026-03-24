@@ -18,7 +18,11 @@ class UserEducationController extends Controller
         $validated            = $request->validated();
         $validated['user_id'] = auth()->id();
         $userEducation        = UserEducation::create($validated);
-        return new UserEducationResource($userEducation);
+        return response()->json([
+            'status'  => true,
+            'message' => 'User education created successfully',
+            'data' => $userEducation
+        ], 201);
     }
 
     public function show(UserEducation $user_education)
@@ -29,7 +33,11 @@ class UserEducationController extends Controller
     public function update(UserEducationRequest $request, UserEducation $user_education)
     {
         $user_education->update($request->validated());
-        return new UserEducationResource($user_education);
+        return response()->json([
+            'status'  => true,
+            'message' => 'User education updated successfully',
+            'data' => $user_education
+        ], 200);
     }
 
     public function destroy(UserEducation $user_education)
