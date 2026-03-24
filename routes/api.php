@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\CompetencyController;
+use App\Http\Controllers\Api\GeneralSkillController;
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
@@ -159,6 +161,9 @@ Route::prefix('v1')->group(function () {
         Route::get('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'teamOutputs']);
         Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
         Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
+        Route::resource('general-skills', GeneralSkillController::class);
+        Route::get('/general-skill-by-user', [GeneralSkillController::class, 'getGeneralSkillByUser']);
+        Route::resource('competencies', CompetencyController::class);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -202,4 +207,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('user-education', UserEducationController::class)->middleware('auth:sanctum');
 
     Route::apiResource('professional-references', ProfessionalReferenceController::class)->middleware('auth:sanctum');
+
 });
