@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfessionSummaryRequest;
@@ -16,15 +15,15 @@ class ProfessionSummaryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $summary ? new ProfessionSummaryResource($summary) : null
+            'data'    => $summary ? new ProfessionSummaryResource($summary) : null,
         ]);
     }
 
     public function store(ProfessionSummaryRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $summary = ProfessionSummary::create($validated);
+        $validated            = $request->validated();
+        $validated['user_id'] = auth()->id();
+        $summary              = ProfessionSummary::create($validated);
 
         return response()->json([
             'success' => true,
