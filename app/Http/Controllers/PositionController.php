@@ -43,7 +43,7 @@ class PositionController extends Controller
     public function update(PositionRequest $request, Position $position)
     {
         $position->update($request->validated());
-            return response()->json(['ds'=>$request->validated(),'dsw'=>$position->fresh()]);
+
         return response()->json([
             'message' => 'Position updated successfully',
             'data' => new PositionResource($position->fresh()),
