@@ -28,6 +28,7 @@ use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProfessionalReferenceController;
+use App\Http\Controllers\ProfessionSummaryController;
 use App\Http\Controllers\ScheduledMessageController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
@@ -208,5 +209,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('user-education', UserEducationController::class)->middleware('auth:sanctum');
     Route::apiResource('user-experiences', UserExperienceController::class)->middleware('auth:sanctum');
     Route::apiResource('professional-references', ProfessionalReferenceController::class)->middleware('auth:sanctum');
+    Route::apiResource('professional-summary', ProfessionSummaryController::class)->middleware('auth:sanctum');
 
 });
