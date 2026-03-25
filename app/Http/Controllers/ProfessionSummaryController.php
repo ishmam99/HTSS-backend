@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfessionSummaryRequest;
@@ -11,9 +12,12 @@ class ProfessionSummaryController extends Controller
 {
     public function index(Request $request)
     {
-        $summaries = ProfessionSummary::where('user_id', auth()->id())->first();
+        $summary = ProfessionSummary::where('user_id', auth()->id())->first();
 
-        return new ProfessionSummaryResource($summaries);
+        return response()->json([
+            'success' => true,
+            'data' => $summary ? new ProfessionSummaryResource($summary) : null
+        ]);
     }
 
     public function store(ProfessionSummaryRequest $request): JsonResponse
