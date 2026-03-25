@@ -41,16 +41,16 @@ class ProfessionSummaryController extends Controller
         ], 200);
     }
 
-    public function update(ProfessionSummaryRequest $request, ProfessionSummary $professionSummary): JsonResponse
+    public function update(ProfessionSummaryRequest $request, ProfessionSummary $profession_summary): JsonResponse
     {
         $validated = $request->validated();
 
-        $professionSummary->update($validated);
+        $profession_summary->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Profession summary updated successfully.',
-            'data'    => $professionSummary,
+            'data'    => $profession_summary,
         ], 200);
     }
 
