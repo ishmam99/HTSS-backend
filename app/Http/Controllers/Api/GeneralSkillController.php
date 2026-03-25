@@ -48,7 +48,7 @@ class GeneralSkillController extends Controller
             'icon'              => 'nullable|string|max:255',
             'proficiency_level' => 'nullable|in:Beginner,Intermediate,Advanced,Expert',
             'competencies'      => 'nullable|array',
-            'competencies.*'    => 'string|exists:competencies,id',
+            'competencies.*'    => 'integer|exists:competencies,id',
         ]);
 
         $skill = GeneralSkill::create([
@@ -85,7 +85,7 @@ class GeneralSkillController extends Controller
             'icon'              => 'nullable|string|max:255',
             'proficiency_level' => 'nullable|in:Beginner,Intermediate,Advanced,Expert',
             'competencies'      => 'nullable|array',
-            'competencies.*'    => 'string|exists:competencies,id',
+            'competencies.*'    => 'integer|exists:competencies,id',
         ]);
 
         $generalSkill->update([
