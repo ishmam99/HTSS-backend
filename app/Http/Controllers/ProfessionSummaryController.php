@@ -32,31 +32,31 @@ class ProfessionSummaryController extends Controller
         ], 201);
     }
 
-    public function show(ProfessionSummary $professionSummary): JsonResponse
+    public function show(ProfessionSummary $professional_summary): JsonResponse
     {
         return response()->json([
             'success' => true,
             'message' => 'Profession summary fetched successfully.',
-            'data'    => $professionSummary,
+            'data'    => $professional_summary,
         ], 200);
     }
 
-    public function update(ProfessionSummaryRequest $request, ProfessionSummary $profession_summary): JsonResponse
+    public function update(ProfessionSummaryRequest $request, ProfessionSummary $professional_summary): JsonResponse
     {
         $validated = $request->validated();
 
-        $profession_summary->update($validated);
+        $professional_summary->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Profession summary updated successfully.',
-            'data'    => $profession_summary,
+            'data'    => $professional_summary,
         ], 200);
     }
 
-    public function destroy(ProfessionSummary $professionSummary): JsonResponse
+    public function destroy(ProfessionSummary $professional_summary): JsonResponse
     {
-        $professionSummary->delete();
+        $professional_summary->delete();
 
         return response()->json([
             'success' => true,
