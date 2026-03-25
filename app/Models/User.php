@@ -13,7 +13,7 @@ use App\Models\SuccessTeam;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable , HasApiTokens , HasAdvancedQuery;
+    use HasFactory, Notifiable, HasApiTokens, HasAdvancedQuery;
 
     /**
      * The attributes that are mass assignable.
@@ -53,29 +53,33 @@ class User extends Authenticatable
     public function softwareSkills()
     {
         return $this->belongsToMany(SoftwareSkill::class, 'user_software_skills')
-                    ->withPivot('proficiency_level', 'experience_years')
-                    ->withTimestamps();
+            ->withPivot('proficiency_level', 'experience_years')
+            ->withTimestamps();
     }
 
-     public function customer()
+    public function customer()
     {
         return $this->hasOne(Customer::class);
     }
-     public function employee()
+    public function employee()
     {
         return $this->hasOne(Employee::class);
     }
-     public function endUser()
+    public function endUser()
     {
         return $this->hasOne(EndUser::class);
     }
     public function successTeams()
-{
-    return $this->belongsToMany(
-        SuccessTeam::class,
-        'success_team_users',
-        'user_id',
-        'success_team_id'
-    )->withPivot('role')->withTimestamps();
-}
+    {
+        return $this->belongsToMany(
+            SuccessTeam::class,
+            'success_team_users',
+            'user_id',
+            'success_team_id'
+        )->withPivot('role')->withTimestamps();
+    }
+    public function professionalReferences()
+    {
+        return $this->hasMany(ProfessionalReference::class);
+    }
 }

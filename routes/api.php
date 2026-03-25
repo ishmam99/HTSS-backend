@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\CompetencyController;
+use App\Http\Controllers\Api\GeneralSkillController;
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
@@ -25,6 +27,8 @@ use App\Http\Controllers\MonthlyCSMActivityController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\ProfessionalReferenceController;
+use App\Http\Controllers\ProfessionSummaryController;
 use App\Http\Controllers\ScheduledMessageController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
@@ -42,6 +46,8 @@ use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
+use App\Http\Controllers\UserEducationController;
+use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,7 +65,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('employees', EmployeeController::class);
         Route::apiResource('success-team-roles', SuccessTeamRoleController::class);
-        Route::post('/set-user-role',[AuthController::class, 'setRole']);
+        Route::post('/set-user-role', [AuthController::class, 'setRole']);
+        Route::post('/set-user-role', [AuthController::class, 'setRole']);
         Route::get('/enums/roles', [EnumController::class, 'roles']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::apiResource('partners', PartnerController::class);
@@ -91,11 +98,16 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('issue-ticket', IssueTicketController::class);
         Route::apiResource('end-users', EndUserController::class);
-        Route::get('end-user-by-user-id/{id}', [EndUserController::class,'getUserByUserId']);
+        Route::get('end-user-by-user-id/{id}', [EndUserController::class, 'getUserByUserId']);
+        Route::get('end-user-by-user-id/{id}', [EndUserController::class, 'getUserByUserId']);
         Route::apiResource('training-course', TrainingCourseController::class);
+        Route::get(
+            '/training-courses/by-company/{company}',
+            [TrainingCourseController::class, 'getByCompany']
+        );
         Route::get('/training-courses/by-company/{company}',
-    [TrainingCourseController::class, 'getByCompany']
-);
+            [TrainingCourseController::class, 'getByCompany']
+        );
         Route::apiResource('trainer', TrainerController::class);
         Route::apiResource('training-event', TrainingEventController::class);
 
@@ -113,7 +125,8 @@ Route::prefix('v1')->group(function () {
         Route::get('end-user-software-list', [EndUserSoftwareController::class, 'getSoftwares']);
         Route::get('end-user-solution-list', [EndUserSoftwareController::class, 'getSolutions']);
         Route::post('end-user-solution-add', [EndUserSoftwareController::class, 'addSolution']);
-        Route::post('end-users/import', [EndUserController::class,'import']);
+        Route::post('end-users/import', [EndUserController::class, 'import']);
+        Route::post('end-users/import', [EndUserController::class, 'import']);
         Route::apiResource('end-user-trainings', EndUserTrainingController::class)->middleware('auth:sanctum');
         Route::apiResource('end-user-road-maps', EndUserRoadMapController::class)->middleware('auth:sanctum');
 
@@ -132,15 +145,27 @@ Route::prefix('v1')->group(function () {
         Route::post('/attendance/logout/{id}', [AttendanceController::class, 'logout']);
         Route::post('/attendance-time', [AttendanceController::class, 'attendanceTimeStore']);
         Route::apiResource('monthly-csm-activity', MonthlyCSMActivityController::class);
-       Route::get('monthly-activity', [MonthlyCSMActivityController::class,'activityByUser']);
-    Route::apiResource('success-team-tasks', SuccessTeamTaskController::class);
-    Route::post('success-team-tasks/{task}/outputs',[SuccessTeamTaskController::class, 'storeOutput']);
-    Route::put('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'updateOutput']);
-    Route::delete('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'deleteOutput']);
-    Route::get('my-success-team-task-outputs',[SuccessTeamTaskController::class, 'myOutputs']);
-    Route::get('success-team-task-outputs/{id}',[SuccessTeamTaskController::class, 'teamOutputs']);
-      Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
-      Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
+        Route::get('monthly-activity', [MonthlyCSMActivityController::class, 'activityByUser']);
+        Route::apiResource('success-team-tasks', SuccessTeamTaskController::class);
+        Route::post('success-team-tasks/{task}/outputs', [SuccessTeamTaskController::class, 'storeOutput']);
+        Route::put('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'updateOutput']);
+        Route::delete('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'deleteOutput']);
+        Route::get('my-success-team-task-outputs', [SuccessTeamTaskController::class, 'myOutputs']);
+        Route::get('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'teamOutputs']);
+        Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
+        Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
+        Route::get('monthly-activity', [MonthlyCSMActivityController::class, 'activityByUser']);
+        Route::apiResource('success-team-tasks', SuccessTeamTaskController::class);
+        Route::post('success-team-tasks/{task}/outputs', [SuccessTeamTaskController::class, 'storeOutput']);
+        Route::put('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'updateOutput']);
+        Route::delete('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'deleteOutput']);
+        Route::get('my-success-team-task-outputs', [SuccessTeamTaskController::class, 'myOutputs']);
+        Route::get('success-team-task-outputs/{id}', [SuccessTeamTaskController::class, 'teamOutputs']);
+        Route::post('success-teams/{team}/assign', [SuccessTeamController::class, 'assign']);
+        Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
+        Route::resource('general-skills', GeneralSkillController::class);
+        Route::get('/general-skill-by-user', [GeneralSkillController::class, 'getGeneralSkillByUser']);
+        Route::resource('competencies', CompetencyController::class);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -181,5 +206,9 @@ Route::prefix('v1')->group(function () {
     Route::get('companies/{company_id}/csm-reports', [MonthlyCSMActivityController::class, 'getCompanyCSMReports']);
     Route::get('/success-teams/{success_team_id}/companies/customers', [SuccessTeamController::class, 'getSuccessTeamCompaniesCustomers']);
     Route::get('/success-teams/{success_team_id}/companies', [SuccessTeamController::class, 'getSuccessTeamCompanies']);
+    Route::apiResource('user-education', UserEducationController::class)->middleware('auth:sanctum');
+    Route::apiResource('user-experiences', UserExperienceController::class)->middleware('auth:sanctum');
+    Route::apiResource('professional-references', ProfessionalReferenceController::class)->middleware('auth:sanctum');
+    Route::apiResource('professional-summary', ProfessionSummaryController::class)->middleware('auth:sanctum');
 
 });

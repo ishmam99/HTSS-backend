@@ -36,8 +36,6 @@ class CustomerSupportController extends Controller
     return CustomerSupportResource::collection($lists);
 }
 
-
-
     public function store(CustomerSupportRequest $request)
     {
         $data = $request->validated();
