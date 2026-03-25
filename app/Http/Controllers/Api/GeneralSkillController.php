@@ -1,28 +1,22 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\GeneralSkillResource;
 use App\Models\GeneralSkill;
-use App\Models\Competency;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class GeneralSkillController extends Controller
 {
 
-     public function getGeneralSkillByUser(Request $request): JsonResponse
+    public function getGeneralSkillByUser(Request $request)
     {
-        $perPage = $request->input('per_page', 10); // default 10
-        $skills = GeneralSkill::with('competencies')
-        ->where('user_id', auth()->id())
-        ->latest()->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Skills fetched successfully.',
-            'data'    => $skills,
-        ], 200);
+        $skills = GeneralSkill::where('user_id', auth()->id())
+            ->get();
+
+        return GeneralSkillResource::collection($skills);
     }
 
     /**
@@ -48,24 +42,21 @@ class GeneralSkillController extends Controller
             'icon'              => 'nullable|string|max:255',
             'proficiency_level' => 'nullable|in:Beginner,Intermediate,Advanced,Expert',
             'competencies'      => 'nullable|array',
-            'competencies.*'    => 'integer|exists:competencies,id',
+            'competencies.*'    => 'string',
         ]);
 
         $skill = GeneralSkill::create([
-            'user_id' => auth()->id(),
+            'user_id'           => auth()->id(),
             'name'              => $validated['name'],
             'icon'              => $validated['icon'] ?? null,
             'proficiency_level' => $validated['proficiency_level'] ?? null,
+            'competencies'      => $validated['competencies'] ?? null,
         ]);
-
-        if (!empty($validated['competencies'])) {
-            $skill->competencies()->sync($validated['competencies']);
-        }
 
         return response()->json([
             'success' => true,
             'message' => 'Skill created successfully.',
-            'data'    => $skill->load('competencies'),
+            'data'    => $skill,
         ], 201);
     }
 
@@ -85,23 +76,20 @@ class GeneralSkillController extends Controller
             'icon'              => 'nullable|string|max:255',
             'proficiency_level' => 'nullable|in:Beginner,Intermediate,Advanced,Expert',
             'competencies'      => 'nullable|array',
-            'competencies.*'    => 'integer|exists:competencies,id',
+            'competencies.*'    => 'string',
         ]);
 
         $generalSkill->update([
             'name'              => $validated['name'],
             'icon'              => $validated['icon'] ?? null,
             'proficiency_level' => $validated['proficiency_level'] ?? null,
+            'competencies'      => $validated['competencies'] ?? null,
         ]);
-
-        if (isset($validated['competencies'])) {
-            $generalSkill->competencies()->sync($validated['competencies']);
-        }
 
         return response()->json([
             'success' => true,
             'message' => 'Skill updated successfully.',
-            'data'    => $generalSkill->load('competencies'),
+            'data'    => $generalSkill,
         ], 200);
     }
 

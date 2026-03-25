@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');                  // e.g., "Soft Skills"
             $table->string('icon')->nullable();      // e.g., icon class or path
             $table->string('proficiency_level')->nullable();
+            $table->json('competencies')->nullable();
             $table->timestamps();
         });
     }

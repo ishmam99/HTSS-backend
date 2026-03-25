@@ -11,11 +11,10 @@ class GeneralSkill extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'name',
-        'icon',
-        'proficiency_level',
+    protected $guarded = ['id'];
+
+    protected $casts = [
+        'competencies' => 'array',
     ];
 
     /**
@@ -30,7 +29,7 @@ class GeneralSkill extends Model
             'competency_id'               // FK of related model
         )->withTimestamps();
     }
-    public function user(): HasMany
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
