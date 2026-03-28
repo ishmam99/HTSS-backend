@@ -101,7 +101,7 @@ class AppliedJobController extends Controller
         $appliedJob = AppliedJob::findOrFail($id);
 
         // Assume frontend sends role flag OR use auth later
-        $isHR = $request->get('is_hr', false);
+        $isHR = auth()->user()->role == 'hr-director' || auth()->user()->role == 'hr-manager' || auth()->user()->role == 'hr-executive' || auth()->user()->role == 'hr-vp' ? true : false;
 
         if ($isHR) {
             // 🧑‍💼 HR VALIDATION
