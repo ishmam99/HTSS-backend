@@ -185,6 +185,12 @@ Route::prefix('v1')->group(function () {
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
     Route::apiResource('applied-jobs', AppliedJobController::class);
+    // HR generates link
+    Route::post('/applied-jobs/{id}/generate-link', [AppliedJobController::class, 'generateAccessLink']);
+
+    // Applicant access
+    Route::get('/applicant-access/{token}', [AppliedJobController::class, 'accessByToken']);
+    Route::post('/applicant-access/{token}', [AppliedJobController::class, 'updateByToken']);
     Route::get('job-public', [JobController::class, 'publicJob']);
     Route::get('job-public/{id}', [JobController::class, 'publicJobShow']);
     Route::apiResource('positions', PositionController::class);

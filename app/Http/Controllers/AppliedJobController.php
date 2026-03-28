@@ -5,52 +5,42 @@ namespace App\Http\Controllers;
 use App\Http\Resources\AppliedJobResource;
 use App\Models\AppliedJob;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class AppliedJobController extends Controller
 {
     /**
-     * Display a listing of applied jobs.
-     *
-     * @return \Illuminate\Http\Response
+     * List applied jobs (HR only ideally)
      */
     public function index(Request $request)
     {
         $appliedJobs = AppliedJob::with(['job', 'software', 'industries']);
 
-        if ($request->has('job_status') && $request->job_status == 'not_null') {
+        if ($request->job_status === 'not_null') {
             $appliedJobs->whereNotNull('job_id');
-        } elseif ($request->has('job_status') && $request->job_status == 'null') {
+        } elseif ($request->job_status === 'null') {
             $appliedJobs->whereNull('job_id');
         }
 
         if ($request->has('status')) {
-            $appliedJobs->where('status' , $request->status);
+            $appliedJobs->where('status', $request->status);
         }
-        $appliedJobs = $appliedJobs->get();
 
-        // Return the collection of AppliedJob resources
-        return AppliedJobResource::collection($appliedJobs);
+        return AppliedJobResource::collection($appliedJobs->latest()->get());
     }
 
     /**
-     * Display the specified applied job.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Show single
      */
     public function show($id)
     {
-        // Retrieve a specific applied job with relationships
         $appliedJob = AppliedJob::with(['job', 'software', 'industries'])->findOrFail($id);
-
-        // Return the specific AppliedJob resource
         return new AppliedJobResource($appliedJob);
     }
 
     /**
-     * Store a newly created applied job in the database.
-     *
-     * @return \Illuminate\Http\Response
+     * STORE (Public Applicant)
      */
     public function store(Request $request)
     {
@@ -59,108 +49,204 @@ class AppliedJobController extends Controller
             'email' => 'nullable|email|max:255',
             'contact' => 'nullable|string|max:20',
             'emergency_contact' => 'nullable|string|max:20',
-            'system' => 'nullable|string|max:255',
-            'softwares' => 'nullable|string|max:255',
-            'industry' => 'nullable|string|max:255',
+
             'highest_education' => 'nullable|string|max:255',
             'university' => 'nullable|string|max:255',
+
             'resume' => 'nullable|file|mimes:pdf|max:10240',
+            'link' => 'nullable|string|max:255',
+
+            // references (applicant allowed)
+            'reference_one_name' => 'nullable|string|max:255',
+            'reference_one_number' => 'nullable|string|max:20',
+            'reference_one_designation' => 'nullable|string|max:255',
+            'reference_one_email' => 'nullable|email|max:255',
+
+            'reference_two_name' => 'nullable|string|max:255',
+            'reference_two_number' => 'nullable|string|max:20',
+            'reference_two_designation' => 'nullable|string|max:255',
+            'reference_two_email' => 'nullable|email|max:255',
+
+            // signature
+            'signature' => 'nullable|file|mimes:png,jpg,jpeg|max:5120',
+
             'job_id' => 'nullable|exists:job_offers,id',
-            'software_id' => 'nullable|exists:softwares,id',
-            'industry_id' => 'nullable|exists:industries,id',
         ]);
+
+        // File uploads
         if ($request->hasFile('resume')) {
             $validated['resume'] = $request->file('resume')->store('resume', 'public');
         }
+
+        if ($request->hasFile('signature')) {
+            $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+            $validated['signature_uploaded'] = true;
+        }
+
+        // Default flags
+        $validated['terms_accepted'] = true;
+
         AppliedJob::create($validated);
+
         return response()->json([
-            'message' => 'Applied job created successfully',
+            'message' => 'Application submitted successfully',
         ], 201);
     }
+
     /**
-     * Update the specified applied job in the database.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * UPDATE (HR + Applicant partial)
      */
     public function update(Request $request, $id)
     {
-        // Validate incoming request data
-        $request->validate([
-            'full_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'contact' => 'nullable|string|max:20',
-            'emergency_contact' => 'nullable|string|max:20',
-            'system' => 'nullable|string|max:255',
-            'highest_education' => 'nullable|string|max:255',
-            'university' => 'nullable|string|max:255',
-            'resume' => 'nullable|file|mimes:pdf|max:10240',
-            'job_id' => 'nullable|exists:job_offers,id',
-            'software_id' => 'nullable|exists:softwares,id',
-            'industry_id' => 'nullable|exists:industries,id',
-        ]);
-
-        // Find the applied job by ID
         $appliedJob = AppliedJob::findOrFail($id);
 
-        // Check if a new PDF resume has been uploaded and update
-        if ($request->hasFile('resume')) {
-            $pdfPath = $request->file('resume')->store('resume');
-            $appliedJob->resume = $pdfPath;
+        // Assume frontend sends role flag OR use auth later
+        $isHR = $request->get('is_hr', false);
+
+        if ($isHR) {
+            // 🧑‍💼 HR VALIDATION
+            $validated = $request->validate([
+                'technical_skills' => 'nullable|integer|min:1|max:10',
+                'communication' => 'nullable|integer|min:1|max:10',
+                'cultural_fit' => 'nullable|integer|min:1|max:10',
+                'problem_solving' => 'nullable|integer|min:1|max:10',
+
+                'overall_comment' => 'nullable|string',
+                'recommendation' => 'nullable|in:hire,no_hire,hold',
+
+                'status' => 'nullable|integer',
+
+                'reference_checked' => 'nullable|boolean',
+                'background_verified' => 'nullable|boolean',
+                'documents_verified' => 'nullable|boolean',
+
+                'expected_salary' => 'nullable|numeric|min:0',
+            ]);
+
+        } else {
+            // 👤 APPLICANT UPDATE (LIMITED)
+            $validated = $request->validate([
+                'contact' => 'nullable|string|max:20',
+                'address' => 'nullable|string',
+
+                'reference_one_name' => 'nullable|string|max:255',
+                'reference_one_number' => 'nullable|string|max:20',
+                'reference_one_designation' => 'nullable|string|max:255',
+                'reference_one_email' => 'nullable|email|max:255',
+
+                'reference_two_name' => 'nullable|string|max:255',
+                'reference_two_number' => 'nullable|string|max:20',
+                'reference_two_designation' => 'nullable|string|max:255',
+                'reference_two_email' => 'nullable|email|max:255',
+            ]);
         }
 
-        // Update the applied job data
-        $appliedJob->update([
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'contact' => $request->contact,
-            'emergency_contact' => $request->emergency_contact,
-            'system' => $request->system,
-            'softwares' => $request->softwares,
-            'industry' => $request->industry,
-            'highest_education' => $request->highest_education,
-            'university' => $request->university,
-            'job_id' => $request->job_id,
-            'software_id' => $request->software_id,
-            'industry_id' => $request->industry_id,
-        ]);
+        // Resume update
+        if ($request->hasFile('resume')) {
+            $validated['resume'] = $request->file('resume')->store('resume', 'public');
+        }
 
-        // Return the updated AppliedJob resource
+        // Signature update
+        if ($request->hasFile('signature')) {
+            $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+            $validated['signature_uploaded'] = true;
+        }
+
+        $appliedJob->update($validated);
+
         return new AppliedJobResource($appliedJob);
     }
 
-    /**
-     * Remove the specified applied job from the database.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+   public function generateAccessLink($id)
+{
+    $appliedJob = AppliedJob::findOrFail($id);
+
+    $token = Str::random(64);
+
+    $appliedJob->update([
+        'access_token' => $token,
+        'access_token_expires_at' => Carbon::now()->addDays(3), // 3 days validity
+    ]);
+
+    $link = url("/applicant-access/{$token}");
+
+    return response()->json([
+        'link' => $link,
+        'expires_at' => $appliedJob->access_token_expires_at
+    ]);
+}
     public function destroy($id)
     {
+        AppliedJob::findOrFail($id)->delete();
 
-
-        // Find the applied job by ID
-        $appliedJob = AppliedJob::findOrFail($id);
-
-        // Delete the applied job record
-        $appliedJob->delete();
-
-        // Return a success message
-        return response()->json(['message' => 'Applied job deleted successfully.']);
+        return response()->json([
+            'message' => 'Deleted successfully'
+        ]);
     }
 
-    public function statusChange(Request $request ,$id){
-
+    /**
+     * HR Status Change Only
+     */
+    public function statusChange(Request $request, $id)
+    {
         $request->validate([
             'status' => 'required|integer',
         ]);
 
         $appliedJob = AppliedJob::findOrFail($id);
 
-        // Delete the applied job record
         $appliedJob->update([
-            'status' =>$request->status
+            'status' => $request->status
         ]);
-        return response()->json(['message' => 'Applied job status successfully.']);
+
+        return response()->json([
+            'message' => 'Status updated successfully'
+        ]);
     }
+    public function accessByToken($token)
+{
+    $appliedJob = AppliedJob::where('access_token', $token)
+        ->where('access_token_expires_at', '>', now())
+        ->first();
+
+    if (!$appliedJob) {
+        return response()->json([
+            'message' => 'Invalid or expired link'
+        ], 403);
+    }
+
+    return new AppliedJobResource($appliedJob);
+}
+public function updateByToken(Request $request, $token)
+{
+    $appliedJob = AppliedJob::where('access_token', $token)
+        ->where('access_token_expires_at', '>', now())
+        ->firstOrFail();
+
+    $validated = $request->validate([
+        'contact' => 'nullable|string|max:20',
+        'address' => 'nullable|string',
+
+        'reference_one_name' => 'nullable|string|max:255',
+        'reference_one_number' => 'nullable|string|max:20',
+        'reference_one_designation' => 'nullable|string|max:255',
+        'reference_one_email' => 'nullable|email|max:255',
+
+        'reference_two_name' => 'nullable|string|max:255',
+        'reference_two_number' => 'nullable|string|max:20',
+        'reference_two_designation' => 'nullable|string|max:255',
+        'reference_two_email' => 'nullable|email|max:255',
+    ]);
+
+    if ($request->hasFile('signature')) {
+        $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+        $validated['signature_uploaded'] = true;
+    }
+
+    $appliedJob->update($validated);
+
+    return response()->json([
+        'message' => 'Updated successfully'
+    ]);
+}
 }
