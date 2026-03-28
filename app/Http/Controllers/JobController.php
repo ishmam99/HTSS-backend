@@ -38,9 +38,22 @@ class JobController extends Controller
         ]);
     }
 
-    public function publicJobShow(JobOffer $jobs_offer)
+    public function publicJobShow(Request $request, JobOffer $job_offer)
     {
-        return new JobResource($jobs_offer->load('department'));
+        $query = JobOffer::advancedQuery($request);
+        $filteredJob = $query->where('id', $job_offer->id)->first();
+        
+        if (!$filteredJob) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Job offer not found or does not match filters',
+            ], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => $filteredJob,
+        ]);
     }
 
     public function show(JobOffer $jobs_offer)
