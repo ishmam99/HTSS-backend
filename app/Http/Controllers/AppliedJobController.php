@@ -122,7 +122,6 @@ class AppliedJobController extends Controller
 
                 'expected_salary' => 'nullable|numeric|min:0',
             ]);
-
         } else {
             // 👤 APPLICANT UPDATE (LIMITED)
             $validated = $request->validate([
@@ -157,24 +156,24 @@ class AppliedJobController extends Controller
         return new AppliedJobResource($appliedJob);
     }
 
-   public function generateAccessLink($id)
-{
-    $appliedJob = AppliedJob::findOrFail($id);
+    public function generateAccessLink($id)
+    {
+        $appliedJob = AppliedJob::findOrFail($id);
 
-    $token = Str::random(64);
+        $token = Str::random(64);
 
-    $appliedJob->update([
-        'access_token' => $token,
-        'access_token_expires_at' => Carbon::now()->addDays(3), // 3 days validity
-    ]);
+        $appliedJob->update([
+            'access_token' => $token,
+            'access_token_expires_at' => Carbon::now()->addDays(3), // 3 days validity
+        ]);
 
-    $link = url("/applicant-access/{$token}");
+        $link = url("/applicant-access/{$token}");
 
-    return response()->json([
-        'link' => $link,
-        'expires_at' => $appliedJob->access_token_expires_at
-    ]);
-}
+        return response()->json([
+            'link' => $link,
+            'expires_at' => $appliedJob->access_token_expires_at
+        ]);
+    }
     public function destroy($id)
     {
         AppliedJob::findOrFail($id)->delete();
@@ -204,49 +203,61 @@ class AppliedJobController extends Controller
         ]);
     }
     public function accessByToken($token)
-{
-    $appliedJob = AppliedJob::where('access_token', $token)
-        ->where('access_token_expires_at', '>', now())
-        ->first();
+    {
+        $appliedJob = AppliedJob::where('access_token', $token)
+            ->where('access_token_expires_at', '>', now())
+            ->first();
 
-    if (!$appliedJob) {
+        if (!$appliedJob) {
+            return response()->json([
+                'message' => 'Invalid or expired link'
+            ], 403);
+        }
+
+        return new AppliedJobResource($appliedJob);
+    }
+    public function updateByToken(Request $request, $token)
+    {
+        $appliedJob = AppliedJob::where('access_token', $token)
+            ->where('access_token_expires_at', '>', now())
+            ->firstOrFail();
+        $validated = $request->validate([
+            'contact' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'marital_status' => 'nullable|string|max:50',
+            'spouse_name' => 'nullable|string|max:255',
+            'spouse_number' => 'nullable|string|max:20',
+            'parent_name' => 'nullable|string|max:255',
+            'parent_relation' => 'nullable|string|max:50',
+            'parent_phone_number' => 'nullable|string|max:20',
+            'siblings_name' => 'nullable|string|max:255',
+            'siblings_relation' => 'nullable|string|max:50',
+            'siblings_phone_number' => 'nullable|string|max:20',
+            'mother_name' => 'nullable|string|max:255',
+            'father_name' => 'nullable|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'company_phone' => 'nullable|string|max:20',
+            'company_email' => 'nullable|email|max:255',
+            'experience_years' => 'nullable|numeric|min:0',
+            'reference_one_name' => 'nullable|string|max:255',
+            'reference_one_number' => 'nullable|string|max:20',
+            'reference_one_designation' => 'nullable|string|max:255',
+            'reference_one_email' => 'nullable|email|max:255',
+            'reference_two_name' => 'nullable|string|max:255',
+            'reference_two_number' => 'nullable|string|max:20',
+            'reference_two_designation' => 'nullable|string|max:255',
+            'reference_two_email' => 'nullable|email|max:255',
+        ]);
+
+        if ($request->hasFile('signature')) {
+            $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+            $validated['signature_uploaded'] = true;
+        }
+
+        $appliedJob->update($validated);
+
         return response()->json([
-            'message' => 'Invalid or expired link'
-        ], 403);
+            'message' => 'Updated successfully'
+        ]);
     }
-
-    return new AppliedJobResource($appliedJob);
-}
-public function updateByToken(Request $request, $token)
-{
-    $appliedJob = AppliedJob::where('access_token', $token)
-        ->where('access_token_expires_at', '>', now())
-        ->firstOrFail();
-
-    $validated = $request->validate([
-        'contact' => 'nullable|string|max:20',
-        'address' => 'nullable|string',
-
-        'reference_one_name' => 'nullable|string|max:255',
-        'reference_one_number' => 'nullable|string|max:20',
-        'reference_one_designation' => 'nullable|string|max:255',
-        'reference_one_email' => 'nullable|email|max:255',
-
-        'reference_two_name' => 'nullable|string|max:255',
-        'reference_two_number' => 'nullable|string|max:20',
-        'reference_two_designation' => 'nullable|string|max:255',
-        'reference_two_email' => 'nullable|email|max:255',
-    ]);
-
-    if ($request->hasFile('signature')) {
-        $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
-        $validated['signature_uploaded'] = true;
-    }
-
-    $appliedJob->update($validated);
-
-    return response()->json([
-        'message' => 'Updated successfully'
-    ]);
-}
 }
