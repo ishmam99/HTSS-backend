@@ -166,6 +166,8 @@ Route::prefix('v1')->group(function () {
         Route::resource('general-skills', GeneralSkillController::class);
         Route::get('/general-skill-by-user', [GeneralSkillController::class, 'getGeneralSkillByUser']);
         Route::resource('competencies', CompetencyController::class);
+         Route::apiResource('applied-jobs', AppliedJobController::class);
+          Route::post('/applied-jobs/{id}/generate-link', [AppliedJobController::class, 'generateAccessLink']);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -184,9 +186,9 @@ Route::prefix('v1')->group(function () {
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
-    Route::apiResource('applied-jobs', AppliedJobController::class);
+    Route::post('applied-jobs',[AppliedJobController::class, 'store']);
     // HR generates link
-    Route::post('/applied-jobs/{id}/generate-link', [AppliedJobController::class, 'generateAccessLink']);
+   
 
     // Applicant access
     Route::get('/applicant-access/{token}', [AppliedJobController::class, 'accessByToken']);
