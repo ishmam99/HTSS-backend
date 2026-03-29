@@ -218,5 +218,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('user-experiences', UserExperienceController::class)->middleware('auth:sanctum');
     Route::apiResource('professional-references', ProfessionalReferenceController::class)->middleware('auth:sanctum');
     Route::apiResource('professional-summary', ProfessionSummaryController::class)->middleware('auth:sanctum');
-
+    Route::post('/send-email', [EndUserController::class, 'emailSend']);
 });
