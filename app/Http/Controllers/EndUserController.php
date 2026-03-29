@@ -242,7 +242,14 @@ class EndUserController extends Controller
             Config::set('mail.from.address', $request->from);
             Config::set('mail.from.name','Hi-Tech Softsys');
 
-            Mail::to($request->to)->send(new DynamicMail($request->all()));
+            // Mail::to($request->to)->send(new DynamicMail($request->all()));
+            try {
+                Mail::to($request->to)->send(new DynamicMail($request->all()));
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => $e->getMessage()
+                ], 500);
+            }
 
             return response()->json([
                 'message' => 'Email sent successfully'
