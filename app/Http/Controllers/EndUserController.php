@@ -246,11 +246,12 @@ Config::set('mail.mailers.smtp.encryption', 'tls');
             Config::set('mail.from.address', $request->from);
             Config::set('mail.from.name',$request->from);
                     try {
-                    Mail::raw($request->body, function ($message) use ($request) {
+                 $dsd =   Mail::raw($request->body, function ($message) use ($request) {
                         $message->to($request->to)
                                 ->subject($request->subject)
                                 ->from($request->from, $request->from);
                     });
+                    dd($dsd);
                     return response()->json(['message' => 'Email sent successfully']);
                 } catch (\Exception $e) {
                     return response()->json(['error' => $e->getMessage()], 500);
