@@ -75,6 +75,12 @@ class AppliedJobResource extends JsonResource
             'access_token' => $this->access_token,
             'access_token_expires_at' => $this->access_token_expires_at,
 
+            // Company Details
+            'company_name' => $this->company_name,
+            'company_email' => $this->company_email,
+            'company_phone' => $this->company_phone,
+            'experience_years' => $this->experience_years,
+
             // Status & timestamps
             'status' => $this->status,
             'created_at' => $this->created_at,
