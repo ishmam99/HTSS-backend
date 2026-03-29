@@ -234,13 +234,17 @@ class EndUserController extends Controller
             // 🔥 Dynamic SMTP config
             Config::set('mail.mailers.smtp.transport', 'smtp');
             Config::set('mail.mailers.smtp.host', 'smtp.bizmail.yahoo.com');
-            Config::set('mail.mailers.smtp.port', 465);
-            Config::set('mail.mailers.smtp.encryption','ssl');
+
+            Config::set('mail.mailers.smtp.port', 587);
+Config::set('mail.mailers.smtp.encryption', 'tls');
+
+            // Config::set('mail.mailers.smtp.port', 465);
+            // Config::set('mail.mailers.smtp.encryption','ssl');
             Config::set('mail.mailers.smtp.username', $request->from);
             Config::set('mail.mailers.smtp.password', 'ufxxkjnllauezyba');
 
             Config::set('mail.from.address', $request->from);
-            Config::set('mail.from.name','Hi-Tech Softsys');
+            Config::set('mail.from.name',$request->from);
 
             // Mail::to($request->to)->send(new DynamicMail($request->all()));
             try {
