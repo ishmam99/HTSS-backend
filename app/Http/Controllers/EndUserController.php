@@ -220,18 +220,31 @@ class EndUserController extends Controller
                 'subject' => 'required|string',
                 'body' => 'required|string',
             ]);
+            $fromEmail = 'test@hitechsoftsys.net'; // real Yahoo BizMail account
+$fromName  = 'Hi-Tech Softsys';
+$appPassword = 'ufxxkjnllauezyba'; // correct App Password
+                Config::set('mail.mailers.smtp.transport', 'smtp');
+        Config::set('mail.mailers.smtp.host', 'smtp.bizmail.yahoo.com');
+        Config::set('mail.mailers.smtp.port', 587);
+        Config::set('mail.mailers.smtp.encryption', 'tls');
+        Config::set('mail.mailers.smtp.username', $fromEmail);
+        Config::set('mail.mailers.smtp.password', $appPassword);
 
-            // $emailAccount = auth()->user()->emailAccount;
+        Config::set('mail.from.address', $fromEmail);
+        Config::set('mail.from.name', $fromName);
 
-            // if (!$emailAccount) {
-            //     return response()->json(['message' => 'No email configured'], 400);
-            // }
 
-        // $table->string('smtp_host')->default('smtp.bizmail.yahoo.com');
-        // $table->integer('smtp_port')->default(465);
-        // $table->string('encryption')->default('ssl');
+        try {
+    Mail::raw($request->body, function ($message) use ($request, $fromEmail, $fromName) {
+        $message->to($request->to)
+                ->subject($request->subject)
+                ->from($fromEmail, $fromName);
+    });
 
-            // 🔥 Dynamic SMTP config
+    return response()->json(['message' => 'Email sent successfully']);
+} catch (\Exception $e) {
+    return response()->json(['error' => $e->getMessage()], 500);
+}
             Config::set('mail.mailers.smtp.transport', 'smtp');
             Config::set('mail.mailers.smtp.host', 'smtp.bizmail.yahoo.com');
 
