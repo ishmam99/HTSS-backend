@@ -235,12 +235,12 @@ $appPassword = 'ufxxkjnllauezyba'; // correct App Password
 
 
         try {
-    Mail::raw($request->body, function ($message) use ($request, $fromEmail, $fromName) {
+  $ffd =  Mail::raw($request->body, function ($message) use ($request, $fromEmail, $fromName) {
         $message->to($request->to)
                 ->subject($request->subject)
                 ->from($fromEmail, $fromName);
     });
-
+        dd($ffd);
     return response()->json(['message' => 'Email sent successfully']);
 } catch (\Exception $e) {
     return response()->json(['error' => $e->getMessage()], 500);
