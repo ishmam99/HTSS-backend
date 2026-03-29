@@ -15,7 +15,7 @@ class AppliedJobController extends Controller
      */
     public function index(Request $request)
     {
-        $appliedJobs = AppliedJob::with(['job', 'software', 'industries']);
+        $appliedJobs = AppliedJob::with(['job', 'software', 'industry']);
 
         if ($request->job_status === 'not_null') {
             $appliedJobs->whereNotNull('job_id');
@@ -35,7 +35,7 @@ class AppliedJobController extends Controller
      */
     public function show($id)
     {
-        $appliedJob = AppliedJob::with(['job', 'software', 'industries'])->findOrFail($id);
+        $appliedJob = AppliedJob::with(['job', 'software', 'industry'])->findOrFail($id);
         return new AppliedJobResource($appliedJob);
     }
 
@@ -45,45 +45,46 @@ class AppliedJobController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'full_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'contact' => 'nullable|string|max:20',
-            'emergency_contact' => 'nullable|string|max:20',
+            'full_name'                  => 'nullable|string|max:255',
+            'email'                      => 'nullable|email|max:255',
+            'contact'                    => 'nullable|string|max:20',
+            'emergency_contact'          => 'nullable|string|max:20',
 
-            'highest_education' => 'nullable|string|max:255',
-            'university' => 'nullable|string|max:255',
+            'highest_education'          => 'nullable|string|max:255',
+            'university'                 => 'nullable|string|max:255',
 
-            'resume' => 'nullable|file|mimes:pdf|max:10240',
-            'link' => 'nullable|string|max:255',
+            'resume'                     => 'nullable|file|mimes:pdf|max:10240',
+            'link'                       => 'nullable|string|max:255',
 
-            // references (applicant allowed)
-            'reference_one_name' => 'nullable|string|max:255',
-            'reference_one_number' => 'nullable|string|max:20',
-            'reference_one_designation' => 'nullable|string|max:255',
-            'reference_one_email' => 'nullable|email|max:255',
+            // References
+            'reference_one_name'         => 'nullable|string|max:255',
+            'reference_one_number'       => 'nullable|string|max:20',
+            'reference_one_designation'  => 'nullable|string|max:255',
+            'reference_one_email'        => 'nullable|email|max:255',
 
-            'reference_two_name' => 'nullable|string|max:255',
-            'reference_two_number' => 'nullable|string|max:20',
-            'reference_two_designation' => 'nullable|string|max:255',
-            'reference_two_email' => 'nullable|email|max:255',
+            'reference_two_name'         => 'nullable|string|max:255',
+            'reference_two_number'       => 'nullable|string|max:20',
+            'reference_two_designation'  => 'nullable|string|max:255',
+            'reference_two_email'        => 'nullable|email|max:255',
 
-            // signature
-            'signature' => 'nullable|file|mimes:png,jpg,jpeg|max:5120',
+            // Signature
+            'signature'                  => 'nullable|file|mimes:png,jpg,jpeg|max:5120',
 
-            'job_id' => 'nullable|exists:job_offers,id',
+            // Relations
+            'job_id'                     => 'nullable|exists:job_offers,id',
+            'software_id'                => 'nullable|exists:softwares,id',
+            'industry_id'                => 'nullable|exists:industries,id',
         ]);
 
-        // File uploads
         if ($request->hasFile('resume')) {
             $validated['resume'] = $request->file('resume')->store('resume', 'public');
         }
 
         if ($request->hasFile('signature')) {
-            $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+            $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
             $validated['signature_uploaded'] = true;
         }
 
-        // Default flags
         $validated['terms_accepted'] = true;
 
         AppliedJob::create($validated);
@@ -100,62 +101,78 @@ class AppliedJobController extends Controller
     {
         $appliedJob = AppliedJob::findOrFail($id);
 
-        // Assume frontend sends role flag OR use auth later
-        $isHR = auth()->user()->role == 'hr-director' || auth()->user()->role == 'hr-manager' || auth()->user()->role == 'hr-executive' || auth()->user()->role == 'hr-vp' ? true : false;
+        $user  = auth()->user();
+        $isHR  = in_array($user->role, ['hr-director', 'hr-manager', 'hr-executive', 'hr-vp']);
 
         if ($isHR) {
-            // 🧑‍💼 HR VALIDATION
             $validated = $request->validate([
-                'technical_skills' => 'nullable|integer|min:1|max:10',
-                'communication' => 'nullable|integer|min:1|max:10',
-                'cultural_fit' => 'nullable|integer|min:1|max:10',
-                'problem_solving' => 'nullable|integer|min:1|max:10',
+                // Scoring
+                'technical_skills'    => 'nullable|integer|min:1|max:10',
+                'communication'       => 'nullable|integer|min:1|max:10',
+                'cultural_fit'        => 'nullable|integer|min:1|max:10',
+                'problem_solving'     => 'nullable|integer|min:1|max:10',
 
-                'overall_comment' => 'nullable|string',
-                'recommendation' => 'nullable|in:hire,no_hire,hold',
+                'overall_comment'     => 'nullable|string',
+                'recommendation'      => 'nullable|in:hire,no_hire,hold',
 
-                'status' => 'nullable|integer',
+                'status'              => 'nullable|integer',
 
-                'reference_checked' => 'nullable|boolean',
+                // Verification flags
+                'reference_checked'   => 'nullable|boolean',
                 'background_verified' => 'nullable|boolean',
-                'documents_verified' => 'nullable|boolean',
+                'documents_verified'  => 'nullable|boolean',
 
-                'expected_salary' => 'nullable|numeric|min:0',
+                // Salary
+                'expected_salary'     => 'nullable|numeric|min:0',
+                'negotiated_salary'   => 'nullable|numeric|min:0',
+
+                // Offer letter fields
+                'responsibilities'    => 'nullable|string',
+                'benefits'            => 'nullable|string',
+                'employment_terms'    => 'nullable|string',
+                'terms_clauses'       => 'nullable|string',
+                'joining_date'        => 'nullable|date',
+                'offering_date'       => 'nullable|date',
+                'completed_at'        => 'nullable|date',
+
+                // Relations
+                'software_id'         => 'nullable|exists:softwares,id',
+                'industry_id'         => 'nullable|exists:industries,id',
             ]);
         } else {
-            // 👤 APPLICANT UPDATE (LIMITED)
             $validated = $request->validate([
-                'contact' => 'nullable|string|max:20',
-                'address' => 'nullable|string',
+                'contact'                    => 'nullable|string|max:20',
+                'address'                    => 'nullable|string',
 
-                'reference_one_name' => 'nullable|string|max:255',
-                'reference_one_number' => 'nullable|string|max:20',
-                'reference_one_designation' => 'nullable|string|max:255',
-                'reference_one_email' => 'nullable|email|max:255',
+                'reference_one_name'         => 'nullable|string|max:255',
+                'reference_one_number'       => 'nullable|string|max:20',
+                'reference_one_designation'  => 'nullable|string|max:255',
+                'reference_one_email'        => 'nullable|email|max:255',
 
-                'reference_two_name' => 'nullable|string|max:255',
-                'reference_two_number' => 'nullable|string|max:20',
-                'reference_two_designation' => 'nullable|string|max:255',
-                'reference_two_email' => 'nullable|email|max:255',
+                'reference_two_name'         => 'nullable|string|max:255',
+                'reference_two_number'       => 'nullable|string|max:20',
+                'reference_two_designation'  => 'nullable|string|max:255',
+                'reference_two_email'        => 'nullable|email|max:255',
             ]);
         }
 
-        // Resume update
         if ($request->hasFile('resume')) {
             $validated['resume'] = $request->file('resume')->store('resume', 'public');
         }
 
-        // Signature update
         if ($request->hasFile('signature')) {
-            $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+            $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
             $validated['signature_uploaded'] = true;
         }
 
         $appliedJob->update($validated);
 
-        return new AppliedJobResource($appliedJob);
+        return new AppliedJobResource($appliedJob->fresh(['job', 'software', 'industry']));
     }
 
+    /**
+     * Generate a time-limited access link for the applicant
+     */
     public function generateAccessLink($id)
     {
         $appliedJob = AppliedJob::findOrFail($id);
@@ -163,24 +180,24 @@ class AppliedJobController extends Controller
         $token = Str::random(64);
 
         $appliedJob->update([
-            'access_token' => $token,
-            'access_token_expires_at' => Carbon::now()->addDays(3), // 3 days validity
+            'access_token'            => $token,
+            'access_token_expires_at' => Carbon::now()->addDays(3),
         ]);
-
-        $link = url("/applicant-access/{$token}");
 
         return response()->json([
-            'link' => $link,
-            'expires_at' => $appliedJob->access_token_expires_at
+            'link'       => url("/applicant-access/{$token}"),
+            'expires_at' => $appliedJob->access_token_expires_at,
         ]);
     }
+
+    /**
+     * Delete
+     */
     public function destroy($id)
     {
         AppliedJob::findOrFail($id)->delete();
 
-        return response()->json([
-            'message' => 'Deleted successfully'
-        ]);
+        return response()->json(['message' => 'Deleted successfully']);
     }
 
     /**
@@ -192,73 +209,72 @@ class AppliedJobController extends Controller
             'status' => 'required|integer',
         ]);
 
-        $appliedJob = AppliedJob::findOrFail($id);
+        AppliedJob::findOrFail($id)->update(['status' => $request->status]);
 
-        $appliedJob->update([
-            'status' => $request->status
-        ]);
-
-        return response()->json([
-            'message' => 'Status updated successfully'
-        ]);
+        return response()->json(['message' => 'Status updated successfully']);
     }
+
+    /**
+     * Public token-based read
+     */
     public function accessByToken($token)
     {
         $appliedJob = AppliedJob::where('access_token', $token)
-            ->with('job')
+            ->with(['job', 'software', 'industry'])
             ->where('access_token_expires_at', '>', now())
             ->first();
 
         if (!$appliedJob) {
-            return response()->json([
-                'message' => 'Invalid or expired link'
-            ], 403);
+            return response()->json(['message' => 'Invalid or expired link'], 403);
         }
 
         return new AppliedJobResource($appliedJob);
     }
+
+    /**
+     * Applicant self-update via token
+     */
     public function updateByToken(Request $request, $token)
     {
         $appliedJob = AppliedJob::where('access_token', $token)
             ->where('access_token_expires_at', '>', now())
             ->firstOrFail();
+
         $validated = $request->validate([
-            'contact' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'marital_status' => 'nullable|string|max:50',
-            'spouse_name' => 'nullable|string|max:255',
-            'spouse_number' => 'nullable|string|max:20',
-            'parent_name' => 'nullable|string|max:255',
-            'parent_relation' => 'nullable|string|max:50',
-            'parent_phone_number' => 'nullable|string|max:20',
-            'siblings_name' => 'nullable|string|max:255',
-            'siblings_relation' => 'nullable|string|max:50',
-            'siblings_phone_number' => 'nullable|string|max:20',
-            'mother_name' => 'nullable|string|max:255',
-            'father_name' => 'nullable|string|max:255',
-            'company_name' => 'nullable|string|max:255',
-            'company_phone' => 'nullable|string|max:20',
-            'company_email' => 'nullable|email|max:255',
-            'experience_years' => 'nullable|numeric|min:0',
-            'reference_one_name' => 'nullable|string|max:255',
-            'reference_one_number' => 'nullable|string|max:20',
-            'reference_one_designation' => 'nullable|string|max:255',
-            'reference_one_email' => 'nullable|email|max:255',
-            'reference_two_name' => 'nullable|string|max:255',
-            'reference_two_number' => 'nullable|string|max:20',
-            'reference_two_designation' => 'nullable|string|max:255',
-            'reference_two_email' => 'nullable|email|max:255',
+            'contact'                    => 'nullable|string|max:20',
+            'address'                    => 'nullable|string',
+            'marital_status'             => 'nullable|string|max:50',
+            'spouse_name'                => 'nullable|string|max:255',
+            'spouse_number'              => 'nullable|string|max:20',
+            'parent_name'                => 'nullable|string|max:255',
+            'parent_relation'            => 'nullable|string|max:50',
+            'parent_phone_number'        => 'nullable|string|max:20',
+            'siblings_name'              => 'nullable|string|max:255',
+            'siblings_relation'          => 'nullable|string|max:50',
+            'siblings_phone_number'      => 'nullable|string|max:20',
+            'mother_name'                => 'nullable|string|max:255',
+            'father_name'                => 'nullable|string|max:255',
+            'company_name'               => 'nullable|string|max:255',
+            'company_phone'              => 'nullable|string|max:20',
+            'company_email'              => 'nullable|email|max:255',
+            'experience_years'           => 'nullable|integer|min:0',  // integer per schema
+            'reference_one_name'         => 'nullable|string|max:255',
+            'reference_one_number'       => 'nullable|string|max:20',
+            'reference_one_designation'  => 'nullable|string|max:255',
+            'reference_one_email'        => 'nullable|email|max:255',
+            'reference_two_name'         => 'nullable|string|max:255',
+            'reference_two_number'       => 'nullable|string|max:20',
+            'reference_two_designation'  => 'nullable|string|max:255',
+            'reference_two_email'        => 'nullable|email|max:255',
         ]);
 
         if ($request->hasFile('signature')) {
-            $validated['signature_path'] = $request->file('signature')->store('signatures', 'public');
+            $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
             $validated['signature_uploaded'] = true;
         }
 
         $appliedJob->update($validated);
 
-        return response()->json([
-            'message' => 'Updated successfully'
-        ]);
+        return response()->json(['message' => 'Updated successfully']);
     }
 }

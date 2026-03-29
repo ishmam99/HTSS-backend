@@ -55,6 +55,7 @@ return new class extends Migration
 
             // Salary
             $table->decimal('expected_salary', 10, 2)->nullable();
+            $table->decimal('negotiated_salary', 10, 2)->nullable();
 
             // Evaluation (HR Scoring)
             $table->tinyInteger('technical_skills')->nullable(); // 1-10
@@ -86,15 +87,23 @@ return new class extends Migration
             $table->boolean('documents_verified')->default(false);
 
             // Status Tracking
-            $table->tinyInteger('status')->default(1); 
-            // 1 = applied, 2 = shortlisted, 3 = interviewed, 4 = hired, 5 = rejected
+            $table->tinyInteger('status')->default(0); 
+           
 
             // Relations
             $table->foreignId('job_id')->nullable()->constrained('job_offers')->cascadeOnDelete();
             $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->foreignId('industry_id')->nullable()->constrained('industries')->cascadeOnDelete();
+
+            $table->text('responsibilities')->nullable();
+            $table->text('benefits')->nullable();
+            $table->text('employment_terms')->nullable();
+            $table->text('terms_clauses')->nullable();
             $table->string('access_token')->nullable()->unique();
             $table->timestamp('access_token_expires_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->date('joining_date')->nullable();
+            $table->date('offering_date')->nullable();
             $table->timestamps();
         });
     }
