@@ -245,7 +245,16 @@ Config::set('mail.mailers.smtp.encryption', 'tls');
 
             Config::set('mail.from.address', $request->from);
             Config::set('mail.from.name',$request->from);
-
+                    try {
+                    Mail::raw($request->body, function ($message) use ($request) {
+                        $message->to($request->to)
+                                ->subject($request->subject)
+                                ->from($request->from, $request->from);
+                    });
+                    return response()->json(['message' => 'Email sent successfully']);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()], 500);
+                }
             // Mail::to($request->to)->send(new DynamicMail($request->all()));
             try {
              $d =   Mail::to($request->to)->send(new DynamicMail($request->all()));
