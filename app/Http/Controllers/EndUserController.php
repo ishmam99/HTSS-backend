@@ -248,7 +248,8 @@ Config::set('mail.mailers.smtp.encryption', 'tls');
 
             // Mail::to($request->to)->send(new DynamicMail($request->all()));
             try {
-                Mail::to($request->to)->send(new DynamicMail($request->all()));
+             $d =   Mail::to($request->to)->send(new DynamicMail($request->all()));
+             dd($d);
             } catch (\Exception $e) {
                 return response()->json([
                     'error' => $e->getMessage()
