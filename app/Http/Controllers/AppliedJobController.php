@@ -205,6 +205,7 @@ class AppliedJobController extends Controller
     public function accessByToken($token)
     {
         $appliedJob = AppliedJob::where('access_token', $token)
+            ->with('job')
             ->where('access_token_expires_at', '>', now())
             ->first();
 
