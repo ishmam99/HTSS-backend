@@ -17,7 +17,7 @@ class ProfessionalReferenceResource extends JsonResource
             'id'          => $this->id,
             'name'        => $this->name,
             'designation' => $this->designation,
-            'company name' => $this->company_name,
+            'company_name' => $this->company_name,
             'email'       => $this->email,
             'phone'       => $this->phone,
             'note'        => $this->note,
