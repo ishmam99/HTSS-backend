@@ -50,11 +50,11 @@ class AppliedJobResource extends JsonResource
             'link'   => $this->link,
 
             // Signature
-            'signature_uploaded' => (bool) $this->signature_uploaded,
+            'signature_uploaded' => $this->signature_uploaded,
             'signature_path'     => $this->signature_path ? Storage::url($this->signature_path) : null,
 
             // Terms
-            'terms_accepted' => (bool) $this->terms_accepted,
+            'terms_accepted' => $this->terms_accepted,
 
             // Relations (singular — belongsTo)
             'job'      => new JobResource($this->whenLoaded('job')),
@@ -84,9 +84,9 @@ class AppliedJobResource extends JsonResource
             'reference_two_email'       => $this->reference_two_email,
 
             // HR Verification Flags
-            'reference_checked'   => (bool) $this->reference_checked,
-            'background_verified' => (bool) $this->background_verified,
-            'documents_verified'  => (bool) $this->documents_verified,
+            'reference_checked'   => $this->reference_checked,
+            'background_verified' =>  $this->background_verified,
+            'documents_verified'  =>  $this->documents_verified,
 
             // Offer Letter Fields
             'responsibilities'  => $this->responsibilities,
