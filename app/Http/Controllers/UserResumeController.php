@@ -16,7 +16,6 @@ class UserResumeController extends Controller
                 'message' => 'End user not found.',
             ], 404);
         }
-
         $resumes = UserResume::with('endUser')->where('end_user_id', $user->endUser->id)->get();
         return UserResumeResource::collection($resumes);
     }
