@@ -22,7 +22,15 @@ class UserResumeController extends Controller
             'status'   => 'nullable',
         ]);
 
-        $validated['end_user_id'] = auth()->id();
+        $user = auth()->user();
+
+        if (! $user->endUser) {
+            return response()->json([
+                'message' => 'End user not found.',
+            ], 404);
+        }
+
+        $validated['end_user_id'] = $user->endUser->id;
         $resume                   = UserResume::create($validated);
         return response()->json([
             'status'  => true,
