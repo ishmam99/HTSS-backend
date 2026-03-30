@@ -58,7 +58,7 @@ class AppliedJobResource extends JsonResource
 
             // Relations (singular — belongsTo)
             'job'      => new JobResource($this->whenLoaded('job')),
-            'software' => new SoftwareResource($this->whenLoaded('software')),
+            'software' => $this->whenLoaded('software'),
             'industry' => new IndustryResource($this->whenLoaded('industry')),
 
             // Salary
