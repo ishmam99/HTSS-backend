@@ -9,7 +9,7 @@ class UserResumeController extends Controller
 {
     public function index()
     {
-        $resumes = UserResume::with('endUser')->get();
+        $resumes = UserResume::with('endUser')->where('end_user_id', auth()->id())->get();
         return UserResumeResource::collection($resumes);
     }
 
