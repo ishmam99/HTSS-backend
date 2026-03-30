@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 
 class UserResumeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $resumes = UserResume::with('endUser')->where('end_user_id', auth()->id())->get();
+        $user = auth()->user();
+
+        if (! $user->endUser) {
+            return response()->json([
+                'message' => 'End user not found.',
+            ], 404);
+        }
+        $resumes = UserResume::with('endUser')->where('end_user_id', $user->endUser->id)
+            ->when($request->status, function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->get();
         return UserResumeResource::collection($resumes);
     }
 
