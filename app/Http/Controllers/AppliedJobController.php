@@ -118,9 +118,9 @@ class AppliedJobController extends Controller
                 'status'              => 'nullable|integer',
 
                 // Verification flags
-                'reference_checked'   => 'nullable|boolean',
-                'background_verified' => 'nullable|boolean',
-                'documents_verified'  => 'nullable|boolean',
+                'reference_checked'   => 'nullable',
+                'background_verified' => 'nullable',
+                'documents_verified'  => 'nullable',
 
                 // Salary
                 'expected_salary'     => 'nullable|numeric|min:0',
