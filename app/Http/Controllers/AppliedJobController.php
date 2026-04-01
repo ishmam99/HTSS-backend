@@ -101,8 +101,8 @@ class AppliedJobController extends Controller
     {
         $appliedJob = AppliedJob::findOrFail($id);
 
-        $user  = auth()->user();
-        $isHR  = in_array($user->role, ['hr-director', 'hr-manager', 'hr-executive', 'hr-vp']);
+        $user  = auth()->user() ?? (object)['role' => null];
+        $isHR  = $user && in_array($user->role, ['hr-director', 'hr-manager', 'hr-executive', 'hr-vp']);
 
         if ($isHR) {
             $validated = $request->validate([
@@ -139,6 +139,16 @@ class AppliedJobController extends Controller
                 'software_id'         => 'nullable|exists:softwares,id',
                 'industry_id'         => 'nullable|exists:industries,id',
             ]);
+            if ($request->hasFile('resume')) {
+                $validated['resume'] = $request->file('resume')->store('resume', 'public');
+            }
+
+            if ($request->hasFile('signature')) {
+                $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
+                $validated['signature_uploaded'] = true;
+            }
+
+            $appliedJob->update($request->all() + $validated);
         } else {
             $validated = $request->validate([
                 'contact'                    => 'nullable|string|max:20',
@@ -154,18 +164,19 @@ class AppliedJobController extends Controller
                 'reference_two_designation'  => 'nullable|string|max:255',
                 'reference_two_email'        => 'nullable|email|max:255',
             ]);
+            if ($request->hasFile('resume')) {
+                $validated['resume'] = $request->file('resume')->store('resume', 'public');
+            }
+
+            if ($request->hasFile('signature')) {
+                $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
+                $validated['signature_uploaded'] = true;
+            }
+
+            $appliedJob->update($validated);
         }
 
-        if ($request->hasFile('resume')) {
-            $validated['resume'] = $request->file('resume')->store('resume', 'public');
-        }
 
-        if ($request->hasFile('signature')) {
-            $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
-            $validated['signature_uploaded'] = true;
-        }
-
-        $appliedJob->update($validated);
 
         return new AppliedJobResource($appliedJob->fresh(['job', 'software', 'industry']));
     }
