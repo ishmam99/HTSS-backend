@@ -136,9 +136,9 @@ class AppliedJobController extends Controller
                 'completed_at'        => 'nullable|date',
 
                 // Background Checks
-                'educational_background_check'      => 'nullable|boolean',
-                'professional_background_check'     => 'nullable|boolean',
-                'experience_background_check'     => 'nullable|boolean',
+                'educational_background_check'      => 'nullable',
+                'professional_background_check'     => 'nullable',
+                'experience_background_check'     => 'nullable',
                 'educational_background_check_document' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
                 'experience_background_check_document'  => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
                 'police_background_check_document'      => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
