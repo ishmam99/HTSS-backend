@@ -86,6 +86,14 @@ return new class extends Migration
             $table->boolean('background_verified')->default(false);
             $table->boolean('documents_verified')->default(false);
 
+            $table->boolean('educational_background_check')->default(false);
+            $table->boolean('professional_background_check')->default(false);
+            $table->boolean('experience_background_check')->default(false);
+            $table->string('educational_background_check_document')->nullable();
+            $table->string('experience_background_check_document')->nullable();
+            $table->string('police_background_check_document')->nullable();
+           
+
             // Status Tracking
             $table->tinyInteger('status')->default(0); 
            

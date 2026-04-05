@@ -135,6 +135,14 @@ class AppliedJobController extends Controller
                 'offering_date'       => 'nullable|date',
                 'completed_at'        => 'nullable|date',
 
+                // Background Checks
+                'educational_background_check'      => 'nullable|boolean',
+                'professional_background_check'     => 'nullable|boolean',
+                'experience_background_check'     => 'nullable|boolean',
+                'educational_background_check_document' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+                'experience_background_check_document'  => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+                'police_background_check_document'      => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+
                 // Relations
                 'software_id'         => 'nullable|exists:softwares,id',
                 'industry_id'         => 'nullable|exists:industries,id',
@@ -146,6 +154,18 @@ class AppliedJobController extends Controller
             if ($request->hasFile('signature')) {
                 $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
                 $validated['signature_uploaded'] = true;
+            }
+
+            if ($request->hasFile('educational_background_check_document')) {
+                $validated['educational_background_check_document'] = $request->file('educational_background_check_document')->store('background-checks', 'public');
+            }
+
+            if ($request->hasFile('experience_background_check_document')) {
+                $validated['experience_background_check_document'] = $request->file('experience_background_check_document')->store('background-checks', 'public');
+            }
+
+            if ($request->hasFile('police_background_check_document')) {
+                $validated['police_background_check_document'] = $request->file('police_background_check_document')->store('background-checks', 'public');
             }
 
             $appliedJob->update($request->all() + $validated);
@@ -163,6 +183,14 @@ class AppliedJobController extends Controller
                 'reference_two_number'       => 'nullable|string|max:20',
                 'reference_two_designation'  => 'nullable|string|max:255',
                 'reference_two_email'        => 'nullable|email|max:255',
+
+                // Background Checks
+                'educational_background_check'      => 'nullable|boolean',
+                'experience_background_check'       => 'nullable|boolean',
+                'professional_background_check'     => 'nullable|boolean',
+                'educational_background_check_document' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+                'experience_background_check_document'  => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+                'police_background_check_document'      => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
             ]);
             if ($request->hasFile('resume')) {
                 $validated['resume'] = $request->file('resume')->store('resume', 'public');
@@ -173,10 +201,20 @@ class AppliedJobController extends Controller
                 $validated['signature_uploaded'] = true;
             }
 
+            if ($request->hasFile('educational_background_check_document')) {
+                $validated['educational_background_check_document'] = $request->file('educational_background_check_document')->store('background-checks', 'public');
+            }
+
+            if ($request->hasFile('experience_background_check_document')) {
+                $validated['experience_background_check_document'] = $request->file('experience_background_check_document')->store('background-checks', 'public');
+            }
+
+            if ($request->hasFile('police_background_check_document')) {
+                $validated['police_background_check_document'] = $request->file('police_background_check_document')->store('background-checks', 'public');
+            }
+
             $appliedJob->update($validated);
         }
-
-
 
         return new AppliedJobResource($appliedJob->fresh(['job', 'software', 'industry']));
     }
@@ -268,7 +306,7 @@ class AppliedJobController extends Controller
             'company_name'               => 'nullable|string|max:255',
             'company_phone'              => 'nullable|string|max:20',
             'company_email'              => 'nullable|email|max:255',
-            'experience_years'           => 'nullable|integer|min:0',  // integer per schema
+            'experience_years'           => 'nullable|integer|min:0',
             'reference_one_name'         => 'nullable|string|max:255',
             'reference_one_number'       => 'nullable|string|max:20',
             'reference_one_designation'  => 'nullable|string|max:255',
@@ -277,11 +315,28 @@ class AppliedJobController extends Controller
             'reference_two_number'       => 'nullable|string|max:20',
             'reference_two_designation'  => 'nullable|string|max:255',
             'reference_two_email'        => 'nullable|email|max:255',
+            // Background Checks
+          
+            'educational_background_check_document' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+            'experience_background_check_document'  => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
+            'police_background_check_document'      => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
         ]);
 
         if ($request->hasFile('signature')) {
             $validated['signature_path']    = $request->file('signature')->store('signatures', 'public');
             $validated['signature_uploaded'] = true;
+        }
+
+        if ($request->hasFile('educational_background_check_document')) {
+            $validated['educational_background_check_document'] = $request->file('educational_background_check_document')->store('background-checks', 'public');
+        }
+
+        if ($request->hasFile('experience_background_check_document')) {
+            $validated['experience_background_check_document'] = $request->file('experience_background_check_document')->store('background-checks', 'public');
+        }
+
+        if ($request->hasFile('police_background_check_document')) {
+            $validated['police_background_check_document'] = $request->file('police_background_check_document')->store('background-checks', 'public');
         }
 
         $appliedJob->update($validated);
