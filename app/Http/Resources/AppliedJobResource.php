@@ -87,6 +87,13 @@ class AppliedJobResource extends JsonResource
             'reference_checked'   => $this->reference_checked,
             'background_verified' =>  $this->background_verified,
             'documents_verified'  =>  $this->documents_verified,
+            'educational_background_check'      => $this->educational_background_check,
+            'professional_background_check'     => $this->professional_background_check,
+            'experience_background_check'     => $this->experience_background_check,
+
+            'educational_background_check_document' => $this->educational_background_check_document ? Storage::url($this->educational_background_check_document) : null,
+            'experience_background_check_document'  => $this->experience_background_check_document ? Storage::url($this->experience_background_check_document) : null,
+            'police_background_check_document'      => $this->police_background_check_document ? Storage::url($this->police_background_check_document) : null,
 
             // Offer Letter Fields
             'responsibilities'  => $this->responsibilities,
