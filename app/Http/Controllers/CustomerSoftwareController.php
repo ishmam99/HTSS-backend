@@ -55,7 +55,7 @@ class CustomerSoftwareController extends Controller
             'customer_id' =>  'required|exists:customers,id',
             'usability'   => 'nullable|integer|min:0'
         ]);
-        CustomerSoftware::firstOrcreate([
+        CustomerSoftware::updateOrCreate([
             'customer_id' => $request->customer_id,
             'software_id' => $request->software_id,
             'usability' => $request->usability ?? 0
