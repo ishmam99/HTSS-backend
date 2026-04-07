@@ -118,9 +118,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('onsite-support-ticket', OnsiteSupportTicketController::class);
         Route::get('customer-software', [CustomerSoftwareController::class, 'index']);
         Route::post('customer-software', [CustomerSoftwareController::class, 'store']);
-        Route::post('customer-software', [CustomerSoftwareController::class, 'update']);
+        Route::put('customer-software/{id}', [CustomerSoftwareController::class, 'update']);
         Route::post('customer-solution', [CustomerSolutionController::class, 'store']);
-        Route::post('customer-solution', [CustomerSolutionController::class, 'update']);
+        Route::put('customer-solution', [CustomerSolutionController::class, 'update']);
         Route::get('customer-solution', [CustomerSolutionController::class, 'index']);
 
         Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
