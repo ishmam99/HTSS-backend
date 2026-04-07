@@ -120,7 +120,7 @@ Route::prefix('v1')->group(function () {
         Route::post('customer-software', [CustomerSoftwareController::class, 'store']);
         Route::put('customer-software/{id}', [CustomerSoftwareController::class, 'update']);
         Route::post('customer-solution', [CustomerSolutionController::class, 'store']);
-        Route::put('customer-solution', [CustomerSolutionController::class, 'update']);
+        Route::put('customer-solution/{id}', [CustomerSolutionController::class, 'update']);
         Route::get('customer-solution', [CustomerSolutionController::class, 'index']);
 
         Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
