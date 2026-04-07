@@ -79,11 +79,24 @@ class CustomerSoftwareController extends Controller
             'customer_id' => 'nullable|exists:customers,id',
             'usability'   => 'nullable|integer|min:0'
         ]);
-        $data->update([
-            'customer_id' => $request->customer_id,
-            'software_id' => $request->software_id,
-            'usability'   => $request->usability ?? $data->usability
-        ]);
+        $updateData = [];
+
+        if ($request->filled('customer_id')) {
+            $updateData['customer_id'] = $request->customer_id;
+        }
+
+        if ($request->filled('software_id')) {
+            $updateData['software_id'] = $request->software_id;
+        }
+
+        if ($request->filled('usability')) {
+            $updateData['usability'] = $request->usability;
+        }
+
+        // Update
+        if (!empty($updateData)) {
+            $data->update($updateData);
+        }
 
         return response()->json([
             'success' => true,
