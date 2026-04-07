@@ -191,8 +191,9 @@ public function index(Module $module)
             });
         }
 
-        if (request()->has('filters') && is_array(request()->filters)) {
-            foreach (request()->filters as $fieldName => $fieldValue) {
+        $filters = $this->collectFiltersFromQuery();
+        if (!empty($filters) && is_array($filters)) {
+            foreach ($filters as $fieldName => $fieldValue) {
                 $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
                     $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
 
@@ -236,6 +237,53 @@ public function index(Module $module)
     // Return all results
     $data = $query->get();
     return response()->json(['data' => $data]);
+}
+
+/**
+ * Collect filters from request input and raw query string.
+ * Supports repeated `filters[field]=value` occurrences and comma-separated values.
+ */
+private function collectFiltersFromQuery()
+{
+    $filters = request()->input('filters', []);
+
+    if (!is_array($filters)) {
+        $filters = is_null($filters) ? [] : (array) $filters;
+    }
+
+    $queryString = request()->server('QUERY_STRING') ?? ($_SERVER['QUERY_STRING'] ?? '');
+    if ($queryString) {
+        preg_match_all('/filters\[(.*?)\]=([^&]*)/', $queryString, $matches, PREG_SET_ORDER);
+        foreach ($matches as $m) {
+            $key = rawurldecode($m[1]);
+            $val = rawurldecode($m[2]);
+
+            if ($key === '') continue;
+
+            if (array_key_exists($key, $filters)) {
+                // ensure existing entry is an array
+                if (!is_array($filters[$key])) {
+                    $filters[$key] = [$filters[$key]];
+                }
+                $filters[$key][] = $val;
+            } else {
+                $filters[$key] = $val;
+            }
+        }
+    }
+
+    // Normalize: convert comma-separated strings to arrays and trim/unique
+    foreach ($filters as $k => $v) {
+        if (is_array($v)) {
+            $normalized = array_values(array_unique(array_map('trim', $v)));
+            $filters[$k] = $normalized;
+        } elseif (is_string($v) && strpos($v, ',') !== false) {
+            $parts = array_map('trim', explode(',', $v));
+            $filters[$k] = array_values(array_unique($parts));
+        }
+    }
+
+    return $filters;
 }
 
 
@@ -544,8 +592,9 @@ public function convertModule($recordId)
             });
         }
 
-        if (request()->has('filters') && is_array(request()->filters)) {
-            foreach (request()->filters as $fieldName => $fieldValue) {
+        $filters = $this->collectFiltersFromQuery();
+        if (!empty($filters) && is_array($filters)) {
+            foreach ($filters as $fieldName => $fieldValue) {
                 $query->whereHas('values', function ($q) use ($fieldName, $fieldValue) {
                     $q->whereHas('field', fn($f) => $f->where('name', $fieldName));
 
