@@ -48,6 +48,7 @@ use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
 use App\Http\Controllers\UserEducationController;
 use App\Http\Controllers\UserExperienceController;
+use App\Http\Controllers\UserResumeController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -117,7 +118,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('onsite-support-ticket', OnsiteSupportTicketController::class);
         Route::get('customer-software', [CustomerSoftwareController::class, 'index']);
         Route::post('customer-software', [CustomerSoftwareController::class, 'store']);
+        Route::put('customer-software/{id}', [CustomerSoftwareController::class, 'update']);
         Route::post('customer-solution', [CustomerSolutionController::class, 'store']);
+        Route::put('customer-solution/{id}', [CustomerSolutionController::class, 'update']);
         Route::get('customer-solution', [CustomerSolutionController::class, 'index']);
 
         Route::get('customers/{customer}/stats', [CustomerStatsController::class, 'show']);
@@ -166,8 +169,8 @@ Route::prefix('v1')->group(function () {
         Route::resource('general-skills', GeneralSkillController::class);
         Route::get('/general-skill-by-user', [GeneralSkillController::class, 'getGeneralSkillByUser']);
         Route::resource('competencies', CompetencyController::class);
-         Route::apiResource('applied-jobs', AppliedJobController::class);
-          Route::post('/applied-jobs/{id}/generate-link', [AppliedJobController::class, 'generateAccessLink']);
+        Route::apiResource('applied-jobs', AppliedJobController::class);
+        Route::post('/applied-jobs/{id}/generate-link', [AppliedJobController::class, 'generateAccessLink']);
     });
     Route::apiResource('customer-support', CustomerSupportController::class);
     Route::put('customer-support-status-update/{customerSupport}', [CustomerSupportController::class, 'statusUpdate']);
@@ -186,9 +189,8 @@ Route::prefix('v1')->group(function () {
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
-    Route::post('applied-jobs',[AppliedJobController::class, 'store']);
+    Route::post('applied-jobs', [AppliedJobController::class, 'store']);
     // HR generates link
-   
 
     // Applicant access
     Route::get('/applicant-access/{token}', [AppliedJobController::class, 'accessByToken']);
@@ -219,4 +221,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('professional-references', ProfessionalReferenceController::class)->middleware('auth:sanctum');
     Route::apiResource('professional-summary', ProfessionSummaryController::class)->middleware('auth:sanctum');
     Route::post('/send-email', [EndUserController::class, 'emailSend']);
+    Route::apiResource('user-resumes', UserResumeController::class)->middleware('auth:sanctum');
 });

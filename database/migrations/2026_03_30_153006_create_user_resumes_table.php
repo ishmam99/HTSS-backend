@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_solutions', function (Blueprint $table) {
+        Schema::create('user_resumes', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
-            $table->foreignId('solution_id')->constrained('solutions')->cascadeOnDelete();
-            $table->tinyInteger('status')->default(0);
-            $table->integer('usability')->default(0);
+            $table->foreignId('end_user_id')
+                ->constrained('end_users')
+                ->cascadeOnDelete();
+            $table->string('title');
+            $table->json('resume');
+            $table->string('template');
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer_solutions');
+        Schema::dropIfExists('user_resumes');
     }
 };

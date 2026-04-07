@@ -22,6 +22,6 @@ public function department()
 
 public function position()
 {
-    return $this->belongsTo(Position::class);
+    return $this->belongsTo(EmployeePosition::class, 'position_id', 'id');
 }
 }
