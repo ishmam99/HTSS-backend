@@ -75,8 +75,8 @@ class CustomerSoftwareController extends Controller
             }
         }
         $request->validate([
-            'software_id' => 'required|exists:softwares,id',
-            'customer_id' => 'required|exists:customers,id',
+            'software_id' => 'nullable|exists:softwares,id',
+            'customer_id' => 'nullable|exists:customers,id',
             'usability'   => 'nullable|integer|min:0'
         ]);
         $data->update([

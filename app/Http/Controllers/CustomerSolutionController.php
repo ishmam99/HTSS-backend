@@ -83,8 +83,8 @@ class CustomerSolutionController extends Controller
         }
 
         $request->validate([
-            'solution_id' => 'required|exists:solutions,id',
-            'customer_id' => 'required|exists:customers,id',
+            'solution_id' => 'nullable|exists:solutions,id',
+            'customer_id' => 'nullable|exists:customers,id',
             'usability'   => 'nullable|integer|min:0'
         ]);
 
