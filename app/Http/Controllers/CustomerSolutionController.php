@@ -88,11 +88,21 @@ class CustomerSolutionController extends Controller
             'usability'   => 'nullable|integer|min:0'
         ]);
 
-        $data->update([
-            'customer_id' => $request->customer_id,
-            'solution_id' => $request->solution_id,
-            'usability'   => $request->usability ?? $data->usability
-        ]);
+        $updateData = [];
+
+        if ($request->filled('customer_id')) {
+            $updateData['customer_id'] = $request->customer_id;
+        }
+
+        if ($request->filled('solution_id')) {
+            $updateData['solution_id'] = $request->solution_id;
+        }
+
+        if ($request->filled('usability')) {
+            $updateData['usability'] = $request->usability;
+        }
+
+        $data->update($updateData);
 
         return response()->json([
             'success' => true,
