@@ -61,11 +61,43 @@ class CustomerSolutionController extends Controller
             'customer_id' =>  'required|exists:customers,id',
             'usability'   => 'nullable|integer|min:0'
         ]);
-        CustomerSolution::updateOrCreate([
+        CustomerSolution::Create([
             'customer_id' => $request->customer_id,
             'solution_id' => $request->solution_id,
             'usability' => $request->usability ?? 0
         ]);
         return response()->json('Customer solution added to list');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $data = CustomerSolution::findOrFail($id);
+
+        if (auth()->check() && auth()->user()->role == 'customer') {
+            if ($data->customer_id != auth()->user()->customer->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+        }
+
+        $request->validate([
+            'solution_id' => 'required|exists:solutions,id',
+            'customer_id' => 'required|exists:customers,id',
+            'usability'   => 'nullable|integer|min:0'
+        ]);
+
+        $data->update([
+            'customer_id' => $request->customer_id,
+            'solution_id' => $request->solution_id,
+            'usability'   => $request->usability ?? $data->usability
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer solution updated successfully',
+            'data' => $data
+        ]);
     }
 }

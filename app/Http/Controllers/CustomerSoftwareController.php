@@ -55,11 +55,40 @@ class CustomerSoftwareController extends Controller
             'customer_id' =>  'required|exists:customers,id',
             'usability'   => 'nullable|integer|min:0'
         ]);
-        CustomerSoftware::updateOrCreate([
+        CustomerSoftware::Create([
             'customer_id' => $request->customer_id,
             'software_id' => $request->software_id,
             'usability' => $request->usability ?? 0
         ]);
         return response()->json('Customer Software added to list');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $data = CustomerSoftware::findOrFail($id);
+        if (auth()->check() && auth()->user()->role == 'customer') {
+            if ($data->customer_id != auth()->user()->customer->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+        }
+        $request->validate([
+            'software_id' => 'required|exists:softwares,id',
+            'customer_id' => 'required|exists:customers,id',
+            'usability'   => 'nullable|integer|min:0'
+        ]);
+        $data->update([
+            'customer_id' => $request->customer_id,
+            'software_id' => $request->software_id,
+            'usability'   => $request->usability ?? $data->usability
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer Software updated successfully',
+            'data' => $data
+        ]);
     }
 }
