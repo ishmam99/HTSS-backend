@@ -11,10 +11,9 @@ class CustomerSoftwareController extends Controller
     //
     public function index(Request $request)
     {
-         $customerIds = [];
-    if($request->filled('company_id'))
-        {
-            $customerIds = Customer::where('company_id',$request->company_id)->pluck('id');
+        $customerIds = [];
+        if ($request->filled('company_id')) {
+            $customerIds = Customer::where('company_id', $request->company_id)->pluck('id');
         }
         $query = CustomerSoftware::with(['customer.user', 'software'])
             ->when(auth()->check() && auth()->user()->role === 'customer', function ($q) {
@@ -27,16 +26,19 @@ class CustomerSoftwareController extends Controller
 
                 $q->whereIn('customer_id', $customerIds);
             })
-           ->when($request->filled('customer_ids'), function ($q) use ($request) {
+            ->when($request->filled('customer_ids'), function ($q) use ($request) {
                 $ids = explode(',', $request->customer_ids);
                 $q->whereIn('customer_id', $ids);
             })
-           ->when($request->filled('software_ids'), function ($q) use ($request) {
+            ->when($request->filled('software_ids'), function ($q) use ($request) {
                 $ids = explode(',', $request->software_ids);
                 $q->whereIn('software_id', $ids);
             })
             ->when($request->filled('software_id'), function ($q) use ($request) {
                 $q->where('software_id', $request->software_id);
+            })
+            ->when($request->filled('usability'), function ($q) use ($request) {
+                $q->where('usability', $request->usability);
             });
 
         $data = $query->get();
@@ -51,10 +53,12 @@ class CustomerSoftwareController extends Controller
         $request->validate([
             'software_id' => 'required|exists:softwares,id',
             'customer_id' =>  'required|exists:customers,id',
+            'usability'   => 'nullable|integer|min:0'
         ]);
         CustomerSoftware::firstOrcreate([
             'customer_id' => $request->customer_id,
-            'software_id' => $request->software_id
+            'software_id' => $request->software_id,
+            'usability' => $request->usability ?? 0
         ]);
         return response()->json('Customer Software added to list');
     }

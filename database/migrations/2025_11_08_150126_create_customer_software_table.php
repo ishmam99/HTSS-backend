@@ -16,6 +16,7 @@ return new class extends Migration
                 $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->foreignId('software_id')->constrained('softwares')->cascadeOnDelete();
             $table->tinyInteger('status')->default(0);
+            $table->integer('usability')->default(0);
             $table->timestamps();
         });
     }
