@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -15,6 +14,11 @@ class SuccessTeamActivityReport extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'summary_activities' => 'array',
+        'key_outcomes'       => 'array',
+    ];
     /**
      * Get the user that owns the SuccessTeamActivityReport
      *
@@ -28,7 +32,7 @@ class SuccessTeamActivityReport extends Model
     {
         return $this->belongsTo(SuccessTeam::class);
     }
-     public function getPeriodRange()
+    public function getPeriodRange()
     {
 
         $start = Carbon::createFromFormat('F-Y', $this->period)->startOfMonth();
@@ -44,6 +48,6 @@ class SuccessTeamActivityReport extends Model
         return SuccessTeamTaskOutput::whereHas('successTeamTask', function ($q) {
             $q->where('success_team_id', $this->success_team_id);
         })->with('successTeamTask.assignedPerson')
-        ->whereBetween('completed_at', [$start, $end]);
+            ->whereBetween('completed_at', [$start, $end]);
     }
 }

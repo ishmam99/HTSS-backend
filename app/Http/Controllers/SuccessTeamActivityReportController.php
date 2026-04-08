@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SuccessTeamActivityReportRequest;
@@ -11,13 +10,13 @@ class SuccessTeamActivityReportController extends Controller
     public function index(Request $request)
     {
         $reports = SuccessTeamActivityReport::with(['user', 'successTeam'])
-            ->when($request->success_team_id, fn ($q) =>
+            ->when($request->success_team_id, fn($q) =>
                 $q->where('success_team_id', $request->success_team_id)
             )
-            ->when($request->period, fn ($q) =>
+            ->when($request->period, fn($q) =>
                 $q->where('period', $request->period)
             )
-            ->when($request->filled('status'), fn ($q) =>
+            ->when($request->filled('status'), fn($q) =>
                 $q->where('status', $request->status)
             )
             ->latest()
@@ -38,15 +37,17 @@ class SuccessTeamActivityReportController extends Controller
 
         if ($exists) {
             return response()->json([
-                'message' => 'Activity report already exists for this team and period'
+                'message' => 'Activity report already exists for this team and period',
             ], 422);
         }
 
         $report = SuccessTeamActivityReport::create([
-            'user_id' =>auth()->user()->id,
-            'success_team_id' => $request->success_team_id,
-            'period' => $request->period,
-            'status' => $request->status ?? 0,
+            'user_id'            => auth()->user()->id,
+            'success_team_id'    => $request->success_team_id,
+            'period'             => $request->period,
+            'status'             => $request->status ?? 0,
+            'summary_activities' => $request->summary_activities,
+            'key_outcomes'       => $request->key_outcomes,
         ]);
 
         return response()->json($report, 201);
@@ -60,8 +61,8 @@ class SuccessTeamActivityReportController extends Controller
         $activityReport = SuccessTeamActivityReport::find($id);
 
         return response()->json([
-            'report' => $activityReport->load(['user', 'successTeam']),
-             'outputs' => $activityReport->taskOutputs()->get(),
+            'report'  => $activityReport->load(['user', 'successTeam']),
+            'outputs' => $activityReport->taskOutputs()->get(),
         ]);
     }
 
@@ -72,8 +73,8 @@ class SuccessTeamActivityReportController extends Controller
         Request $request,
         $id
     ) {
-         $activityReport = SuccessTeamActivityReport::findOrFail($id);
-        $activityReport->update(['status'=>$request->status]);
+        $activityReport = SuccessTeamActivityReport::findOrFail($id);
+        $activityReport->update(['status' => $request->status]);
 
         return response()->json($activityReport);
     }
@@ -86,7 +87,7 @@ class SuccessTeamActivityReportController extends Controller
         $activityReport->delete();
 
         return response()->json([
-            'message' => 'Activity report deleted successfully'
+            'message' => 'Activity report deleted successfully',
         ]);
     }
 }
