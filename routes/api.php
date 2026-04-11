@@ -168,6 +168,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('success-team-activity-reports', SuccessTeamActivityReportController::class);
         Route::resource('general-skills', GeneralSkillController::class);
         Route::get('/general-skill-by-user', [GeneralSkillController::class, 'getGeneralSkillByUser']);
+        Route::get('/task-outputs-by-team-and-date-range/{team_id}', [SuccessTeamActivityReportController::class, 'getTaskOutputsByTeamAndDateRange']);
         Route::resource('competencies', CompetencyController::class);
         Route::apiResource('applied-jobs', AppliedJobController::class);
         Route::post('/applied-jobs/{id}/generate-link', [AppliedJobController::class, 'generateAccessLink']);

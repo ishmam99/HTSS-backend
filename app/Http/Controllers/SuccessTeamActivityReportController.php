@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SuccessTeamActivityReportRequest;
 use App\Models\SuccessTeamActivityReport;
+use App\Models\SuccessTeamTaskOutput;
 use Illuminate\Http\Request;
 
 class SuccessTeamActivityReportController extends Controller
@@ -90,4 +91,37 @@ class SuccessTeamActivityReportController extends Controller
             'message' => 'Activity report deleted successfully',
         ]);
     }
+    public function getSuccessTeamReports(Request $request, $company_id)
+    {
+        $reports = SuccessTeamActivityReport::whereHas('successTeam', function ($q) use ($company_id) {
+            $q->where('company_id', $company_id);
+        })->with(['user', 'successTeam'])
+            ->when($request->period, fn($q) =>
+                $q->where('period', $request->period)
+            )
+            ->when($request->filled('status'), fn($q) =>
+                $q->where('status', $request->status)
+            )
+            ->latest()
+            ->paginate(15);
+
+        return response()->json($reports);
+    }
+
+        public function getTaskOutputsByTeamAndDateRange(Request $request, $team_id)
+        {
+            $outputs = SuccessTeamTaskOutput::whereHas('successTeamTask.successTeam', function ($q) use ($team_id) {
+                $q->where('success_team_id', $team_id);
+            })
+          
+            ->when($request->filled('start_date') && $request->filled('end_date'), fn($q) =>
+                $q->whereBetween('created_at', [$request->start_date, $request->end_date])
+            )
+            ->with('successTeamTask')
+            ->get()
+            ->groupBy('success_team_task_id');
+
+            return response()->json($outputs);
+        }
+    
 }
