@@ -115,7 +115,7 @@ class SuccessTeamActivityReportController extends Controller
             })
           
             ->when($request->filled('start_date') && $request->filled('end_date'), fn($q) =>
-                $q->whereBetween('created_at', [$request->start_date, $request->end_date])
+                $q->whereBetween('completed_at', [$request->start_date, $request->end_date])
             )
             ->with('successTeamTask')
             ->get()
