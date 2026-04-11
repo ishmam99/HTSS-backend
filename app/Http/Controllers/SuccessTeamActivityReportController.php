@@ -83,9 +83,9 @@ class SuccessTeamActivityReportController extends Controller
     /**
      * DELETE /api/activity-reports/{id}
      */
-    public function destroy(SuccessTeamActivityReport $activityReport)
+    public function destroy(SuccessTeamActivityReport $success_team_activity_report)
     {
-        $activityReport->delete();
+        $success_team_activity_report->delete();
 
         return response()->json([
             'message' => 'Activity report deleted successfully',
