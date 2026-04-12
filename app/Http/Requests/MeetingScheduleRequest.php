@@ -28,7 +28,7 @@ class MeetingScheduleRequest extends FormRequest
             'time'                   => 'required',
             'timezone'               => 'required|string',
             'meeting_type'           => 'required|string',
-            'meeting_link'           => 'required|string',
+            'meeting_link'           => 'nullable|string',
             'priority'               => 'required|string',
             'success_team_id'        => 'required|exists:success_teams,id',
             'success_team_user_id'   => 'required|array',
