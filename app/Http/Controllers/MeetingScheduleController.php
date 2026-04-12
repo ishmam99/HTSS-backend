@@ -10,7 +10,9 @@ class MeetingScheduleController extends Controller
     public function index(Request $request)
     {
         $query = MeetingSchedule::with(['users', 'successTeam', 'createdBy'])->where('created_by', auth()->id());
-
+        $query->when($request->success_team_id, function ($q) use ($request) {
+            $q->where('success_team_id', $request->success_team_id);
+        });
         $query->when($request->start_date && $request->end_date, function ($q) use ($request) {
             $q->whereBetween('date', [$request->start_date, $request->end_date]);
         });
