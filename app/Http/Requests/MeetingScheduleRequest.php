@@ -34,6 +34,7 @@ class MeetingScheduleRequest extends FormRequest
             'success_team_user_id'   => 'required|array',
             'success_team_user_id.*' => 'exists:users,id',
             'type_of_activity'       => 'nullable|string',
+            'location'               => 'nullable|string',
         ];
     }
 }

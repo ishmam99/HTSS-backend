@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('meeting_link');
             $table->string('priority');
             $table->string('type_of_activity')->nullable();
+            $table->string('location')->nullable();
             $table->foreignId('success_team_id')->constrained('success_teams')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
