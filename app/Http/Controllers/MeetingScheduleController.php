@@ -47,10 +47,14 @@ class MeetingScheduleController extends Controller
 
     public function update(MeetingScheduleRequest $request, $id)
     {
-        $meetingSchedule = MeetingSchedule::findOrFail($id);
-        $meetingSchedule->update($request->validated());
-        if (! empty($request->success_team_user_ids)) {
-            $meetingSchedule->users()->sync($request->success_team_user_ids);
+        $meetingSchedule    = MeetingSchedule::findOrFail($id);
+        $data               = $request->validated();
+        $data['created_by'] = auth()->id();
+        $successTeamUserIds = $data['success_team_user_id'];
+        unset($data['success_team_user_id']);
+        $meetingSchedule->update($data);
+        if (! empty($successTeamUserIds)) {
+            $meetingSchedule->users()->sync($successTeamUserIds);
         }
         return response()->json([
             'success' => true,
