@@ -23,6 +23,7 @@ use App\Http\Controllers\EnumController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\MeetingScheduleController;
 use App\Http\Controllers\MonthlyCSMActivityController;
 use App\Http\Controllers\OnsiteSupportTicketController;
 use App\Http\Controllers\PartnerController;
@@ -223,4 +224,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('professional-summary', ProfessionSummaryController::class)->middleware('auth:sanctum');
     Route::post('/send-email', [EndUserController::class, 'emailSend']);
     Route::apiResource('user-resumes', UserResumeController::class)->middleware('auth:sanctum');
+
+    Route::apiResource('meeting-schedules', MeetingScheduleController::class)->middleware('auth:sanctum');
 });
