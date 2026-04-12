@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -21,18 +22,18 @@ class MeetingScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'meeting_title'           => 'required|string|max:255',
-            'description'             => 'nullable|string',
-            'date'                    => 'required|date',
-            'duration'                => 'required|string',
-            'time'                    => 'required',
-            'timezone'                => 'required|string',
-            'meeting_type'            => 'required|string',
-            'meeting_link'            => 'required|string',
-            'priority'                => 'required|string',
-            'success_team_id'         => 'required|exists:success_teams,id',
-            'success_team_user_ids'   => 'required|array',
-            'success_team_user_ids.*' => 'exists:users,id',
+            'meeting_title'          => 'required|string|max:255',
+            'description'            => 'nullable|string',
+            'date'                   => 'required|date',
+            'duration'               => 'required|string',
+            'time'                   => 'required',
+            'timezone'               => 'required|string',
+            'meeting_type'           => 'required|string',
+            'meeting_link'           => 'required|string',
+            'priority'               => 'required|string',
+            'success_team_id'        => 'required|exists:success_teams,id',
+            'success_team_user_id'   => 'required|array',
+            'success_team_user_id.*' => 'exists:users,id',
         ];
     }
 }
