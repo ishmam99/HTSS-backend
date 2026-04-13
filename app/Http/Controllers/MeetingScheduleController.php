@@ -9,7 +9,10 @@ class MeetingScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = MeetingSchedule::with(['users', 'successTeam', 'createdBy'])->where('created_by', auth()->id());
+        $query = MeetingSchedule::with(['users', 'successTeam', 'createdBy']);
+        $query->when($request->created_by, function ($q) use ($request) {
+            $q->where('created_by', $request->created_by);
+        });
         $query->when($request->success_team_id, function ($q) use ($request) {
             $q->where('success_team_id', $request->success_team_id);
         });
