@@ -51,6 +51,7 @@ use App\Http\Controllers\UserEducationController;
 use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserResumeController;
 use App\Http\Controllers\UserSoftwareSkillController;
+use App\Http\Controllers\TrainingRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -224,6 +225,27 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('professional-summary', ProfessionSummaryController::class)->middleware('auth:sanctum');
     Route::post('/send-email', [EndUserController::class, 'emailSend']);
     Route::apiResource('user-resumes', UserResumeController::class)->middleware('auth:sanctum');
-
+    Route::prefix('training-requests')->group(function () {
+    // Public routes (no auth required for submission)
+    Route::post('/', [TrainingRequestController::class, 'store']);
+    
+    // Admin routes (add auth middleware in production)
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/', [TrainingRequestController::class, 'index']);
+        Route::get('/dashboard', [TrainingRequestController::class, 'dashboard']);
+        Route::get('/reports', [TrainingRequestController::class, 'reports']);
+        Route::get('/software-list', [TrainingRequestController::class, 'getSoftwareList']);
+        Route::get('/export', [TrainingRequestController::class, 'export']);
+        Route::get('/{id}', [TrainingRequestController::class, 'show']);
+        Route::put('/{id}', [TrainingRequestController::class, 'update']);
+        Route::delete('/{id}', [TrainingRequestController::class, 'destroy']);
+        Route::post('/bulk-delete', [TrainingRequestController::class, 'bulkDelete']);
+        Route::post('/{id}/status', [TrainingRequestController::class, 'updateStatus']);
+        Route::post('/{id}/schedule', [TrainingRequestController::class, 'schedule']);
+        Route::post('/{id}/complete', [TrainingRequestController::class, 'complete']);
+        Route::post('/{id}/payment', [TrainingRequestController::class, 'recordPayment']);
+        Route::post('/{id}/certificate', [TrainingRequestController::class, 'issueCertificate']);
+    });
+});
     Route::apiResource('meeting-schedules', MeetingScheduleController::class)->middleware('auth:sanctum');
 });
