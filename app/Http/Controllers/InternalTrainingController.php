@@ -36,9 +36,9 @@ class InternalTrainingController extends Controller
             $query->where('type', $request->type);
         }
 
-        $trainings = $query
-            ->latest()
-            ->paginate(10);
+        $trainings = $query->get();
+            // ->latest()
+            // ->paginate(10);
 
         return response()->json([
             'success' => true,
