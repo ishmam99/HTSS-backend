@@ -26,4 +26,8 @@ class Solution extends Model
     {
         return $this->hasMany(TrainingCourse::class);
     }
+      public function internalTrainings(): HasMany
+    {
+        return $this->hasMany(InternalTraining::class);
+    }
 }
