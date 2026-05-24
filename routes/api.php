@@ -21,6 +21,7 @@ use App\Http\Controllers\EndUserSoftwareController;
 use App\Http\Controllers\EndUserTrainingController;
 use App\Http\Controllers\EnumController;
 use App\Http\Controllers\IndustryController;
+use App\Http\Controllers\InternalTrainingController;
 use App\Http\Controllers\IssueTicketController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MeetingScheduleController;
@@ -64,7 +65,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('role-by-user-list', [AuthController::class, 'usersByRole']);
     Route::get('users-role-wise-count', [AuthController::class, 'roleWiseCount']);
-
+    Route::apiResource('internal-trainings', InternalTrainingController::class);
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('employees', EmployeeController::class);
         Route::apiResource('success-team-roles', SuccessTeamRoleController::class);
