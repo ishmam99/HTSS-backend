@@ -117,7 +117,7 @@ class InternalTrainingController extends Controller
                 Rule::unique('internal_trainings', 'code')->ignore($training->id)
             ],
 
-            'status' => ['nullable', 'integer', 'in:0,1'],
+            'status' => ['nullable', 'integer', 'in:0,1,2'],
 
             'short_description' => ['nullable', 'string'],
             'long_description' => ['nullable', 'string'],
