@@ -55,7 +55,7 @@ class InternalTrainingController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:255', 'unique:internal_trainings,code'],
-            'status' => ['nullable', 'integer', 'in:0,1'],
+            'status' => ['nullable', 'integer', 'in:0,1,2'],
 
             'short_description' => ['nullable', 'string'],
             'long_description' => ['nullable', 'string'],
