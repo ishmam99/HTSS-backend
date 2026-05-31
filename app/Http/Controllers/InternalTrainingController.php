@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InternalTraining;
+use App\Models\TrainingCourse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -13,7 +13,7 @@ class InternalTrainingController extends Controller
      */
     public function index(Request $request)
     {
-        $query = InternalTraining::with(['software', 'solution']);
+        $query = TrainingCourse::with(['software', 'solution']);
 
         // Search
         if ($request->filled('search')) {
@@ -74,7 +74,7 @@ class InternalTrainingController extends Controller
             'analysis' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $training = InternalTraining::create($validated);
+        $training = TrainingCourse::create($validated);
 
         return response()->json([
             'success' => true,
@@ -88,7 +88,7 @@ class InternalTrainingController extends Controller
      */
     public function show($id)
     {
-        $training = InternalTraining::with([
+        $training = TrainingCourse::with([
             'software',
             'solution'
         ])->findOrFail($id);
@@ -105,7 +105,7 @@ class InternalTrainingController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $training = InternalTraining::findOrFail($id);
+        $training = TrainingCourse::findOrFail($id);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -150,7 +150,7 @@ class InternalTrainingController extends Controller
      */
     public function destroy($id)
     {
-        $training = InternalTraining::findOrFail($id);
+        $training = TrainingCourse::findOrFail($id);
 
         $training->delete();
 
