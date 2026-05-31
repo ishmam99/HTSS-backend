@@ -7,10 +7,13 @@ use App\Models\TrainerPreferredSchedule;
 use App\Models\TrainerSkill;
 use App\Http\Requests\TrainerRequestFormRequest;
 use App\Http\Resources\TrainerRequestFormResource;
+use App\Models\Trainer;
 use App\Models\TrainerPreferdSchedule;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class TrainerRequestFormController extends Controller
 {
