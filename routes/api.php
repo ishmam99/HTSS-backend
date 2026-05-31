@@ -200,8 +200,8 @@ Route::prefix('v1')->group(function () {
 // Route::patch('/trainer-request-forms/{id}/status', [TrainerRequestFormController::class, 'statusUpdate']);
 
 // Or use specific methods for better clarity
-Route::post('/trainer-request-forms/{id}/approve', [TrainerRequestFormController::class, 'approve']);
-Route::post('/trainer-request-forms/{id}/reject', [TrainerRequestFormController::class, 'reject']);
+Route::post('/trainer-request-form/{id}/approve', [TrainerRequestFormController::class, 'approve']);
+Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::class, 'reject']);
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
     Route::post('applied-jobs', [AppliedJobController::class, 'store']);
