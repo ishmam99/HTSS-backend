@@ -16,14 +16,19 @@ class TrainerRequestForm extends Model
         return $this->belongsTo(Industry::class);
     }
 
-    public function solution()
-    {
-        return $this->belongsTo(Solution::class);
-    }
+    // public function solution()
+    // {
+    //     return $this->belongsTo(Solution::class);
+    // }
 
-    public function software()
+    // public function software()
+    // {
+    //     return $this->belongsTo(Software::class);
+    // }
+    
+     public function trainer()
     {
-        return $this->belongsTo(Software::class);
+        return $this->belongsTo(User::class, 'trainer_id');
     }
     public function schedules()
     {
