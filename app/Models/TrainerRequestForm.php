@@ -25,4 +25,13 @@ class TrainerRequestForm extends Model
     {
         return $this->belongsTo(Software::class);
     }
+    public function schedules()
+    {
+        return $this->hasMany(TrainerPreferdSchedule::class);
+    }
+    public function skills()
+    {
+        return $this->hasMany(TrainerSkill::class);
+    }
+    
 }
