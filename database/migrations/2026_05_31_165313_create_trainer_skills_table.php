@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('trainer_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('trainer_request_form_id')->nullable()->constrained('trainer_request_forms')->cascadeOnDelete();
             $table->tinyInteger('skill_type')->default(0);
-            $table->foreignInd('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
+            $table->foreignId('software_id')->nullable()->constrained('softwares')->cascadeOnDelete();
             $table->string('level')->nullable();
             $table->foreignId('solution_id')->nullable()->constrained('solutions')->cascadeOnDelete();
             $table->string('analysis')->nullable();
