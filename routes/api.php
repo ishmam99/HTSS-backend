@@ -191,6 +191,15 @@ Route::prefix('v1')->group(function () {
     Route::put('status-update-attendance-time/{attendanceTimeId}', [AttendanceController::class, 'attendanceTimeStatusUpdate']);
     Route::apiResource('trainer-request-form', TrainerRequestFormController::class);
     Route::put('trainer-request-form-status-update/{id}', [TrainerRequestFormController::class, 'statusUpdate']);
+
+    // In routes/api.php
+
+// Status update (generic)
+// Route::patch('/trainer-request-forms/{id}/status', [TrainerRequestFormController::class, 'statusUpdate']);
+
+// Or use specific methods for better clarity
+Route::post('/trainer-request-forms/{id}/approve', [TrainerRequestFormController::class, 'approve']);
+Route::post('/trainer-request-forms/{id}/reject', [TrainerRequestFormController::class, 'reject']);
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
     Route::post('applied-jobs', [AppliedJobController::class, 'store']);
@@ -249,4 +258,20 @@ Route::prefix('v1')->group(function () {
     });
 });
     Route::apiResource('meeting-schedules', MeetingScheduleController::class)->middleware('auth:sanctum');
+    Route::prefix('trainer-schedules')->group(function () {
+    Route::get('/', [TrainerController::class, 'index']);
+    Route::post('/', [TrainerController::class, 'store']);
+    Route::get('/{id}', [TrainerController::class, 'show']);
+    Route::put('/{id}', [TrainerController::class, 'update']);
+    Route::delete('/{id}', [TrainerController::class, 'destroy']);
+});
+
+// Trainer Skills Routes
+Route::prefix('trainer-skills')->group(function () {
+    Route::get('/', [TrainerController::class, 'index']);
+    Route::post('/', [TrainerController::class, 'store']);
+    Route::get('/{id}', [TrainerController::class, 'show']);
+    Route::put('/{id}', [TrainerController::class, 'update']);
+    Route::delete('/{id}', [TrainerController::class, 'destroy']);
+});
 });

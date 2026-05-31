@@ -54,6 +54,7 @@ class TrainerController extends Controller
     ], 201);
 }
 
+
     public function show(Trainer $trainer)
     {
         return new TrainerResource($trainer);
