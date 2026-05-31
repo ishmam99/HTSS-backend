@@ -17,8 +17,9 @@ return new class extends Migration
             $table->foreignId('trainer_request_form_id')->nullable()->constrained('trainer_request_forms')->cascadeOnDelete();
             $table->json('days');
             $table->tinyInteger('status')->default(0);
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->time('start_time');
+             $table->time('end_time');
+          
             $table->timestamps();
         });
     }

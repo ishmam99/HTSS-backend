@@ -66,8 +66,8 @@ class TrainerRequestFormController extends Controller
                         'trainer_request_form_id' => $trainerRequestForm->id,
                         'trainer_id' => $data['trainer_id'] ?? null,
                         'days' => json_encode($schedule['days']),
-                        'start_date' => $schedule['start_date'],
-                        'end_date' => $schedule['end_date'],
+                        'start_time' => $schedule['start_time'],
+                        'end_time' => $schedule['end_time'],
                         'status' => $schedule['status'] ?? 0,
                     ]);
                 }

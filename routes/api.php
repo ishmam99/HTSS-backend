@@ -42,8 +42,10 @@ use App\Http\Controllers\SuccessTeamRoleController;
 use App\Http\Controllers\SuccessTeamTaskController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TrainerCourseController;
+use App\Http\Controllers\TrainerPreferdScheduleController;
 use App\Http\Controllers\TrainerRequestFormController;
 use App\Http\Controllers\TrainerScheduleController;
+use App\Http\Controllers\TrainerSkillController;
 use App\Http\Controllers\TrainingCourseController;
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
@@ -259,19 +261,19 @@ Route::post('/trainer-request-forms/{id}/reject', [TrainerRequestFormController:
 });
     Route::apiResource('meeting-schedules', MeetingScheduleController::class)->middleware('auth:sanctum');
     Route::prefix('trainer-schedules')->group(function () {
-    Route::get('/', [TrainerController::class, 'index']);
-    Route::post('/', [TrainerController::class, 'store']);
-    Route::get('/{id}', [TrainerController::class, 'show']);
-    Route::put('/{id}', [TrainerController::class, 'update']);
-    Route::delete('/{id}', [TrainerController::class, 'destroy']);
+    Route::get('/', [TrainerPreferdScheduleController::class, 'index']);
+    Route::post('/', [TrainerPreferdScheduleController::class, 'store']);
+    Route::get('/{id}', [TrainerPreferdScheduleController::class, 'show']);
+    Route::put('/{id}', [TrainerPreferdScheduleController::class, 'update']);
+    Route::delete('/{id}', [TrainerPreferdScheduleController::class, 'destroy']);
 });
 
 // Trainer Skills Routes
 Route::prefix('trainer-skills')->group(function () {
-    Route::get('/', [TrainerController::class, 'index']);
-    Route::post('/', [TrainerController::class, 'store']);
-    Route::get('/{id}', [TrainerController::class, 'show']);
-    Route::put('/{id}', [TrainerController::class, 'update']);
-    Route::delete('/{id}', [TrainerController::class, 'destroy']);
+    Route::get('/', [TrainerSkillController::class, 'index']);
+    Route::post('/', [TrainerSkillController::class, 'store']);
+    Route::get('/{id}', [TrainerSkillController::class, 'show']);
+    Route::put('/{id}', [TrainerSkillController::class, 'update']);
+    Route::delete('/{id}', [TrainerSkillController::class, 'destroy']);
 });
 });
