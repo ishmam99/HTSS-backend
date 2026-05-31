@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class TrainerSkill extends Model
 {
     //
+     protected $guarded = ['id'];
 }
