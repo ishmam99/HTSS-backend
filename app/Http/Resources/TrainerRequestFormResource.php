@@ -17,9 +17,12 @@ class TrainerRequestFormResource extends JsonResource
             'status' => $this->status,
             'image' => $this->image ? asset('storage/' . $this->image) : null,
             'experience_year' => $this->experience_year,
-            'industry' => $this->industry,
-            'solution' => $this->solution,
-            'software' => $this->software,
+            'skills' => $this->skills,
+            'schedules' => $this->schedules,
+             'trainer' => $this->trainer,
+            // 'industry' => $this->industry,
+            // 'solution' => $this->solution,
+            // 'software' => $this->software,
         ];
         
     }
