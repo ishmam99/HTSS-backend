@@ -86,9 +86,21 @@ class TrainingRequestController extends Controller
         return view('admin.training-requests.index', compact('trainingRequests', 'statistics'));
     }
 
-    /**
-     * Store a newly created training request.
-     */
+      public function stats()
+    {
+        $stats = [
+            'total' => TrainingRequest::count(),
+            'pending' => TrainingRequest::where('status', 'pending')->count(),
+            'under_review' => TrainingRequest::where('status', 'under_review')->count(),
+            'approved' => TrainingRequest::where('status', 'approved')->count(),
+            'completed' => TrainingRequest::where('status', 'completed')->count(),
+        ];
+        
+        return response()->json([
+            'success' => true,
+            'data' => $stats
+        ]);
+    }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

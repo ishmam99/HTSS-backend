@@ -244,7 +244,9 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
     // Admin routes (add auth middleware in production)
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [TrainingRequestController::class, 'index']);
+        
         Route::get('/dashboard', [TrainingRequestController::class, 'dashboard']);
+          Route::get('/stats', [TrainingRequestController::class, 'stats']);
         Route::get('/reports', [TrainingRequestController::class, 'reports']);
         Route::get('/software-list', [TrainingRequestController::class, 'getSoftwareList']);
         Route::get('/export', [TrainingRequestController::class, 'export']);
