@@ -28,6 +28,6 @@ class Solution extends Model
     }
       public function internalTrainings(): HasMany
     {
-        return $this->hasMany(InternalTraining::class);
+        return $this->hasMany(TrainingCourse::class);
     }
 }
