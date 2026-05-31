@@ -379,33 +379,13 @@ public function approve($id)
             'trainer_id' => $user->id
         ]);
         
-        // Copy schedules
-        $schedules = TrainerPreferredSchedule::where('trainer_request_form_id', $trainerRequestForm->id)->get();
-        foreach ($schedules as $schedule) {
-            TrainerPreferredSchedule::create([
-                'trainer_id' => $user->id,
-                'trainer_request_form_id' => $trainerRequestForm->id,
-                'days' => $schedule->days,
-                'start_date' => $schedule->start_date,
-                'end_date' => $schedule->end_date,
-                'status' => 1,
-            ]);
-        }
+        // Update schedules with trainer_id
+        TrainerPreferdSchedule::where('trainer_request_form_id', $trainerRequestForm->id)
+            ->update(['trainer_id' => $user->id]);
         
-        // Copy skills
-        $skills = TrainerSkill::where('trainer_request_form_id', $trainerRequestForm->id)->get();
-        foreach ($skills as $skill) {
-            TrainerSkill::create([
-                'trainer_id' => $user->id,
-                'trainer_request_form_id' => $trainerRequestForm->id,
-                'skill_type' => $skill->skill_type,
-                'software_id' => $skill->software_id,
-                'level' => $skill->level,
-                'solution_id' => $skill->solution_id,
-                'analysis' => $skill->analysis,
-                'status' => 1,
-            ]);
-        }
+        // Update skills with trainer_id
+        TrainerSkill::where('trainer_request_form_id', $trainerRequestForm->id)
+            ->update(['trainer_id' => $user->id]);
         
         DB::commit();
         
