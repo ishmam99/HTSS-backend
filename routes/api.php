@@ -103,7 +103,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::apiResource('issue-ticket', IssueTicketController::class);
-        Route::apiResource('end-users', EndUserController::class);
+      
         Route::get('end-user-by-user-id/{id}', [EndUserController::class, 'getUserByUserId']);
         Route::get('end-user-by-user-id/{id}', [EndUserController::class, 'getUserByUserId']);
         Route::apiResource('training-course', TrainingCourseController::class);
@@ -205,6 +205,7 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
     Route::post('applied-jobs', [AppliedJobController::class, 'store']);
+    Route::apiResource('end-users', EndUserController::class);
     // HR generates link
 
     // Applicant access
