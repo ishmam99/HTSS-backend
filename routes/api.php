@@ -55,6 +55,7 @@ use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserResumeController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use App\Http\Controllers\TrainingRequestController;
+use App\Http\Controllers\Api\TrainingScheduleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -81,6 +82,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('customer-success-managers', CustomerSuccessManagerController::class);
         Route::get('my-success-team', [SuccessTeamController::class, 'mySuccessTeams']);
 
+        Route::apiResource('training-schedules', TrainingScheduleController::class);
+
         // Route::apiResource('training-schedules', TrainingScheduleController::class);
         // Route::apiResource('solution-trainings', SolutionTrainingController::class);
         Route::get('users', [AuthController::class, 'index']);
@@ -103,7 +106,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::apiResource('issue-ticket', IssueTicketController::class);
-      
+
         Route::get('end-user-by-user-id/{id}', [EndUserController::class, 'getUserByUserId']);
         Route::get('end-user-by-user-id/{id}', [EndUserController::class, 'getUserByUserId']);
         Route::apiResource('training-course', TrainingCourseController::class);
@@ -241,11 +244,11 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
     Route::prefix('training-requests')->group(function () {
     // Public routes (no auth required for submission)
     Route::post('/', [TrainingRequestController::class, 'store']);
-    
+
     // Admin routes (add auth middleware in production)
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [TrainingRequestController::class, 'index']);
-        
+
         Route::get('/dashboard', [TrainingRequestController::class, 'dashboard']);
           Route::get('/stats', [TrainingRequestController::class, 'stats']);
         Route::get('/reports', [TrainingRequestController::class, 'reports']);
