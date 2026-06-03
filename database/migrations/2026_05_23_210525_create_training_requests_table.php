@@ -15,28 +15,28 @@ return new class extends Migration
             $table->id();
             
             // Personal Information
-            $table->string('full_name');
-            $table->string('email');
+            $table->string('full_name')->nullable();
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('organization');
+            $table->string('organization')->nullable();
             $table->string('job_title')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             // Course Information
             $table->unsignedBigInteger('course_id')->nullable();
-            $table->foreignId('training_schedule_id')->nullable()->constrained('training_schedules')->cascadeOnDelete();
-            $table->string('course_name');
-            $table->string('course_code');
-            $table->string('training_type'); 
+            $table->foreignId('training_course_schedule_id')->nullable()->constrained('training_course_schedules')->cascadeOnDelete();
+            $table->string('course_name')->nullable();
+            $table->string('course_code')->nullable();
+            $table->string('training_type')->nullable(); 
             $table->string('software')->nullable();
             $table->string('solution_area')->nullable(); // Structure, Fluids, Acoustics
-            $table->string('experience_level'); // beginner, intermediate, advanced
+            $table->string('experience_level')->nullable(); // beginner, intermediate, advanced
             $table->decimal('course_price', 10, 2)->nullable();
             
             // Training Preferences
-            $table->string('preferred_format'); // online, onsite, hybrid
+            $table->string('preferred_format')->nullable(); // online, onsite, hybrid
             $table->date('preferred_start_date')->nullable();
             $table->string('preferred_timezone')->nullable();
-            $table->integer('number_of_participants')->default(1);
+            $table->integer('number_of_participants')->nullable()->default(1);
             
             // Additional Information
             $table->text('comments')->nullable();

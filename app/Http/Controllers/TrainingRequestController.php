@@ -105,28 +105,28 @@ class TrainingRequestController extends Controller
     {
         $validator = Validator::make($request->all(), [
             // Personal Information
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'full_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'organization' => 'required|string|max:255',
+            'organization' => 'nullable|string|max:255',
             'job_title' => 'nullable|string|max:255',
             
             // Course Information
-            'course_name' => 'required|string|max:255',
+            'course_name' => 'nullable|string|max:255',
             'course_id' => 'nullable|exists:training_courses,id',
-            'training_schedule_id' => 'nullable|exists:training_schedules,id',
-            'course_code' => 'required|string|max:50',
-            'training_type' => 'required|in:onsite,online,webinar',
+            'training_course_schedule_id' => 'nullable|exists:training_course_schedules,id',
+            'course_code' => 'nullable|string|max:50',
+            'training_type' => 'nullable|in:individual,group,company',
             'software' => 'nullable|string|max:100',
             'solution_area' => 'nullable|string|max:100',
-            'experience_level' => 'required|in:beginner,intermediate,advanced',
+            'experience_level' => 'nullable|in:beginner,intermediate,advanced',
             'course_price' => 'nullable|numeric|min:0',
             
             // Training Preferences
-            'preferred_format' => 'required|in:online,onsite,hybrid',
+            'preferred_format' => 'nullable|in:online,onsite,hybrid',
             'preferred_start_date' => 'nullable|date|after:today',
             'preferred_timezone' => 'nullable|string|max:100',
-            'number_of_participants' => 'integer|min:1|max:100',
+            'number_of_participants' => 'nullable|integer|min:1|max:100',
             
             // Additional Information
             'comments' => 'nullable|string',
@@ -238,14 +238,14 @@ class TrainingRequestController extends Controller
             'full_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'organization' => 'sometimes|string|max:255',
+            'organization' => 'nullable|string|max:255',
             'job_title' => 'nullable|string|max:255',
             'user_id' => 'nullable|exists:users,id',
             'course_id' => 'nullable|exists:training_courses,id',
-            'training_schedule_id' => 'nullable|exists:training_schedules,id',
+            'training_course_schedule_id' => 'nullable|exists:training_course_schedules,id',
             'course_name' => 'sometimes|string|max:255',
             'course_code' => 'sometimes|string|max:50',
-            'training_type' => 'sometimes|in:onsite,online,webinar',
+            'training_type' => 'nullable|in:individual,group,company',
             'software' => 'nullable|string|max:100',
             'solution_area' => 'nullable|string|max:100',
             'experience_level' => 'sometimes|in:beginner,intermediate,advanced',
