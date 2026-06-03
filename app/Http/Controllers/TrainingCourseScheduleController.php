@@ -557,10 +557,10 @@ class TrainingCourseScheduleController extends Controller
             ->whereYear('date', $year)
             // ->whereMonth('date', '>', now()->month)
             ->orderBy('date', 'asc')
-            ->get()
-            ->filter(function ($schedule) {
-                return $schedule->isAvailable(); // Check if seats are available
-            });
+            ->get();
+            // ->filter(function ($schedule) {
+            //     return $schedule->isAvailable(); // Check if seats are available
+            // });
         dd($schedules);
         // Group by course
         $coursesByMonth = $schedules->groupBy('training_course_id')->map(function ($courseSchedules) {
