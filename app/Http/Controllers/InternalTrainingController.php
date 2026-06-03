@@ -54,7 +54,7 @@ class InternalTrainingController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:255', 'unique:internal_trainings,code'],
+            'code' => ['required', 'string', 'max:255', 'unique:training_courses,code'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
 
             'short_description' => ['nullable', 'string'],
@@ -114,7 +114,7 @@ class InternalTrainingController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('internal_trainings', 'code')->ignore($training->id)
+                Rule::unique('training_courses', 'code')->ignore($training->id)
             ],
 
             'status' => ['nullable', 'integer', 'in:0,1,2'],
