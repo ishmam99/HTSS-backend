@@ -20,12 +20,13 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('organization');
             $table->string('job_title')->nullable();
-            
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             // Course Information
             $table->unsignedBigInteger('course_id')->nullable();
+            $table->foreignId('training_schedule_id')->nullable()->constrained('training_schedules')->cascadeOnDelete();
             $table->string('course_name');
             $table->string('course_code');
-            $table->string('training_type'); // onsite, online, webinar
+            $table->string('training_type'); 
             $table->string('software')->nullable();
             $table->string('solution_area')->nullable(); // Structure, Fluids, Acoustics
             $table->string('experience_level'); // beginner, intermediate, advanced

@@ -113,6 +113,8 @@ class TrainingRequestController extends Controller
             
             // Course Information
             'course_name' => 'required|string|max:255',
+            'course_id' => 'nullable|exists:training_courses,id',
+            'training_schedule_id' => 'nullable|exists:training_schedules,id',
             'course_code' => 'required|string|max:50',
             'training_type' => 'required|in:onsite,online,webinar',
             'software' => 'nullable|string|max:100',
@@ -152,9 +154,11 @@ class TrainingRequestController extends Controller
                 'phone' => $request->phone,
                 'organization' => $request->organization,
                 'job_title' => $request->job_title,
-                
+                'user_id' => auth()->id(),
                 // Course Information
                 'course_name' => $request->course_name,
+                'course_id' => $request->course_id,
+                'training_schedule_id' => $request->training_schedule_id,
                 'course_code' => $request->course_code,
                 'training_type' => $request->training_type,
                 'software' => $request->software,
@@ -236,6 +240,9 @@ class TrainingRequestController extends Controller
             'phone' => 'nullable|string|max:20',
             'organization' => 'sometimes|string|max:255',
             'job_title' => 'nullable|string|max:255',
+            'user_id' => 'nullable|exists:users,id',
+            'course_id' => 'nullable|exists:training_courses,id',
+            'training_schedule_id' => 'nullable|exists:training_schedules,id',
             'course_name' => 'sometimes|string|max:255',
             'course_code' => 'sometimes|string|max:50',
             'training_type' => 'sometimes|in:onsite,online,webinar',
