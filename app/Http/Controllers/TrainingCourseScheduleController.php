@@ -570,8 +570,8 @@ public function getAvailableCoursesByMonth(Request $request)
             'schedules' => $courseSchedules->map(function($schedule) {
                 return [
                     'schedule_id' => $schedule->id,
-                    'date' => $schedule->date->format('Y-m-d'),
-                    'date_formatted' => $schedule->date->format('l, F j, Y'),
+                    'date' => $schedule->date,
+                    'date_formatted' => $schedule->date?->format('l, F j, Y'),
                     'available_seats' => $schedule->available_seats_count,
                     'trainer_name' => $schedule->trainer ? $schedule->trainer->name : 'TBD'
                 ];
