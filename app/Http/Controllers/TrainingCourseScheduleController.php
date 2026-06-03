@@ -555,13 +555,13 @@ class TrainingCourseScheduleController extends Controller
             ->where('status', 2) // Active status
             ->where('date', '>=', now()->toDateString())
             ->whereYear('date', $year)
-            // ->whereMonth('date', '>', now()->month)
+            ->whereMonth('date', '>', now()->month)
             ->orderBy('date', 'asc')
             ->get();
             // ->filter(function ($schedule) {
             //     return $schedule->isAvailable(); // Check if seats are available
             // });
-        dd($schedules);
+        // dd($schedules);
         // Group by course
         $coursesByMonth = $schedules->groupBy('training_course_id')->map(function ($courseSchedules) {
             $course = $courseSchedules->first()->trainingCourse;
