@@ -34,7 +34,8 @@ public function trainer()
 
 public function isAvailable()
 {
-    $bookedSeats = $this->enrollments()->count();
+    $bookedSeats = 0 ;
+    // $bookedSeats = $this->enrollments()->count();
     return $this->status == 1 && 
            $this->date >= now()->toDateString() && 
            ($this->available_seats - $bookedSeats) > 0;
@@ -42,7 +43,8 @@ public function isAvailable()
 
 public function getAvailableSeatsCountAttribute()
 {
-    $bookedSeats = $this->enrollments()->count();
+    $bookedSeats = 0;
+    // $bookedSeats = $this->enrollments()->count();
     return max(0, $this->available_seats - $bookedSeats);
 }
 
