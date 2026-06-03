@@ -542,46 +542,46 @@ class TrainingCourseScheduleController extends Controller
      */
     public function getAvailableCoursesByMonth(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'year' => 'nullable|integer|min:2000|max:2100',
-            'month' => 'nullable|integer|min:1|max:12'
-        ]);
-
         $year = $request->get('year', now()->year);
-        $month = $request->get('month', now()->month);
 
-        // Get active schedules with available seats
+        // Get active schedules with available seats for all months
         $schedules = TrainingCourseSchedule::with(['trainingCourse', 'trainer'])
-            ->where('status', 2) // Active status
+            ->where('status', 2) // Active status only
             ->where('date', '>=', now()->toDateString())
             ->whereYear('date', $year)
-            ->whereMonth('date', '>', now()->month)
             ->orderBy('date', 'asc')
             ->get();
-            // ->filter(function ($schedule) {
-            //     return $schedule->isAvailable(); // Check if seats are available
-            // });
-        // dd($schedules);
-        // Group by course
-        $coursesByMonth = $schedules->groupBy('training_course_id')->map(function ($courseSchedules) {
-            $course = $courseSchedules->first()->trainingCourse;
+
+        // Group by month and course
+        $coursesByMonth = $schedules->groupBy(function ($schedule) {
+            return Carbon::parse($schedule->date)->format('Y-m');
+        })->map(function ($monthSchedules, $monthYear) {
             return [
-                'course_id' => $course->id,
-                'course_name' => $course->name,
-                'course_description' => $course->description,
-                'total_schedules' => $courseSchedules->count(),
-                'total_available_seats' => $courseSchedules->sum(function ($schedule) {
-                    return $schedule->available_seats_count;
-                }),
-                'schedules' => $courseSchedules->map(function ($schedule) {
+                'month_year' => $monthYear,
+                'month' => Carbon::parse($monthSchedules->first()->date)->month,
+                'month_name' => Carbon::parse($monthSchedules->first()->date)->format('F'),
+                'year' => Carbon::parse($monthSchedules->first()->date)->year,
+                'courses' => $monthSchedules->groupBy('training_course_id')->map(function ($courseSchedules) {
+                    $course = $courseSchedules->first()->trainingCourse;
                     return [
-                        'schedule_id' => $schedule->id,
-                        'date' => $schedule->date,
-                        'date_formatted' => Carbon::parse($schedule->date)->format('l, F j, Y'),
-                        'available_seats' => $schedule->available_seats_count,
-                        'trainer_name' => $schedule->trainer ? $schedule->trainer->name : 'TBD'
+                        'course_id' => $course->id,
+                        'course_name' => $course->name,
+                        'course_description' => $course->description,
+                        'total_schedules' => $courseSchedules->count(),
+                        'total_available_seats' => $courseSchedules->sum(function ($schedule) {
+                            return $schedule->available_seats_count;
+                        }),
+                        'schedules' => $courseSchedules->map(function ($schedule) {
+                            return [
+                                'schedule_id' => $schedule->id,
+                                'date' => $schedule->date,
+                                'date_formatted' => Carbon::parse($schedule->date)->format('l, F j, Y'),
+                                'available_seats' => $schedule->available_seats_count,
+                                'trainer_name' => $schedule->trainer ? $schedule->trainer->name : 'TBD'
+                            ];
+                        })
                     ];
-                })
+                })->values()
             ];
         })->values();
 
@@ -589,9 +589,7 @@ class TrainingCourseScheduleController extends Controller
             'success' => true,
             'data' => [
                 'year' => $year,
-                'month' => $month,
-                'month_name' => date('F', mktime(0, 0, 0, $month, 1)),
-                'courses' => $coursesByMonth
+                'groups' => $coursesByMonth
             ],
             'message' => 'Available courses by month retrieved successfully'
         ]);
