@@ -406,7 +406,7 @@ class TrainingCourseScheduleController extends Controller
         $schedules = TrainingCourseSchedule::with('trainer')
             ->where('training_course_id', $courseId)
             ->where('date', '>=', now()->toDateString())
-            ->where('status', 1)
+            ->where('status', 2)
             ->orderBy('date', 'asc')
             ->get();
 
