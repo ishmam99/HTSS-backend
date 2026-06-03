@@ -160,7 +160,7 @@ class TrainingRequestController extends Controller
                 // Course Information
                 'course_name' => $request->course_name,
                 'course_id' => $request->course_id,
-                'training_schedule_id' => $request->training_schedule_id,
+                'training_course_schedule_id' => $request->training_course_schedule_id,
                 'course_code' => $request->course_code,
                 'training_type' => $request->training_type,
                 'software' => $request->software,
@@ -275,6 +275,8 @@ class TrainingRequestController extends Controller
                 'organization',
                 'job_title',
                 'course_name',
+                'course_id',
+                'training_course_schedule_id',
                 'course_code',
                 'training_type',
                 'software',
