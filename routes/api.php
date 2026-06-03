@@ -47,6 +47,7 @@ use App\Http\Controllers\TrainerRequestFormController;
 use App\Http\Controllers\TrainerScheduleController;
 use App\Http\Controllers\TrainerSkillController;
 use App\Http\Controllers\TrainingCourseController;
+
 use App\Http\Controllers\TrainingEnrollmentController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingOfferController;
@@ -55,6 +56,7 @@ use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserResumeController;
 use App\Http\Controllers\UserSoftwareSkillController;
 use App\Http\Controllers\TrainingRequestController;
+use App\Http\Controllers\TrainingCourseScheduleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -277,5 +279,30 @@ Route::prefix('trainer-skills')->group(function () {
     Route::get('/{id}', [TrainerSkillController::class, 'show']);
     Route::put('/{id}', [TrainerSkillController::class, 'update']);
     Route::delete('/{id}', [TrainerSkillController::class, 'destroy']);
+});
+
+
+// Admin routes (protected with auth and admin middleware)
+Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+    // Training Course Schedules
+    Route::apiResource('training-course-schedules', TrainingCourseScheduleController::class);
+    Route::post('training-course-schedules/bulk-delete', [TrainingCourseScheduleController::class, 'bulkDestroy']);
+    Route::patch('training-course-schedules/{id}/status', [TrainingCourseScheduleController::class, 'updateStatus']);
+    Route::get('training-course-schedules/trainer/{trainerId}', [TrainingCourseScheduleController::class, 'schedulesByTrainer']);
+    Route::get('training-course-schedules/calendar/events', [TrainingCourseScheduleController::class, 'calendar']);
+      Route::get('training-course-schedules/monthly/grouped', [TrainingCourseScheduleController::class, 'getSchedulesGroupedByMonth']);
+    Route::get('training-course-schedules/monthly/calendar', [TrainingCourseScheduleController::class, 'getMonthlyCalendar']);
+    Route::get('training-course-schedules/monthly/statistics', [TrainingCourseScheduleController::class, 'getMonthlyStatistics']);
+    Route::get('training-course-schedules/available-months', [TrainingCourseScheduleController::class, 'getAvailableMonths']);
+});
+
+// Public routes (no authentication required or with optional auth)
+Route::prefix('public')->group(function () {
+    Route::get('training-course-schedules', [TrainingCourseScheduleController::class, 'publicIndex']);
+    Route::get('training-course-schedules/{id}', [TrainingCourseScheduleController::class, 'publicShow']);
+    Route::get('training-course-schedules/{id}/availability', [TrainingCourseScheduleController::class, 'checkAvailability']);
+    Route::get('courses/{courseId}/upcoming-schedules', [TrainingCourseScheduleController::class, 'upcomingSchedules']);
+     Route::get('training-course-schedules/monthly/available-courses', [TrainingCourseScheduleController::class, 'getAvailableCoursesByMonth']);
+    Route::get('training-course-schedules/monthly/calendar', [TrainingCourseScheduleController::class, 'getMonthlyCalendar']);
 });
 });

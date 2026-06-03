@@ -879,4 +879,4 @@ class TrainingRequestController extends Controller
             'data' => $software
         ]);
     }
-}
+} 
