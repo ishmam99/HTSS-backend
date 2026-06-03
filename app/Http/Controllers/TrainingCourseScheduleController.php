@@ -727,7 +727,7 @@ class TrainingCourseScheduleController extends Controller
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->get();
-
+  dd($monthsWithSchedules);
         $availableMonths = $monthsWithSchedules->map(function ($data) {
             $monthInt = (int) $data->month;
             return [
@@ -737,7 +737,7 @@ class TrainingCourseScheduleController extends Controller
                 'total_schedules' => (int) $data->total_schedules
             ];
         })->values();
-
+      
         return response()->json([
             'success' => true,
             'data' => $availableMonths,
