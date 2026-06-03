@@ -18,7 +18,7 @@ class TrainingRequestController extends Controller
         $query = TrainingRequest::with(['user', 'trainingCourseSchedule', 'trainingCourse']);
 
         // Restrict end-users to only their own requests
-        if (auth()->check() && auth()->user()->role === 'end-user') {
+        if (auth()->user()->role == 'end-user') {
             $query->where('user_id', auth()->id());
         }
 
