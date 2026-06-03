@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TrainingCourse;
 use App\Models\TrainingCourseSchedule;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -505,7 +506,7 @@ public function getSchedulesGroupedByMonth(Request $request)
     
     // Group by month
     $groupedSchedules = $schedules->groupBy(function($schedule) {
-        return $schedule->date->format('F Y'); // e.g., "January 2024"
+        return Carbon::parse($schedule->date)->format('F Y'); // e.g., "January 2024"
     });
     
     $result = [];
@@ -571,7 +572,7 @@ public function getAvailableCoursesByMonth(Request $request)
                 return [
                     'schedule_id' => $schedule->id,
                     'date' => $schedule->date,
-                    'date_formatted' => $schedule->date?->format('l, F j, Y'),
+                    'date_formatted' => Carbon::parse($schedule->date)->format('l, F j, Y'),
                     'available_seats' => $schedule->available_seats_count,
                     'trainer_name' => $schedule->trainer ? $schedule->trainer->name : 'TBD'
                 ];
