@@ -263,12 +263,12 @@ class TrainingCourseScheduleController extends Controller
         }
         
         // Check if schedule has any enrollments before deletion
-        if ($schedule->enrollments()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot delete schedule with existing enrollments'
-            ], 409);
-        }
+        // if ($schedule->enrollments()->count() > 0) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Cannot delete schedule with existing enrollments'
+        //     ], 409);
+        // }
         
         $schedule->delete();
         
@@ -296,18 +296,18 @@ class TrainingCourseScheduleController extends Controller
             ], 422);
         }
         
-        // Check for schedules with enrollments
-        $schedulesWithEnrollments = TrainingCourseSchedule::whereIn('id', $request->ids)
-            ->has('enrollments')
-            ->pluck('id');
+        // // Check for schedules with enrollments
+        // $schedulesWithEnrollments = TrainingCourseSchedule::whereIn('id', $request->ids)
+        //     ->has('enrollments')
+        //     ->pluck('id');
             
-        if ($schedulesWithEnrollments->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Some schedules have enrollments and cannot be deleted',
-                'data' => ['schedules_with_enrollments' => $schedulesWithEnrollments]
-            ], 409);
-        }
+        // if ($schedulesWithEnrollments->count() > 0) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Some schedules have enrollments and cannot be deleted',
+        //         'data' => ['schedules_with_enrollments' => $schedulesWithEnrollments]
+        //     ], 409);
+        // }
         
         $deletedCount = TrainingCourseSchedule::whereIn('id', $request->ids)->delete();
         
@@ -367,14 +367,15 @@ class TrainingCourseScheduleController extends Controller
             ], 404);
         }
         
-        $bookedSeats = $schedule->enrollments()->count();
-        $availableSeats = $schedule->available_seats - $bookedSeats;
+        // $bookedSeats = $schedule->enrollments()->count();
+        $availableSeats = $schedule->available_seats ;
+        // $availableSeats = $schedule->available_seats - $bookedSeats;
         
         return response()->json([
             'success' => true,
             'data' => [
                 'total_seats' => $schedule->available_seats,
-                'booked_seats' => $bookedSeats,
+                // 'booked_seats' => $bookedSeats,
                 'available_seats' => max(0, $availableSeats),
                 'is_available' => $availableSeats > 0 && $schedule->status == 1
             ],
@@ -630,15 +631,15 @@ public function getMonthlyCalendar(Request $request)
             'is_past' => $date < now()->toDateString(),
             'has_schedules' => $daySchedules->count() > 0,
             'schedules' => $daySchedules->map(function($schedule) {
-                $bookedSeats = $schedule->enrollments()->count();
+                // $bookedSeats = $schedule->enrollments()->count();
                 return [
                     'schedule_id' => $schedule->id,
                     'course_id' => $schedule->training_course_id,
                     'course_name' => $schedule->trainingCourse->name,
                     'trainer_name' => $schedule->trainer ? $schedule->trainer->name : 'Not Assigned',
                     'total_seats' => $schedule->available_seats,
-                    'booked_seats' => $bookedSeats,
-                    'available_seats' => $schedule->available_seats - $bookedSeats,
+                    // 'booked_seats' => $bookedSeats,
+                    // 'available_seats' => $schedule->available_seats - $bookedSeats,
                     'status' => $schedule->status,
                     'status_label' => $this->getStatusLabel($schedule->status)
                 ];
