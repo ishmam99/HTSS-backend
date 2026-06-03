@@ -545,7 +545,7 @@ class TrainingCourseScheduleController extends Controller
         $year = $request->get('year', now()->year);
 
         // Get active schedules with available seats for all months
-        $schedules = TrainingCourseSchedule::with(['trainingCourse', 'trainer'])
+        $schedules = TrainingCourseSchedule::with(['trainingCourse.solution','trainingCourse.software', 'trainer'])
             ->where('status', 2) // Active status only
             ->where('date', '>=', now()->toDateString())
             ->whereYear('date', $year)
