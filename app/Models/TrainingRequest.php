@@ -224,4 +224,16 @@ class TrainingRequest extends Model
             'paid_at' => now(),
         ]);
     }
+    public function trainingCourseSchedule()
+    {
+        return $this->belongsTo(TrainingCourseSchedule::class, 'training_course_schedule_id');
+    }
+    public function trainingCourse()
+    {
+        return $this->belongsTo(TrainingCourse::class, 'course_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

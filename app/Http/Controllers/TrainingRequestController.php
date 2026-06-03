@@ -15,7 +15,12 @@ class TrainingRequestController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TrainingRequest::query();
+        $query = TrainingRequest::with(['user', 'trainingCourseSchedule', 'trainingCourse']);
+
+        // Restrict end-users to only their own requests
+        if (auth()->check() && auth()->user()->role === 'end-user') {
+            $query->where('user_id', auth()->id());
+        }
 
         // Filter by status
         if ($request->has('status') && $request->status !== 'all') {
@@ -43,12 +48,12 @@ class TrainingRequestController extends Controller
         // Search by name, email, organization, or course code
         if ($request->has('search') && $request->search) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('organization', 'like', "%{$search}%")
-                  ->orWhere('course_code', 'like', "%{$search}%")
-                  ->orWhere('course_name', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('organization', 'like', "%{$search}%")
+                    ->orWhere('course_code', 'like', "%{$search}%")
+                    ->orWhere('course_name', 'like', "%{$search}%");
             });
         }
 
@@ -86,7 +91,7 @@ class TrainingRequestController extends Controller
         return view('admin.training-requests.index', compact('trainingRequests', 'statistics'));
     }
 
-      public function stats()
+    public function stats()
     {
         $stats = [
             'total' => TrainingRequest::count(),
@@ -95,7 +100,7 @@ class TrainingRequestController extends Controller
             'approved' => TrainingRequest::where('status', 'approved')->count(),
             'completed' => TrainingRequest::where('status', 'completed')->count(),
         ];
-        
+
         return response()->json([
             'success' => true,
             'data' => $stats
@@ -110,7 +115,7 @@ class TrainingRequestController extends Controller
             'phone' => 'nullable|string|max:20',
             'organization' => 'nullable|string|max:255',
             'job_title' => 'nullable|string|max:255',
-            
+
             // Course Information
             'course_name' => 'nullable|string|max:255',
             'course_id' => 'nullable|exists:training_courses,id',
@@ -121,18 +126,18 @@ class TrainingRequestController extends Controller
             'solution_area' => 'nullable|string|max:100',
             'experience_level' => 'nullable|in:beginner,intermediate,advanced',
             'course_price' => 'nullable|numeric|min:0',
-            
+
             // Training Preferences
             'preferred_format' => 'nullable|in:online,onsite,hybrid',
             'preferred_start_date' => 'nullable|date|after:today',
             'preferred_timezone' => 'nullable|string|max:100',
             'number_of_participants' => 'nullable|integer|min:1|max:100',
-            
+
             // Additional Information
             'comments' => 'nullable|string',
             'specific_goals' => 'nullable|string',
             'previous_experience' => 'nullable|string',
-            
+
             // Tracking
             'source_page' => 'nullable|string|max:255',
         ]);
@@ -165,22 +170,22 @@ class TrainingRequestController extends Controller
                 'solution_area' => $request->solution_area,
                 'experience_level' => $request->experience_level,
                 'course_price' => $request->course_price,
-                
+
                 // Training Preferences
                 'preferred_format' => $request->preferred_format,
                 'preferred_start_date' => $request->preferred_start_date,
                 'preferred_timezone' => $request->preferred_timezone,
                 'number_of_participants' => $request->number_of_participants ?? 1,
-                
+
                 // Additional Information
                 'comments' => $request->comments,
                 'specific_goals' => $request->specific_goals,
                 'previous_experience' => $request->previous_experience,
-                
+
                 // Status
                 'status' => TrainingRequest::STATUS_PENDING,
                 'payment_status' => $request->course_price > 0 ? 'pending' : 'not_required',
-                
+
                 // Tracking
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
@@ -197,11 +202,10 @@ class TrainingRequestController extends Controller
                 'message' => 'Training request submitted successfully. We will contact you within 2 business days.',
                 'data' => $trainingRequest
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Training request creation failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to submit training request. Please try again later.',
@@ -215,7 +219,7 @@ class TrainingRequestController extends Controller
      */
     public function show($id)
     {
-        $trainingRequest = TrainingRequest::with('reviewer')->findOrFail($id);
+        $trainingRequest = TrainingRequest::with(['reviewer', 'user', 'trainingCourseSchedule', 'trainingCourse'])->findOrFail($id);
 
         if (request()->expectsJson()) {
             return response()->json([
@@ -268,15 +272,29 @@ class TrainingRequestController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $trainingRequest->update($request->only([
-                'full_name', 'email', 'phone', 'organization', 'job_title',
-                'course_name', 'course_code', 'training_type', 'software', 
-                'solution_area', 'experience_level', 'course_price',
-                'preferred_format', 'preferred_start_date', 'number_of_participants',
-                'comments', 'specific_goals', 'previous_experience', 'admin_notes'
+                'full_name',
+                'email',
+                'phone',
+                'organization',
+                'job_title',
+                'course_name',
+                'course_code',
+                'training_type',
+                'software',
+                'solution_area',
+                'experience_level',
+                'course_price',
+                'preferred_format',
+                'preferred_start_date',
+                'number_of_participants',
+                'comments',
+                'specific_goals',
+                'previous_experience',
+                'admin_notes'
             ]));
-            
+
             DB::commit();
 
             return response()->json([
@@ -284,10 +302,9 @@ class TrainingRequestController extends Controller
                 'message' => 'Training request updated successfully',
                 'data' => $trainingRequest
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update training request',
@@ -314,36 +331,36 @@ class TrainingRequestController extends Controller
         }
 
         $trainingRequest = TrainingRequest::findOrFail($id);
-        
+
         try {
             DB::beginTransaction();
-            
+
             $oldStatus = $trainingRequest->status;
             $newStatus = $request->status;
-            
+
             $updateData = ['status' => $newStatus];
-            
+
             if ($request->admin_notes) {
                 $updateData['admin_notes'] = $request->admin_notes;
             }
-            
+
             if ($newStatus === TrainingRequest::STATUS_UNDER_REVIEW && !$trainingRequest->reviewed_at) {
                 $updateData['reviewed_at'] = now();
                 $updateData['reviewed_by'] = auth()->id();
             }
-            
+
             if ($newStatus === TrainingRequest::STATUS_COMPLETED && !$trainingRequest->completed_at) {
                 $updateData['completed_at'] = now();
             }
-            
+
             if ($newStatus === TrainingRequest::STATUS_CANCELLED || $newStatus === TrainingRequest::STATUS_REJECTED) {
                 $updateData['admin_notes'] = $request->admin_notes ?? $trainingRequest->admin_notes;
             }
-            
+
             $trainingRequest->update($updateData);
-            
+
             DB::commit();
-            
+
             // Send status update email
             // Mail::to($trainingRequest->email)->send(new TrainingRequestStatusUpdated($trainingRequest, $oldStatus));
 
@@ -352,10 +369,9 @@ class TrainingRequestController extends Controller
                 'message' => 'Training request status updated successfully',
                 'data' => $trainingRequest
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update status',
@@ -385,24 +401,24 @@ class TrainingRequestController extends Controller
         }
 
         $trainingRequest = TrainingRequest::findOrFail($id);
-        
+
         try {
             DB::beginTransaction();
-            
+
             $trainingRequest->schedule(
                 $request->scheduled_date,
                 $request->scheduled_time,
                 $request->meeting_link,
                 $request->location
             );
-            
+
             if ($request->admin_notes) {
                 $trainingRequest->admin_notes = $request->admin_notes;
                 $trainingRequest->save();
             }
-            
+
             DB::commit();
-            
+
             // Send scheduling email
             // Mail::to($trainingRequest->email)->send(new TrainingScheduled($trainingRequest));
 
@@ -411,10 +427,9 @@ class TrainingRequestController extends Controller
                 'message' => 'Training scheduled successfully',
                 'data' => $trainingRequest
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to schedule training',
@@ -443,23 +458,23 @@ class TrainingRequestController extends Controller
         }
 
         $trainingRequest = TrainingRequest::findOrFail($id);
-        
+
         try {
             DB::beginTransaction();
-            
+
             $trainingRequest->complete($request->feedback, $request->rating);
-            
+
             if ($request->certificate_url) {
                 $trainingRequest->issueCertificate($request->certificate_url);
             }
-            
+
             if ($request->admin_notes) {
                 $trainingRequest->admin_notes = $request->admin_notes;
                 $trainingRequest->save();
             }
-            
+
             DB::commit();
-            
+
             // Send completion email with certificate
             // Mail::to($trainingRequest->email)->send(new TrainingCompleted($trainingRequest));
 
@@ -468,10 +483,9 @@ class TrainingRequestController extends Controller
                 'message' => 'Training marked as completed',
                 'data' => $trainingRequest
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to complete training',
@@ -499,19 +513,19 @@ class TrainingRequestController extends Controller
         }
 
         $trainingRequest = TrainingRequest::findOrFail($id);
-        
+
         try {
             DB::beginTransaction();
-            
+
             $trainingRequest->recordPayment($request->amount, $request->payment_reference);
-            
+
             if ($request->admin_notes) {
                 $trainingRequest->admin_notes = $request->admin_notes;
                 $trainingRequest->save();
             }
-            
+
             DB::commit();
-            
+
             // Send payment confirmation email
             // Mail::to($trainingRequest->email)->send(new PaymentReceived($trainingRequest));
 
@@ -520,10 +534,9 @@ class TrainingRequestController extends Controller
                 'message' => 'Payment recorded successfully',
                 'data' => $trainingRequest
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to record payment',
@@ -550,26 +563,26 @@ class TrainingRequestController extends Controller
         }
 
         $trainingRequest = TrainingRequest::findOrFail($id);
-        
+
         if ($trainingRequest->status !== TrainingRequest::STATUS_COMPLETED) {
             return response()->json([
                 'success' => false,
                 'message' => 'Certificate can only be issued for completed trainings'
             ], 422);
         }
-        
+
         try {
             DB::beginTransaction();
-            
+
             $trainingRequest->issueCertificate($request->certificate_url);
-            
+
             if ($request->admin_notes) {
                 $trainingRequest->admin_notes = $request->admin_notes;
                 $trainingRequest->save();
             }
-            
+
             DB::commit();
-            
+
             // Send certificate email
             // Mail::to($trainingRequest->email)->send(new CertificateIssued($trainingRequest));
 
@@ -578,10 +591,9 @@ class TrainingRequestController extends Controller
                 'message' => 'Certificate issued successfully',
                 'data' => $trainingRequest
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to issue certificate',
@@ -596,12 +608,12 @@ class TrainingRequestController extends Controller
     public function destroy($id)
     {
         $trainingRequest = TrainingRequest::findOrFail($id);
-        
+
         try {
             DB::beginTransaction();
-            
+
             $trainingRequest->delete();
-            
+
             DB::commit();
 
             if (request()->expectsJson()) {
@@ -613,10 +625,9 @@ class TrainingRequestController extends Controller
 
             return redirect()->route('admin.training-requests.index')
                 ->with('success', 'Training request deleted successfully');
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete training request',
@@ -644,19 +655,18 @@ class TrainingRequestController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $deleted = TrainingRequest::whereIn('id', $request->ids)->delete();
-            
+
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => "{$deleted} training request(s) deleted successfully"
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete training requests',
@@ -688,22 +698,32 @@ class TrainingRequestController extends Controller
         $requests = $query->get();
 
         $filename = 'training-requests-' . Carbon::now()->format('Y-m-d-His') . '.csv';
-        
+
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename={$filename}",
         ];
 
-        $callback = function() use ($requests) {
+        $callback = function () use ($requests) {
             $file = fopen('php://output', 'w');
-            
+
             // Add headers
             fputcsv($file, [
-                'ID', 'Full Name', 'Email', 'Organization', 'Course Name', 
-                'Course Code', 'Training Type', 'Status', 'Preferred Start Date',
-                'Scheduled Date', 'Amount Paid', 'Payment Status', 'Created At'
+                'ID',
+                'Full Name',
+                'Email',
+                'Organization',
+                'Course Name',
+                'Course Code',
+                'Training Type',
+                'Status',
+                'Preferred Start Date',
+                'Scheduled Date',
+                'Amount Paid',
+                'Payment Status',
+                'Created At'
             ]);
-            
+
             // Add data
             foreach ($requests as $request) {
                 fputcsv($file, [
@@ -722,7 +742,7 @@ class TrainingRequestController extends Controller
                     $request->created_at
                 ]);
             }
-            
+
             fclose($file);
         };
 
@@ -736,10 +756,10 @@ class TrainingRequestController extends Controller
     {
         // Get statistics for the last 12 months
         $monthlyRequests = TrainingRequest::select(
-                DB::raw('MONTH(created_at) as month'),
-                DB::raw('YEAR(created_at) as year'),
-                DB::raw('COUNT(*) as total')
-            )
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('COUNT(*) as total')
+        )
             ->where('created_at', '>=', Carbon::now()->subMonths(12))
             ->groupBy('year', 'month')
             ->orderBy('year', 'asc')
@@ -886,4 +906,4 @@ class TrainingRequestController extends Controller
             'data' => $software
         ]);
     }
-} 
+}
