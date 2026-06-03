@@ -547,7 +547,7 @@ public function getAvailableCoursesByMonth(Request $request)
     
     // Get active schedules with available seats
     $schedules = TrainingCourseSchedule::with(['trainingCourse', 'trainer'])
-        ->where('status', 1) // Active status
+        ->where('status', 2) // Active status
         ->where('date', '>=', now()->toDateString())
         ->whereYear('date', $year)
         ->whereMonth('date', $month)
