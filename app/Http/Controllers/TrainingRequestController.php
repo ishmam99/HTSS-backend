@@ -79,17 +79,14 @@ class TrainingRequestController extends Controller
             'total_revenue' => TrainingRequest::where('payment_status', 'paid')->sum('amount_paid'),
         ];
 
-        if ($request->expectsJson()) {
+      
             return response()->json([
                 'success' => true,
                 'data' => $trainingRequests,
                 'statistics' => $statistics,
                 'filters' => $request->all()
             ]);
-        }
-
-        return view('admin.training-requests.index', compact('trainingRequests', 'statistics'));
-    }
+         }
 
     public function stats()
     {
@@ -221,14 +218,12 @@ class TrainingRequestController extends Controller
     {
         $trainingRequest = TrainingRequest::with(['reviewer', 'user', 'trainingCourseSchedule', 'trainingCourse'])->findOrFail($id);
 
-        if (request()->expectsJson()) {
+      
             return response()->json([
                 'success' => true,
                 'data' => $trainingRequest
             ]);
-        }
-
-        return view('admin.training-requests.show', compact('trainingRequest'));
+       
     }
 
     /**
