@@ -243,10 +243,11 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
     Route::apiResource('user-resumes', UserResumeController::class)->middleware('auth:sanctum');
     Route::prefix('training-requests')->group(function () {
     // Public routes (no auth required for submission)
-    Route::post('/', [TrainingRequestController::class, 'store']);
+
 
     // Admin routes (add auth middleware in production)
     Route::middleware(['auth:sanctum'])->group(function () {
+            Route::post('/', [TrainingRequestController::class, 'store']);
         Route::get('/', [TrainingRequestController::class, 'index']);
 
         Route::get('/dashboard', [TrainingRequestController::class, 'dashboard']);
