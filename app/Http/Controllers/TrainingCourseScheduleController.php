@@ -566,6 +566,7 @@ class TrainingCourseScheduleController extends Controller
                     return [
                         'course_id' => $course->id,
                         'course_name' => $course->name,
+                        'course_details' => $course,
                         'course_description' => $course->description,
                         'total_schedules' => $courseSchedules->count(),
                         'total_available_seats' => $courseSchedules->sum(function ($schedule) {
