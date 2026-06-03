@@ -555,7 +555,7 @@ class TrainingCourseScheduleController extends Controller
             ->where('status', 2) // Active status
             ->where('date', '>=', now()->toDateString())
             ->whereYear('date', $year)
-            ->whereMonth('date', '>', now()->month)
+            // ->whereMonth('date', '>', now()->month)
             ->orderBy('date', 'asc')
             ->get()
             ->filter(function ($schedule) {
