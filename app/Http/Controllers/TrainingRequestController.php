@@ -178,7 +178,7 @@ class TrainingRequestController extends Controller
                 'previous_experience' => $request->previous_experience,
                 
                 // Status
-                'status' => TrainingRequest::STATUS_PENDING,
+                'status' => TrainingRequest::STATUS_APPROVED,
                 'payment_status' => $request->course_price > 0 ? 'pending' : 'not_required',
                 
                 // Tracking
