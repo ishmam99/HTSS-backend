@@ -20,6 +20,7 @@ class TrainerRequestFormResource extends JsonResource
             'skills' => $this->skills,
             'schedules' => $this->schedules,
              'trainer' => $this->trainer,
+             'courses' => $this->courses,
             // 'industry' => $this->industry,
             // 'solution' => $this->solution,
             // 'software' => $this->software,
