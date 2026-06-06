@@ -12,65 +12,7 @@ class TrainingRequest extends Model
 
     protected $table = 'training_requests';
 
-    protected $fillable = [
-        // Personal Information
-        'full_name',
-        'email',
-        'phone',
-        'organization',
-        'job_title',
-        
-        // Course Information
-        'course_id',
-        'course_name',
-        'course_code',
-        'training_type',
-        'software',
-        'solution_area',
-        'experience_level',
-        'course_price',
-        
-        // Training Preferences
-        'preferred_format',
-        'preferred_start_date',
-        'preferred_timezone',
-        'number_of_participants',
-        
-        // Additional Information
-        'comments',
-        'specific_goals',
-        'previous_experience',
-        
-        // Status Tracking
-        'status',
-        'admin_notes',
-        'reviewed_at',
-        'reviewed_by',
-        
-        // Scheduling Information
-        'scheduled_date',
-        'scheduled_time',
-        'meeting_link',
-        'location',
-        
-        // Payment Information
-        'payment_status',
-        'amount_paid',
-        'payment_reference',
-        'paid_at',
-        
-        // Completion & Certificate
-        'completed_at',
-        'certificate_issued',
-        'certificate_url',
-        'feedback',
-        'rating',
-        
-        // Tracking
-        'ip_address',
-        'user_agent',
-        'source_page',
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'preferred_start_date' => 'date',
@@ -223,5 +165,17 @@ class TrainingRequest extends Model
             'payment_reference' => $reference,
             'paid_at' => now(),
         ]);
+    }
+    public function trainingCourseSchedule()
+    {
+        return $this->belongsTo(TrainingCourseSchedule::class, 'training_course_schedule_id');
+    }
+    public function trainingCourse()
+    {
+        return $this->belongsTo(TrainingCourse::class, 'course_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
