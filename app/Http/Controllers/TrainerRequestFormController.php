@@ -8,6 +8,7 @@ use App\Models\TrainerSkill;
 use App\Http\Requests\TrainerRequestFormRequest;
 use App\Http\Resources\TrainerRequestFormResource;
 use App\Models\Trainer;
+use App\Models\TrainerCourse;
 use App\Models\TrainerPreferdSchedule;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -61,7 +62,15 @@ class TrainerRequestFormController extends Controller
                 $path = $request->file('image')->store('uploads/trainerRequestForm', 'public');
                 $trainerRequestForm->update(['image' => $path]);
             }
-            
+            if($request->course_ids && is_array($request->course_ids)){
+                foreach($request->course_ids as $course_id){
+                    TrainerCourse::create([
+                        'trainer_request_form_id' => $trainerRequestForm->id,
+                        'training_course_id' => $course_id,
+                        'status' => 0,
+                    ]);
+                }
+            }
             // Create schedules if provided
             if ($request->has('schedules') && is_array($request->schedules)) {
                 foreach ($request->schedules as $schedule) {
