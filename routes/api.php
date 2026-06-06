@@ -276,7 +276,7 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
 });
 
 // Trainer Skills Routes
-Route::prefix('trainer-skills')->group(function () {
+Route::prefix('trainer-skills')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [TrainerSkillController::class, 'index']);
     Route::post('/', [TrainerSkillController::class, 'store']);
     Route::get('/{id}', [TrainerSkillController::class, 'show']);

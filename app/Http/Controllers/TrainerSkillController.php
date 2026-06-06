@@ -81,7 +81,7 @@ class TrainerSkillController extends Controller
             }
             
             $skill = TrainerSkill::create([
-                'trainer_id' => $request->trainer_id,
+                'trainer_id' =>auth()->id(),
                 'trainer_request_form_id' => $request->trainer_request_form_id,
                 'skill_type' => $request->skill_type ?? 0,
                 'software_id' => $request->software_id,
