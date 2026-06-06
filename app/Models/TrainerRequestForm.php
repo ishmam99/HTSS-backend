@@ -38,5 +38,9 @@ class TrainerRequestForm extends Model
     {
         return $this->hasMany(TrainerSkill::class);
     }
+    public function courses()
+    {
+        return $this->hasMany(TrainerCourse::class);
+    }
     
 }

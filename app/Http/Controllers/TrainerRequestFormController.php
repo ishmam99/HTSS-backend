@@ -20,7 +20,7 @@ class TrainerRequestFormController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainerRequestForm::with(['schedules', 'skills', 'skills.software', 'skills.solution']);
+        $query = TrainerRequestForm::with(['schedules', 'skills','courses.trainingCourse', 'skills.software', 'skills.solution']);
 
         if ($request->has('status')) {
             $query->where('status', $request->status);
