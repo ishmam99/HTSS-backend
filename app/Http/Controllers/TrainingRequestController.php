@@ -15,7 +15,7 @@ class TrainingRequestController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TrainingRequest::with(['user', 'trainingCourseSchedule', 'trainingEnrollment', 'trainingCourse']);
+        $query = TrainingRequest::with(['user', 'trainingCourseSchedule.trainer', 'trainingEnrollment', 'trainingCourse']);
 
         // Restrict end-users to only their own requests
         if (auth()->user()->role == 'end-user') {
