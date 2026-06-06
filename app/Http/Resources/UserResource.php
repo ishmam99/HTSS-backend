@@ -29,6 +29,10 @@ class UserResource extends JsonResource
         {
             $data['profile'] = EndUserResource::make($this->endUser);
         }
+        if($this->role == 'trainer')
+        {
+            $data['trainer'] = TrainerResource::make($this->trainer);
+        }
         return $data;
     }
 }
