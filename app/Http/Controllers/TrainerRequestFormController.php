@@ -395,7 +395,8 @@ public function approve($id)
         // Update skills with trainer_id
         TrainerSkill::where('trainer_request_form_id', $trainerRequestForm->id)
             ->update(['trainer_id' => $user->id]);
-        
+        TrainerCourse::where('trainer_request_form_id', $trainerRequestForm->id)
+            ->update(['trainer_id' => $trainer->id]);
         DB::commit();
         
         return response()->json([
