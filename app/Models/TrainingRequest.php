@@ -178,4 +178,9 @@ class TrainingRequest extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+   
+    public function trainingEnrollment()
+    {
+        return $this->hasOne(TrainingEnrollment::class, 'training_request_id');
+    }
 }

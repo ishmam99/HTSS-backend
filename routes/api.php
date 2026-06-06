@@ -267,7 +267,7 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
     });
 });
     Route::apiResource('meeting-schedules', MeetingScheduleController::class)->middleware('auth:sanctum');
-    Route::prefix('trainer-schedules')->group(function () {
+    Route::prefix('trainer-preferred-schedules')->group(function () {
     Route::get('/', [TrainerPreferdScheduleController::class, 'index']);
     Route::post('/', [TrainerPreferdScheduleController::class, 'store']);
     Route::get('/{id}', [TrainerPreferdScheduleController::class, 'show']);

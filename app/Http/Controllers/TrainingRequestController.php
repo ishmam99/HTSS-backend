@@ -15,11 +15,16 @@ class TrainingRequestController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TrainingRequest::with(['user', 'trainingCourseSchedule', 'trainingCourse']);
+        $query = TrainingRequest::with(['user', 'trainingCourseSchedule', 'trainingEnrollment', 'trainingCourse']);
 
         // Restrict end-users to only their own requests
         if (auth()->user()->role == 'end-user') {
             $query->where('user_id', auth()->id());
+        }
+
+        // Filter trainingEnrollment - exclude records with no data
+        if($request->has('enrolled') && $request->enrolled == 'yes') {
+             $query->whereHas('trainingEnrollment');
         }
 
         // Filter by status
@@ -79,14 +84,14 @@ class TrainingRequestController extends Controller
             'total_revenue' => TrainingRequest::where('payment_status', 'paid')->sum('amount_paid'),
         ];
 
-      
-            return response()->json([
-                'success' => true,
-                'data' => $trainingRequests,
-                'statistics' => $statistics,
-                'filters' => $request->all()
-            ]);
-         }
+
+        return response()->json([
+            'success' => true,
+            'data' => $trainingRequests,
+            'statistics' => $statistics,
+            'filters' => $request->all()
+        ]);
+    }
 
     public function stats()
     {
@@ -218,12 +223,11 @@ class TrainingRequestController extends Controller
     {
         $trainingRequest = TrainingRequest::with(['reviewer', 'user', 'trainingCourseSchedule', 'trainingCourse'])->findOrFail($id);
 
-      
-            return response()->json([
-                'success' => true,
-                'data' => $trainingRequest
-            ]);
-       
+
+        return response()->json([
+            'success' => true,
+            'data' => $trainingRequest
+        ]);
     }
 
     /**

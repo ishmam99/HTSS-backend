@@ -11,7 +11,10 @@ return new class extends Migration
         Schema::create('training_enrollments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('end_user_id')->constrained('end_users')->cascadeOnDelete();
-            $table->foreignId('training_offer_id')->constrained('training_offers')->cascadeOnDelete();
+            $table->foreignId('training_request_id')->nullable()->constrained('training_requests')->cascadeOnDelete();
+            $table->string('transaction_id')->nullable();
+            $table->decimal('amount_paid', 10, 2)->nullable();
+            $table->foreignId('training_course_schedule_id')->nullable()->constrained('training_course_schedules')->cascadeOnDelete();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });

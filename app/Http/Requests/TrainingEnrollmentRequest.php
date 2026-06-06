@@ -13,12 +13,11 @@ class TrainingEnrollmentRequest extends FormRequest
 
     public function rules(): array
     {
-        $enrollmentId = $this->route('training_enrollment')?->id;
-
         return [
             'end_user_id' => 'required|exists:end_users,id',
-            'training_offer_id' => 'required|exists:training_offers,id',
-            'status' => 'nullable|integer',
+            'training_request_id' => 'nullable|exists:training_requests,id',
+            'training_course_schedule_id' => 'nullable|exists:training_course_schedules,id',
+            'status' => 'nullable|in:0,1',
         ];
     }
 
@@ -27,8 +26,8 @@ class TrainingEnrollmentRequest extends FormRequest
         return [
             'end_user_id.required' => 'End user is required',
             'end_user_id.exists' => 'Selected end user does not exist',
-            'offer_id.required' => 'Training offer is required',
-            'offer_id.exists' => 'Selected training offer does not exist',
+            'training_request_id.exists' => 'Selected training request does not exist',
+            'training_course_schedule_id.exists' => 'Selected training course schedule does not exist',
             'status.in' => 'Status must be 0 or 1',
         ];
     }

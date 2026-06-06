@@ -16,8 +16,12 @@ class TrainingEnrollment extends Model
         return $this->belongsTo(EndUser::class);
     }
 
-    public function trainingOffer()
+    public function trainingCourseSchedule()
     {
-        return $this->belongsTo(TrainingOffer::class);
+        return $this->belongsTo(TrainingCourseSchedule::class);
+    }
+    public function trainingRequest()
+    {
+        return $this->belongsTo(TrainingRequest::class);
     }
 }

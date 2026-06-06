@@ -12,14 +12,12 @@ class TrainingEnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrainingEnrollment::with(['endUser.user','trainingOffer.event.trainingCourse'])->when($request->status, function($query, $status) {
+        $query = TrainingEnrollment::with(['endUser', 'trainingRequest', 'trainingCourseSchedule'])->when($request->status, function ($query, $status) {
             return $query->where('status', $status);
-        })->when($request->customer_id, function($q, $customerId) {
-            return $q->whereHas('endUser', function($q2) use ($customerId) {
-                $q2->where('customer_id', $customerId);
-            });
+        })->when($request->end_user_id, function ($q, $endUserId) {
+            return $q->where('end_user_id', $endUserId);
         })
-        ->orderBy('id', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($request->has('per_page')) {
             $lists = $query->paginate($request->per_page);
@@ -83,6 +81,6 @@ class TrainingEnrollmentController extends Controller
     public function destroy(TrainingEnrollment $trainingEnrollment)
     {
         $trainingEnrollment->delete();
-        return response()->json(['status' => true,'message' => 'TrainingEnrollment deleted successfully'],200);
+        return response()->json(['status' => true, 'message' => 'TrainingEnrollment deleted successfully'], 200);
     }
 }
