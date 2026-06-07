@@ -10,6 +10,7 @@ use App\Http\Resources\TrainerRequestFormResource;
 use App\Models\Trainer;
 use App\Models\TrainerCourse;
 use App\Models\TrainerPreferdSchedule;
+use App\Models\TrainerSchedule;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -396,7 +397,7 @@ public function approve($id)
         TrainerSkill::where('trainer_request_form_id', $trainerRequestForm->id)
             ->update(['trainer_id' => $user->id]);
         TrainerCourse::where('trainer_request_form_id', $trainerRequestForm->id)
-            ->update(['trainer_id' => $trainer->id]);
+            ->update(['trainer_id' => $user->id]);
         DB::commit();
         
         return response()->json([
