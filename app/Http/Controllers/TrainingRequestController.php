@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TrainingCourseSchedule;
+use App\Models\TrainingEnrollment;
 use App\Models\TrainingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -195,6 +197,20 @@ class TrainingRequestController extends Controller
             ]);
 
             DB::commit();
+            if($request->training_type != 'group'){
+              $schedule = TrainingCourseSchedule::create([
+                    'training_course_id' => $request->course_id,
+                    'date' => $request->preferred_start_date,
+                    'available_seats' => $request->number_of_participants ?? 1,
+                ]);
+                TrainingEnrollment::create([
+                    'training_request_id' => $trainingRequest->id,
+                    'training_course_schedule_id' => $schedule->id,
+                    'status' => 'enrolled',
+                    'end_user_id' => auth()->id(),
+                    'amount_paid' => $request->course_price ?? 0,
+                ]);
+            }
 
             // Send notification email (implement this later)
             // Mail::to($trainingRequest->email)->send(new TrainingRequestReceived($trainingRequest));
