@@ -520,6 +520,11 @@ class TrainingRequestController extends Controller
 
             $trainingRequest->recordPayment($request->amount, $request->payment_reference);
 
+            $trainingRequest->update([
+                'status' => TrainingRequest::STATUS_COMPLETED,
+                'completed_at' => $trainingRequest->completed_at ?? now(),
+            ]);
+
             if ($request->admin_notes) {
                 $trainingRequest->admin_notes = $request->admin_notes;
                 $trainingRequest->save();
