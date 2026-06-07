@@ -207,7 +207,7 @@ class TrainingRequestController extends Controller
                     'training_request_id' => $trainingRequest->id,
                     'training_course_schedule_id' => $schedule->id,
                     // 'status' => 'enrolled',
-                    'end_user_id' => auth()->id(),
+                    'end_user_id' => auth()->user()->endUser->id,
                     'amount_paid' => $request->course_price ?? 0,
                 ]);
             }
