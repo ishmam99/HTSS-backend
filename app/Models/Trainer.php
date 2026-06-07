@@ -21,4 +21,21 @@ class Trainer extends Model
     {
         return $this->hasMany(TrainingEvent::class);
     }
+    public function skills()
+    {
+        return $this->hasMany(TrainerSkill::class);
+    }
+    public function courses()
+    {
+        return $this->hasMany(TrainerCourse::class);
+    }
+    public function schedules()
+    {
+        return $this->hasMany(TrainerSchedule::class);
+    }
+    public function preferedSchedules()
+    {
+        return $this->hasMany(TrainerPreferdSchedule::class);
+    }
+
 }
