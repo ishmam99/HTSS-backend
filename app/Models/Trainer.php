@@ -23,18 +23,18 @@ class Trainer extends Model
     }
     public function skills()
     {
-        return $this->hasMany(TrainerSkill::class, 'user_id');
+        return $this->hasMany(TrainerSkill::class, 'user_id','trainer_id');
     }
     public function courses()
     {
-        return $this->hasMany(TrainerCourse::class, 'user_id');
+        return $this->hasMany(TrainerCourse::class, 'user_id','trainer_id');
     }
     public function schedules()
     {
-        return $this->hasMany(TrainerSchedule::class, 'user_id');
+        return $this->hasMany(TrainerSchedule::class, 'user_id','trainer_id');
     }
     public function preferedSchedules()
     {
-        return $this->hasMany(TrainerPreferdSchedule::class, 'user_id');
+        return $this->hasMany(TrainerPreferdSchedule::class, 'user_id','trainer_id');
     }
 }
