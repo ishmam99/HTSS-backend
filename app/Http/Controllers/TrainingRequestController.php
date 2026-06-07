@@ -206,7 +206,7 @@ class TrainingRequestController extends Controller
                 TrainingEnrollment::create([
                     'training_request_id' => $trainingRequest->id,
                     'training_course_schedule_id' => $schedule->id,
-                    'status' => 'enrolled',
+                    // 'status' => 'enrolled',
                     'end_user_id' => auth()->id(),
                     'amount_paid' => $request->course_price ?? 0,
                 ]);
