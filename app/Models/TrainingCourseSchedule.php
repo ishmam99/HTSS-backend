@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
 
 class TrainingCourseSchedule extends Model
 {
     //
-
+    use HasAdvancedQuery;
     /**
      * The attributes that aren't mass assignable.
      *

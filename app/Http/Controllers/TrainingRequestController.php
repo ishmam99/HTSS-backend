@@ -201,6 +201,7 @@ class TrainingRequestController extends Controller
               $schedule = TrainingCourseSchedule::create([
                     'training_course_id' => $request->course_id,
                     'date' => $request->preferred_start_date,
+                    'training_type' => $request->training_type,
                     'available_seats' => $request->number_of_participants ?? 1,
                 ]);
                 $trainingRequest->update([

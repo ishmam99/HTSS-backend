@@ -15,49 +15,20 @@ class TrainingCourseScheduleController extends Controller
     /**
      * Display a listing of schedules (Admin)
      */
-    public function index(Request $request)
+      public function index(Request $request)
     {
-        $query = TrainingCourseSchedule::with(['trainingCourse', 'trainer']);
-
-        // Filter by course
-        if ($request->has('training_course_id')) {
-            $query->where('training_course_id', $request->training_course_id);
-        }
-
-        // Filter by status
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by date range
-        if ($request->has('start_date')) {
-            $query->where('date', '>=', $request->start_date);
-        }
-        if ($request->has('end_date')) {
-            $query->where('date', '<=', $request->end_date);
-        }
-
-        // Filter by trainer
-        if ($request->has('trainer_id')) {
-            $query->where('trainer_id', $request->trainer_id);
-        }
-
-        // Sort
-        $sortField = $request->get('sort_by', 'date');
-        $sortOrder = $request->get('sort_order', 'asc');
-        $query->orderBy($sortField, $sortOrder);
-
-        // Pagination
-        $perPage = $request->get('per_page', 15);
-        $schedules = $query->paginate($perPage);
+        $query = TrainingCourseSchedule::advancedQuery($request);
+        $lists = $request->per_page
+            ? $query->paginate($request->per_page)
+            : $query->get();
 
         return response()->json([
-            'success' => true,
-            'data' => $schedules,
-            'message' => 'Schedules retrieved successfully'
-        ]);
+                'success' => true,
+                'data' => $lists,
+                'total' => TrainingCourseSchedule::count()
+            ]);
     }
-
+    
     /**
      * Display public schedules (only upcoming and active)
      */
