@@ -216,14 +216,24 @@ class TrainingRequestController extends Controller
                     'amount_paid' => $request->course_price ?? 0,
                 ]);
             }
-
+            else{
+                  TrainingEnrollment::create([
+                    'training_request_id' => $trainingRequest->id,
+                    'training_course_schedule_id' => $request->training_course_schedule_id,
+                    // 'status' => 'enrolled',
+                    'end_user_id' => auth()->user()->endUser->id,
+                    'amount_paid' => $request->course_price ?? 0,
+                ]);
+            }
+            $trainingRequest->load(['trainingCourseSchedule', 'trainingCourse','trainingEnrollment']);
             // Send notification email (implement this later)
             // Mail::to($trainingRequest->email)->send(new TrainingRequestReceived($trainingRequest));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Training request submitted successfully. We will contact you within 2 business days.',
-                'data' => $trainingRequest
+                'data' => $trainingRequest,
+
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
