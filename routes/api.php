@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CompetencyController;
 use App\Http\Controllers\Api\GeneralSkillController;
+use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\TrainingScheduleController;
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
@@ -66,6 +67,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function () {
+    Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
+    Route::post('/stripe/create-payment-intent', [StripeWebhookController::class, 'createPaymentIntent']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('role-by-user-list', [AuthController::class, 'usersByRole']);
@@ -317,4 +320,5 @@ Route::prefix('software-requests')->group(function () {
     Route::put('{id}/status', [SoftwareRequestController::class, 'updateStatus']);
     Route::put('{id}/conversion-status', [SoftwareRequestController::class, 'updateConversionStatus']);
 });
+
 });
