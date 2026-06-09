@@ -89,26 +89,25 @@ class StripeWebhookController extends Controller
             'status' => 3 // Assuming 3 represents payment failed
         ]);
     }
+public function createPaymentIntent(Request $request)
+{
+    $request->validate([
+        'amount'        => 'required|numeric|min:1',
+        'currency'      => 'required|string',
+        'enrollment_id' => 'required|integer', // pass this from frontend
+    ]);
 
-     public function createPaymentIntent(Request $request)
-    {
-        $request->validate([
-            'amount' => 'required|numeric|min:1',
-            'currency' => 'required|string'
-        ]);
+    Stripe::setApiKey(config('stripe.secret'));
 
-        Stripe::setApiKey(config('stripe.secret'));
+    $paymentIntent = PaymentIntent::create([
+        'amount'   => $request->amount * 100,
+        'currency' => $request->currency ?? 'usd',
+        'metadata' => [
+            'order_id' => $request->enrollment_id, // ← this is what webhook needs
+        ],
+        'automatic_payment_methods' => ['enabled' => true],
+    ]);
 
-        $paymentIntent = PaymentIntent::create([
-            'amount' => $request->amount * 100, // Stripe uses cents
-            'currency' => $request->currency ?? 'usd',
-            'automatic_payment_methods' => [
-                'enabled' => true,
-            ],
-        ]);
-
-        return response()->json([
-            'clientSecret' => $paymentIntent->client_secret
-        ]);
-    }
+    return response()->json(['clientSecret' => $paymentIntent->client_secret]);
+}
 }
