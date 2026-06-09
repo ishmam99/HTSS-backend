@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CompetencyController;
 use App\Http\Controllers\Api\GeneralSkillController;
+use App\Http\Controllers\Api\TrainingScheduleController;
 use App\Http\Controllers\AppliedJobController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\ProfessionSummaryController;
 use App\Http\Controllers\ScheduledMessageController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SoftwareLevelController;
+use App\Http\Controllers\SoftwareRequestController;
 use App\Http\Controllers\SoftwareSkillController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\SuccessTeamActivityReportController;
@@ -307,5 +309,12 @@ Route::prefix('public')->group(function () {
     Route::get('courses/{courseId}/upcoming-schedules', [TrainingCourseScheduleController::class, 'upcomingSchedules']);
      Route::get('training-course-schedules/monthly/available-courses', [TrainingCourseScheduleController::class, 'getAvailableCoursesByMonth']);
     Route::get('training-course-schedules/monthly/calendar', [TrainingCourseScheduleController::class, 'getMonthlyCalendar']);
+});
+Route::apiResource('software-requests', SoftwareRequestController::class);
+
+// Additional custom routes
+Route::prefix('software-requests')->group(function () {
+    Route::put('{id}/status', [SoftwareRequestController::class, 'updateStatus']);
+    Route::put('{id}/conversion-status', [SoftwareRequestController::class, 'updateConversionStatus']);
 });
 });
