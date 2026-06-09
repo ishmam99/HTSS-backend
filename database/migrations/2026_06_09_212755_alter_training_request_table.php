@@ -16,7 +16,7 @@ return new class extends Migration
           
         });
          Schema::table('training_enrollments', function (Blueprint $table) {
-            $table->string('receipt_url')->nullable()->after('training_course_id');
+            $table->string('receipt_url')->nullable()->after('transaction_id');
           
         });
     }
