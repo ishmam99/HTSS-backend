@@ -68,8 +68,15 @@ class StripeWebhookController extends Controller
         $order->update([
             'status' => 2,
             'transaction_id' => $paymentIntent->id,
+            'receipt_url' => $paymentIntent->charges->data[0]->receipt_url ?? null,
         ]);
-
+          $order->trainingRequest()->update([
+            'payment_status' => 'paid', 
+            'payment_reference' => $paymentIntent->id,
+            'paid_at' => now(),
+            'amount_paid' => $paymentIntent->amount / 100,
+            'receipt_url' => $paymentIntent->charges->data[0]->receipt_url ?? null,
+        ]);
         // 👉 OPTIONAL: stock deduction
         // 👉 OPTIONAL: send email
         // 👉 OPTIONAL: generate invoice
@@ -87,6 +94,9 @@ class StripeWebhookController extends Controller
 
         $order->update([
             'status' => 3 // Assuming 3 represents payment failed
+        ]);
+        $order->trainingRequest()->update([
+            'payment_status' => 'failed', // Assuming 'failed' represents payment failed
         ]);
     }
 public function createPaymentIntent(Request $request)
