@@ -75,6 +75,7 @@ Route::prefix('v1')->group(function () {
     Route::get('users-role-wise-count', [AuthController::class, 'roleWiseCount']);
     Route::apiResource('internal-trainings', InternalTrainingController::class);
     Route::middleware('auth:sanctum')->group(function () {
+           Route::apiResource('end-users', EndUserController::class);
         Route::apiResource('employees', EmployeeController::class);
         Route::apiResource('success-team-roles', SuccessTeamRoleController::class);
         Route::post('/set-user-role', [AuthController::class, 'setRole']);
@@ -213,7 +214,8 @@ Route::post('/trainer-request-form/{id}/reject', [TrainerRequestFormController::
     Route::put('job/{id}/status', [JobController::class, 'changeStatus']);
     Route::apiResource('department', DepartmentController::class);
     Route::post('applied-jobs', [AppliedJobController::class, 'store']);
-    Route::apiResource('end-users', EndUserController::class);
+    
+ 
     // HR generates link
 
     // Applicant access
