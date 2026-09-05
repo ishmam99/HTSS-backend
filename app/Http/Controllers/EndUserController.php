@@ -20,7 +20,10 @@ use App\Mail\DynamicMail;
 class EndUserController extends Controller
 {
   public function index(Request $request)
-{
+{   
+    if(auth()->user()->role == 'customer'){
+        $request['customer_id'] = auth()->user()->customer->id;
+    }
     $query = EndUser::advancedQuery($request);
 
     $lists = $request->per_page
