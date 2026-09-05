@@ -24,9 +24,11 @@ class AppServiceProvider extends ServiceProvider
     foreach ($modules as $moduleMigrationPath) {
         $this->loadMigrationsFrom($moduleMigrationPath);
     }
-    $routes = base_path('app/Modules/CRM/routes/api.php');
-    if (file_exists($routes)) {
-        $this->loadRoutesFrom($routes);
+    $routes = glob(base_path('app/Modules/*/routes/api.php'), GLOB_ONLYDIR);
+    foreach ($routes as $route) {
+        if (file_exists($route)) {
+            $this->loadRoutesFrom($route);
+        }
     }
     }
 }

@@ -18,8 +18,9 @@ class CustomerSolutionController extends Controller
             $customerIds = Customer::where('company_id', $request->company_id)->pluck('id');
         }
         $query = CustomerSolution::with(['customer.user', 'solution', 'solution.softwares'])
-            ->when(auth()->user()->role === 'customer', function ($q) {
-                $q->where('customer_id', auth()->user()->customer->id);
+            ->when(auth()->user()->role === 'customer', function ($q) use ($request) {
+                $customerId  = auth()->user()->customer?->id || $request->customer_id;
+                $q->where('customer_id', $customerId);
             })
             ->when($request->filled('customer_id'), function ($q) use ($request) {
                 $q->where('customer_id', $request->customer_id);
