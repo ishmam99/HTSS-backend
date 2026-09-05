@@ -17,6 +17,12 @@ class CustomerSupportController extends Controller
             $query->where('type', $request->type);
         })
         ->when($request->filled('customer_id'), function ($query) use ($request) {
+            if(auth()->user()->role == 'customer'){
+                $request['customer_id'] = auth()->user()->customer->id;
+            }
+            else{
+                $request['customer_id'] = $request->customer_id;
+            }
             $query->where('customer_id', $request->customer_id);
         })
         ->when($request->filled('end_user_id'), function ($query) use ($request) {
