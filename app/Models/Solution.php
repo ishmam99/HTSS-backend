@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Solution extends Model
@@ -17,6 +18,10 @@ class Solution extends Model
      public function softwares()
     {
         return $this->belongsToMany(Software::class, 'software_solutions');
+    }
+      public function customers(): BelongsToMany
+    {
+        return $this->belongsToMany(Customer::class, 'customer_solutions');
     }
     public function industries()
     {

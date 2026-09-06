@@ -45,6 +45,10 @@ class SolutionController extends Controller
         {
            $solution->load('softwares');
         }
+          if($request->has('customers'))
+        {
+           $solution->load('customers');
+        }
         if($request->has('industries'))
         {
            $solution->load('industries');
