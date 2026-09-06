@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasAdvancedQuery;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Software extends Model
@@ -28,6 +29,10 @@ class Software extends Model
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+      public function customers(): BelongsToMany
+    {
+        return $this->belongsToMany(Customer::class, 'customer_software');
     }
     /**
      * Get all of the trainings for the Software

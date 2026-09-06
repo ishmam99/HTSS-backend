@@ -30,7 +30,7 @@ class SoftwareController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'vendor' => 'nullable|string|max:255',
             'version' => 'nullable|string|max:255',
@@ -49,6 +49,13 @@ class SoftwareController extends Controller
         {
            $software->load('solutions');
         }
+        if($request->has('customers'))
+        {
+           $software->load('customers');
+        }
+        {
+           $software->load('solutions');
+        }
         if($request->has('industries'))
         {
            $software->load('industries');
@@ -63,7 +70,7 @@ class SoftwareController extends Controller
     public function update(Request $request, Software $software)
     {
         $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
+            // 'user_id' => 'sometimes|exists:users,id',
             'name' => 'sometimes|required|string|max:255',
             'vendor' => 'nullable|string|max:255',
             'version' => 'nullable|string|max:255',
