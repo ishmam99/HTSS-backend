@@ -26,7 +26,7 @@ class SolutionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'domain' => 'nullable|string|max:255',
             'description' => 'nullable|string',
@@ -59,7 +59,7 @@ class SolutionController extends Controller
     public function update(Request $request, Solution $solution)
     {
         $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
+            // 'user_id' => 'sometimes|exists:users,id',
             'name' => 'sometimes|required|string|max:255',
             'domain' => 'nullable|string|max:255',
             'description' => 'nullable|string',
