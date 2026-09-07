@@ -263,8 +263,5 @@ php artisan make:module CRM
 3. Copy the module to any project and it works out of the box.
 4. Maintain modular, organized, and scalable CRM system.
 
----
-
-If you want, I can also create a **diagram of the module system** showing **folders, route flow, migrations, and controllers** — that makes it very easy for new developers to understand.
-
-Do you want me to do that?
+production git repo:
+production      ssh://w0g2ymo07kyk@hi-techtest.com/home/w0g2ymo07kyk/repository/htss-backend.git (fetch)
