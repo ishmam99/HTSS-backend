@@ -24,7 +24,7 @@ class SoftwareSkillController extends Controller
     public function store(Request $request)
     {
         $skill = SoftwareSkill::create($request->validate([
-            'software_id' => 'required'
+            'software_id' => 'required',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'nullable|integer',
