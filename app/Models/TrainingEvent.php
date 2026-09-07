@@ -18,6 +18,6 @@ class TrainingEvent extends Model
 
     public function trainer()
     {
-        return $this->belongsTo(Trainer::class);
+        return $this->belongsTo(Trainer::class,'id', 'trainer_id');
     }
 }

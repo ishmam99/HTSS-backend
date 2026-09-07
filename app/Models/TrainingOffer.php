@@ -26,6 +26,7 @@ class TrainingOffer extends Model
     {
         return $this->hasMany(EndUserTraining::class, 'training_offer_id', 'id');
     }
+    
 
 
 
